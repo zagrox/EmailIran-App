@@ -144,6 +144,20 @@
 </head>
 <body>
     <div id="root"></div>
+    <script>
+      // This script is intended to be processed by a server-side environment.
+      // It injects the environment variable for the Gemini API key into the browser,
+      // making it available at `process.env.API_KEY` before the main app loads.
+      // The placeholder `${VITE_GEMINI_API_KEY}` should be replaced with the actual
+      // API key by your hosting platform's deploy process.
+      window.process = {
+        env: {
+          // IMPORTANT: If this value is the literal string "${VITE_GEMINI_API_KEY}", 
+          // your hosting service has not replaced it and the AI API will fail.
+          API_KEY: "${VITE_GEMINI_API_KEY}"
+        }
+      };
+    </script>
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
