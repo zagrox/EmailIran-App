@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { generateCampaignFromPrompt } from '../services/geminiService';
 import { AUDIENCE_CATEGORIES } from '../constants';
@@ -27,11 +29,8 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
             const result = await generateCampaignFromPrompt(currentPrompt, AUDIENCE_CATEGORIES);
             setDraft(result);
         } catch (err) {
-            console.error("AI Assistant Error:", err);
-            const errorMessage = err instanceof Error && err.message.includes("API_KEY")
-                ? "اتصال به سرویس هوش مصنوعی ناموفق بود. لطفاً مطمئن شوید که کلید API به درستی در محیط برنامه تنظیم شده است."
-                : "متأسفانه، پیش‌نویس تولید نشد. لطفاً دوباره تلاش کنید.";
-            setError(errorMessage);
+            console.error(err);
+            setError('متأسفانه، پیش‌نویس تولید نشد. لطفاً دوباره تلاش کنید.');
         } finally {
             setIsLoading(false);
         }

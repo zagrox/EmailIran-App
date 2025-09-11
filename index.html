@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>جادوگر بازاریابی ایمیل ایران</title>
+    <title>جادوگر کمپین ایمیل</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -145,18 +145,17 @@
 <body>
     <div id="root"></div>
     <script>
-      // This script is intended to be processed by a server-side environment.
-      // It injects the environment variable for the Gemini API key into the browser,
-      // making it available at `process.env.API_KEY` before the main app loads.
-      // The placeholder `${VITE_GEMINI_API_KEY}` should be replaced with the actual
-      // API key by your hosting platform's deploy process.
+      // In a real production app, this key should not be hardcoded in the client-side
+      // code. For a secure deployment, you should use a backend proxy or a build tool 
+      // that can manage environment variables safely. For this prototype, we are defining 
+      // it here to resolve the application's loading error.
       window.process = {
         env: {
-          // IMPORTANT: If this value is the literal string "${VITE_GEMINI_API_KEY}", 
-          // your hosting service has not replaced it and the AI API will fail.
-          API_KEY: "${VITE_GEMINI_API_KEY}"
+          // IMPORTANT: Replace this placeholder with your actual Google Gemini API key.
+          API_KEY: 'AIzaSyCt-_hrZ-josNNYe8ukRFLVUbXnfMGawac'
         }
       };
+      
     </script>
     <script type="module" src="/index.tsx"></script>
 </body>
