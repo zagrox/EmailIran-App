@@ -64,9 +64,13 @@
   }
 }
 </script>
+<!-- 1. Add Babel Standalone for in-browser transpilation -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/preset-typescript/standalone.js"></script>
 </head>
 <body class="font-sans antialiased">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <!-- 2. Change script type to tell Babel to transpile our TSX code -->
+    <script type="text/babel" data-type="module" data-presets="react,typescript" src="/index.tsx"></script>
 </body>
 </html>
