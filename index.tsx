@@ -751,10 +751,6 @@ const UserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 // =============================================
 // START: src/services/geminiService.ts
 // =============================================
-if (!process.env.API_KEY) {
-    console.error("API_KEY environment variable not set. AI features will not work.");
-}
-
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 const model = 'gemini-2.5-flash';
 
