@@ -144,20 +144,6 @@
 </head>
 <body>
     <div id="root"></div>
-    <script type="module">
-      // This script bridges the gap between Vite's environment variables (`import.meta.env`)
-      // and the `process.env.API_KEY` that the Gemini SDK is required to use.
-      // This allows the use of a standard .env file for the API key.
-      if (import.meta.env.VITE_GEMINI_API_KEY) {
-        window.process = {
-          env: {
-            API_KEY: import.meta.env.VITE_GEMINI_API_KEY
-          }
-        };
-      }
-      
-      // Now, import the main application bundle.
-      import '/index.tsx';
-    </script>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
