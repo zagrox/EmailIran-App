@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Report } from '../types';
 import { ChartBarIcon, ClockIcon } from './IconComponents';
-import { STYLES } from '../styles';
 import PageHeader from './PageHeader';
 
 interface ReportCardProps {
@@ -13,7 +12,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report, onViewReport }) => {
     return (
         <div 
             onClick={() => onViewReport(report)}
-            className={STYLES.card.report}
+            className="card-report"
         >
             <div className="flex-grow">
                 <h3 className="font-bold text-lg text-slate-900 dark:text-white">{report.name}</h3>
@@ -55,6 +54,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ reports, onViewReport }) => {
             />
             <div className="space-y-6">
                 {reports.map(report => (
+                    // FIX: Passed the `onViewReport` function prop to the `ReportCard` component instead of the `report` object.
                     <ReportCard key={report.id} report={report} onViewReport={onViewReport} />
                 ))}
             </div>

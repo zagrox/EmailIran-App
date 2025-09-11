@@ -2,7 +2,6 @@
 
 import React from 'react';
 import type { CampaignState } from '../../types';
-import { STYLES } from '../../styles';
 
 interface Props {
   campaignData: CampaignState;
@@ -23,12 +22,12 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
 
     return (
         <div className="animate-slide-in-up">
-            <h2 className={STYLES.typography.h2}>تایید نهایی</h2>
-            <p className={STYLES.typography.p}>جزئیات کمپین خود را بررسی کنید، قیمت‌گذاری شفاف را ببینید و برای ارسال آماده شوید.</p>
+            <h2 className="h2">تایید نهایی</h2>
+            <p className="p-description">جزئیات کمپین خود را بررسی کنید، قیمت‌گذاری شفاف را ببینید و برای ارسال آماده شوید.</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Campaign Details */}
-                <div className={`${STYLES.card.container} lg:col-span-2 space-y-6`}>
+                <div className="card lg:col-span-2 space-y-6">
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">خلاصه کمپین</h3>
                     
                     <SummaryItem label="مخاطبان">
@@ -66,7 +65,7 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
 
                 {/* Pricing and Payment */}
                 <div className="space-y-6">
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">قیمت‌گذاری</h3>
                         <div className="space-y-3 text-slate-600 dark:text-slate-300">
                            <div className="flex justify-between">
@@ -84,7 +83,7 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
                            </div>
                         </div>
                     </div>
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">روش پرداخت</h3>
                         <div className="flex items-center gap-4 bg-slate-200 dark:bg-slate-800 p-4 rounded-md">
                             <svg className="h-8 w-8 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 48 48">

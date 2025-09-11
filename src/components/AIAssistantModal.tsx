@@ -1,10 +1,10 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { generateCampaignFromPrompt } from '../services/geminiService';
 import { AUDIENCE_CATEGORIES } from '../constants';
 import type { AICampaignDraft } from '../types';
 import { XIcon, SparklesIcon, LoadingSpinner, UsersIcon, MailIcon, ClockIcon } from './IconComponents';
-import { STYLES } from '../styles';
 
 interface Props {
   isOpen: boolean;
@@ -72,16 +72,16 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
 
     return (
         <div
-            className={STYLES.modal.overlay}
+            className="modal-overlay"
             onClick={handleClose}
             aria-modal="true"
             role="dialog"
         >
             <div
-                className={STYLES.modal.container}
+                className="modal-container"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className={STYLES.modal.header}>
+                <div className="modal-header">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <SparklesIcon className="w-7 h-7 text-brand-purple" />
                         دستیار هوش مصنوعی کمپین
@@ -91,7 +91,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                     </button>
                 </div>
 
-                <div className={STYLES.modal.content}>
+                <div className="modal-content">
                     {!draft && !isLoading && (
                         <div>
                             <label htmlFor="campaign-goal" className="block text-lg font-medium text-slate-700 dark:text-slate-300">
@@ -104,7 +104,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
                                 disabled={isLoading}
-                                className={STYLES.input.default}
+                                className="input"
                                 placeholder="اینجا بنویسید..."
                             />
                         </div>
@@ -155,10 +155,10 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                     )}
                 </div>
 
-                <div className={STYLES.modal.footer}>
+                <div className="modal-footer">
                     <button
                         onClick={handleClose}
-                        className={STYLES.button.secondary}
+                        className="btn btn-secondary"
                     >
                         لغو
                     </button>
@@ -166,14 +166,14 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                         <button
                             onClick={() => handleGenerate()}
                             disabled={isLoading || !prompt}
-                            className="w-48 px-6 py-2 bg-brand-purple text-white rounded-md hover:bg-violet-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            className="btn btn-primary w-48"
                         >
                             {isLoading ? <LoadingSpinner className="w-5 h-5"/> : 'تولید پیش‌نویس'}
                         </button>
                     ) : (
                         <button
                             onClick={handleApply}
-                            className="px-6 py-2 bg-brand-mint text-slate-900 rounded-md hover:opacity-90 transition-opacity font-semibold"
+                            className="btn px-6 py-2 bg-brand-mint text-slate-900 hover:opacity-90"
                         >
                             اعمال پیش‌نویس
                         </button>

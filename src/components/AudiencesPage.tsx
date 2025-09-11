@@ -1,7 +1,6 @@
 import React from 'react';
 import { AUDIENCE_CATEGORIES } from '../constants';
 import { MailIcon } from './IconComponents';
-import { STYLES } from '../styles';
 import PageHeader from './PageHeader';
 
 interface AudienceCardProps {
@@ -11,7 +10,7 @@ interface AudienceCardProps {
 
 const AudienceCard: React.FC<AudienceCardProps> = ({ category, onStartCampaign }) => {
     return (
-        <div className={STYLES.card.audiencePage}>
+        <div className="card-audience">
             <div className="sm:pl-5 flex-grow w-full">
                 <h3 className="text-lg font-bold text-blue-600 dark:text-blue-400">{category.name_fa}</h3>
                 <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider">{category.name_en}</p>

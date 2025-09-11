@@ -5,7 +5,6 @@ import type { CampaignState } from '../../types';
 import { getSubjectSuggestions, improveEmailBody } from '../../services/geminiService';
 import { SparklesIcon, LoadingSpinner, DocumentDuplicateIcon } from '../IconComponents';
 import TemplateBrowser from '../TemplateBrowser';
-import { STYLES } from '../../styles';
 
 interface Props {
   campaignData: CampaignState;
@@ -16,7 +15,7 @@ const AISuggestionButton: React.FC<{ onClick: () => void; isLoading: boolean; te
     <button
         onClick={onClick}
         disabled={isLoading}
-        className={STYLES.button.aiSuggestion}
+        className="btn-ai-suggestion"
     >
         {isLoading ? <LoadingSpinner className="w-4 h-4" /> : <SparklesIcon className="w-4 h-4" />}
         <span>{text}</span>
@@ -85,7 +84,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
             />
 
             <div className="flex justify-between items-center mb-2">
-                <h2 className={STYLES.typography.h2}>پیام خود را بسازید</h2>
+                <h2 className="h2">پیام خود را بسازید</h2>
                 <button
                     onClick={() => setIsTemplateBrowserOpen(true)}
                     className="flex items-center gap-2 px-4 py-2 bg-brand-mint text-slate-900 rounded-md hover:opacity-90 transition-opacity duration-200 font-semibold text-sm"
@@ -94,14 +93,14 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                     انتخاب از قالب‌ها
                 </button>
             </div>
-            <p className={STYLES.typography.p}>با ذوق طراحی کنید، با کمک هوش مصنوعی با هدف صحبت کنید.</p>
+            <p className="p-description">با ذوق طراحی کنید، با کمک هوش مصنوعی با هدف صحبت کنید.</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-6">
                     {/* Subject */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label htmlFor="subject" className={STYLES.typography.label}>موضوع اصلی (نسخه الف)</label>
+                            <label htmlFor="subject" className="label">موضوع اصلی (نسخه الف)</label>
                             <AISuggestionButton onClick={handleGetSubjectSuggestions} isLoading={isSubjectLoading} text="پیشنهاد موضوع" />
                         </div>
                         <input
@@ -110,7 +109,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                             id="subject"
                             value={message.subject}
                             onChange={handleInputChange}
-                            className={STYLES.input.default}
+                            className="input"
                         />
                          {subjectSuggestions.length > 0 && (
                             <div className="mt-2 space-y-2 bg-slate-100 dark:bg-slate-900 p-3 rounded-md border border-slate-200 dark:border-slate-700">
@@ -125,32 +124,32 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                     </div>
 
                     {/* A/B Test Section */}
-                    <div className={`${STYLES.card.container} !p-4`}>
+                    <div className="card !p-4">
                         <div className="flex items-center justify-between">
                             <h3 className="text-base font-semibold text-slate-900 dark:text-white">آزمون A/B برای موضوع</h3>
                             <button
                                 onClick={handleAbTestEnableToggle}
-                                className={`${STYLES.toggle.base} ${isAbTestEnabled ? STYLES.abTest.on : STYLES.toggle.off}`}
+                                className={`toggle-switch ${isAbTestEnabled ? 'toggle-switch-ab-on' : 'toggle-switch-off'}`}
                             >
-                                <span className={`${STYLES.toggle.handle} ${isAbTestEnabled ? STYLES.toggle.handleOn : STYLES.toggle.handleOff}`} />
+                                <span className={`toggle-switch-handle ${isAbTestEnabled ? 'toggle-switch-handle-on' : 'toggle-switch-handle-off'}`} />
                             </button>
                         </div>
                          {isAbTestEnabled && (
                              <div className="mt-4 space-y-4 animate-fade-in">
                                 <div>
-                                    <label htmlFor="subjectB" className={`${STYLES.typography.label} mb-2`}>موضوع جایگزین (نسخه ب)</label>
+                                    <label htmlFor="subjectB" className="label mb-2">موضوع جایگزین (نسخه ب)</label>
                                     <input
                                         type="text"
                                         id="subjectB"
                                         name="subjectB"
                                         value={message.abTest.subjectB}
                                         onChange={handleAbTestChange}
-                                        className={STYLES.input.default}
+                                        className="input"
                                         placeholder="موضوع جایگزین را وارد کنید"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="testSize" className={`${STYLES.typography.label} mb-2`}>اندازه گروه آزمون ({message.abTest.testSize}%)</label>
+                                    <label htmlFor="testSize" className="label mb-2">اندازه گروه آزمون ({message.abTest.testSize}%)</label>
                                     <input
                                         type="range"
                                         id="testSize"
@@ -160,7 +159,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                                         step="5"
                                         value={message.abTest.testSize}
                                         onChange={handleAbTestChange}
-                                        className={STYLES.input.range}
+                                        className="input-range"
                                     />
                                 </div>
                             </div>
@@ -170,7 +169,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                     {/* Body */}
                     <div>
                          <div className="flex justify-between items-center mb-2">
-                            <label htmlFor="body" className={STYLES.typography.label}>متن ایمیل</label>
+                            <label htmlFor="body" className="label">متن ایمیل</label>
                             <AISuggestionButton onClick={handleImproveBody} isLoading={isBodyLoading} text="بهبود با هوش مصنوعی" />
                         </div>
                         <div className="relative">
@@ -180,7 +179,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                                 rows={15}
                                 value={message.body}
                                 onChange={handleInputChange}
-                                className={`${STYLES.input.default} resize-none`}
+                                className="input resize-none"
                             ></textarea>
                              {isBodyLoading && (
                                 <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 flex items-center justify-center rounded-md">
@@ -193,7 +192,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
 
                 {/* Email Previews */}
                 <div className="space-y-6">
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                         <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">پیش‌نمایش زنده</h3>
                         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
                             <div className="p-4 border-b border-slate-200 dark:border-slate-700">
@@ -207,7 +206,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                     </div>
                     
                     {isAbTestEnabled && (
-                         <div className={`${STYLES.card.container} animate-fade-in`}>
+                         <div className="card animate-fade-in">
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">پیش‌نمایش آزمون A/B</h3>
                             <div className="space-y-3 p-4 bg-white dark:bg-slate-900 rounded-md border border-slate-300 dark:border-slate-600">
                                 <div>

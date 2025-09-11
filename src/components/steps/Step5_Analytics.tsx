@@ -1,8 +1,8 @@
 
+
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Report } from '../../types';
-import { STYLES } from '../../styles';
 
 interface Props {
     theme: 'light' | 'dark';
@@ -28,7 +28,7 @@ const defaultAnalyticsData = {
 };
 
 const StatCard: React.FC<{ title: string; value: string; description: string }> = ({ title, value, description }) => (
-    <div className={STYLES.card.container}>
+    <div className="card">
         <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{title}</h3>
         <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
@@ -75,7 +75,7 @@ const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onStartNewCampai
                 <StatCard title="تبدیل‌ها" value={stats.conversions.toLocaleString('fa-IR')} description="اهداف تکمیل شده از این کمپین"/>
             </div>
 
-            <div className={`${STYLES.card.container} h-96`}>
+            <div className="card h-96">
                  <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: -10, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={gridStrokeColor} />
@@ -95,7 +95,7 @@ const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onStartNewCampai
             <div className="mt-10">
                  <button 
                     onClick={mainButtonAction}
-                    className="px-8 py-3 bg-brand-purple text-white rounded-md hover:bg-violet-700 transition-colors duration-200 font-bold text-lg"
+                    className="btn btn-launch"
                  >
                     {mainButtonText}
                  </button>

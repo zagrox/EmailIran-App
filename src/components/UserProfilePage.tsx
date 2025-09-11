@@ -1,7 +1,7 @@
 
+
 import React, { useState } from 'react';
 import PageHeader from './PageHeader';
-import { STYLES } from '../styles';
 import { SunIcon, MoonIcon, DesktopIcon } from './IconComponents';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -76,56 +76,56 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                 {/* User Info Column */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Profile Details Card */}
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اطلاعات کاربری</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="name" className={STYLES.typography.label}>نام کامل</label>
-                                <input type="text" id="name" name="name" value={user.name} onChange={handleInfoChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="name" className="label">نام کامل</label>
+                                <input type="text" id="name" name="name" value={user.name} onChange={handleInfoChange} className="input mt-1" />
                             </div>
                             <div>
-                                <label htmlFor="email" className={STYLES.typography.label}>آدرس ایمیل</label>
-                                <input type="email" id="email" name="email" value={user.email} onChange={handleInfoChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="email" className="label">آدرس ایمیل</label>
+                                <input type="email" id="email" name="email" value={user.email} onChange={handleInfoChange} className="input mt-1" />
                             </div>
                             <div>
-                                <label htmlFor="company" className={STYLES.typography.label}>شرکت</label>
-                                <input type="text" id="company" name="company" value={user.company} onChange={handleInfoChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="company" className="label">شرکت</label>
+                                <input type="text" id="company" name="company" value={user.company} onChange={handleInfoChange} className="input mt-1" />
                             </div>
                             <div>
-                                <label htmlFor="role" className={STYLES.typography.label}>نقش</label>
-                                <input type="text" id="role" name="role" value={user.role} onChange={handleInfoChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="role" className="label">نقش</label>
+                                <input type="text" id="role" name="role" value={user.role} onChange={handleInfoChange} className="input mt-1" />
                             </div>
                         </div>
                         <div className="mt-6 text-right">
-                            <button onClick={handleSaveChanges} className={STYLES.button.primary}>ذخیره تغییرات</button>
+                            <button onClick={handleSaveChanges} className="btn btn-primary">ذخیره تغییرات</button>
                         </div>
                     </div>
 
                     {/* Change Password Card */}
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">تغییر رمز عبور</h3>
                          <div className="space-y-4">
                             <div>
-                                <label htmlFor="current" className={STYLES.typography.label}>رمز عبور فعلی</label>
-                                <input type="password" id="current" name="current" value={password.current} onChange={handlePasswordChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="current" className="label">رمز عبور فعلی</label>
+                                <input type="password" id="current" name="current" value={password.current} onChange={handlePasswordChange} className="input mt-1" />
                             </div>
                             <div>
-                                <label htmlFor="new" className={STYLES.typography.label}>رمز عبور جدید</label>
-                                <input type="password" id="new" name="new" value={password.new} onChange={handlePasswordChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="new" className="label">رمز عبور جدید</label>
+                                <input type="password" id="new" name="new" value={password.new} onChange={handlePasswordChange} className="input mt-1" />
                             </div>
                             <div>
-                                <label htmlFor="confirm" className={STYLES.typography.label}>تکرار رمز عبور جدید</label>
-                                <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={handlePasswordChange} className={`${STYLES.input.default} mt-1`} />
+                                <label htmlFor="confirm" className="label">تکرار رمز عبور جدید</label>
+                                <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={handlePasswordChange} className="input mt-1" />
                             </div>
                          </div>
                           <div className="mt-6 text-right">
-                            <button onClick={handleChangePassword} disabled={!isPasswordFormValid} className={`${STYLES.button.secondary} disabled:opacity-50 disabled:cursor-not-allowed`}>بروزرسانی رمز عبور</button>
+                            <button onClick={handleChangePassword} disabled={!isPasswordFormValid} className="btn btn-secondary">بروزرسانی رمز عبور</button>
                         </div>
                     </div>
                 </div>
                 {/* Settings Column */}
                 <div className="lg:col-span-1 space-y-8">
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اعلان‌ها</h3>
                          <div className="space-y-6">
                             <NotificationToggle 
@@ -149,7 +149,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                          </div>
                     </div>
                     {/* Display Settings Card */}
-                    <div className={STYLES.card.container}>
+                    <div className="card">
                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">تنظیمات نمایش</h3>
                          <div className="flex justify-around items-center gap-4">
                             {themeOptions.map(option => (
@@ -190,9 +190,9 @@ const NotificationToggle: React.FC<NotificationToggleProps> = ({ label, descript
         </div>
         <button
             onClick={onToggle}
-            className={`${STYLES.toggle.base} ${enabled ? STYLES.toggle.on : STYLES.toggle.off} flex-shrink-0 mt-1`}
+            className={`toggle-switch ${enabled ? 'toggle-switch-on' : 'toggle-switch-off'} flex-shrink-0 mt-1`}
         >
-            <span className={`${STYLES.toggle.handle} ${enabled ? STYLES.toggle.handleOn : STYLES.toggle.handleOff}`} />
+            <span className={`toggle-switch-handle ${enabled ? 'toggle-switch-handle-on' : 'toggle-switch-handle-off'}`} />
         </button>
     </div>
 );

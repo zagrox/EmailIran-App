@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import type { CampaignState } from '../../types';
 import { getBestSendTime } from '../../services/geminiService';
 import { SparklesIcon, LoadingSpinner } from '../IconComponents';
-import { STYLES } from '../../styles';
 import PersianCalendar from '../PersianCalendar';
 
 interface Props {
@@ -43,22 +42,22 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
     
     const timeInput = (
         <div>
-            <label htmlFor="sendTime" className={`${STYLES.typography.label} mb-2 text-center`}>ساعت ارسال</label>
+            <label htmlFor="sendTime" className="label mb-2 text-center">ساعت ارسال</label>
             <input
                 type="time"
                 id="sendTime"
                 name="sendTime"
                 value={schedule.sendTime}
                 onChange={handleScheduleChange}
-                className={`${STYLES.input.default} text-center text-lg`}
+                className="input text-center text-lg"
             />
         </div>
     );
 
     return (
         <div className="animate-slide-in-up">
-            <h2 className={STYLES.typography.h2}>زمان‌بندی را تنظیم کنید</h2>
-            <p className={STYLES.typography.p}>مانند یک حرفه‌ای با تحویل آگاه از منطقه زمانی و پیش‌بینی‌های هوشمند، زمان‌بندی کنید.</p>
+            <h2 className="h2">زمان‌بندی را تنظیم کنید</h2>
+            <p className="p-description">مانند یک حرفه‌ای با تحویل آگاه از منطقه زمانی و پیش‌بینی‌های هوشمند، زمان‌بندی کنید.</p>
 
             <div className="mt-8">
                 <PersianCalendar
@@ -73,9 +72,9 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
                     <span className="font-medium text-slate-900 dark:text-white">تحویل آگاه از منطقه زمانی</span>
                     <button
                         onClick={handleTimezoneToggle}
-                        className={`${STYLES.toggle.base} ${isTimezoneAware ? STYLES.toggle.on : STYLES.toggle.off}`}
+                        className={`toggle-switch ${isTimezoneAware ? 'toggle-switch-on' : 'toggle-switch-off'}`}
                     >
-                        <span className={`${STYLES.toggle.handle} ${isTimezoneAware ? STYLES.toggle.handleOn : STYLES.toggle.handleOff}`} />
+                        <span className={`toggle-switch-handle ${isTimezoneAware ? 'toggle-switch-handle-on' : 'toggle-switch-handle-off'}`} />
                     </button>
                 </div>
 

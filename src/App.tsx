@@ -13,7 +13,6 @@ import Step5Analytics from './components/steps/Step5_Analytics';
 import AIAssistantModal from './components/AIAssistantModal';
 import AudiencesPage from './components/AudiencesPage';
 import ReportsPage from './components/ReportsPage';
-import { STYLES } from './styles';
 import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
@@ -268,10 +267,10 @@ const App: React.FC = () => {
                 );
             case 'wizard':
                 return (
-                    <div className={STYLES.page.wizardContainer}>
+                    <div className="page-container">
                         {currentStep <= 4 && <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />}
                         
-                        <main className={STYLES.page.mainContent}>
+                        <main className="page-main-content">
                             {renderWizardStep()}
                         </main>
                         
@@ -281,7 +280,7 @@ const App: React.FC = () => {
                                     {currentStep > 1 && (
                                         <button
                                             onClick={handlePrev}
-                                            className={STYLES.button.secondary}
+                                            className="btn btn-secondary"
                                         >
                                             بازگشت
                                         </button>
@@ -291,14 +290,14 @@ const App: React.FC = () => {
                                     {currentStep < 4 ? (
                                         <button
                                             onClick={handleNext}
-                                            className={STYLES.button.primary}
+                                            className="btn btn-primary"
                                         >
                                             بعدی
                                         </button>
                                     ) : (
                                         <button
                                             onClick={handleLaunch}
-                                            className={STYLES.button.launch}
+                                            className="btn btn-launch"
                                         >
                                             پرداخت و ارسال کمپین
                                         </button>
@@ -313,7 +312,7 @@ const App: React.FC = () => {
 
 
     return (
-        <div className={STYLES.page.container}>
+        <div className="app-container">
             <Header setCurrentPage={handleNavigation} currentPage={currentPage} />
             
             {isAIAssistantOpen && (

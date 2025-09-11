@@ -1,9 +1,9 @@
 
+
 import React, { useMemo } from 'react';
 import type { CampaignState, AudienceCategory } from '../../types';
 import { AUDIENCE_CATEGORIES } from '../../constants';
 import { UsersIcon, SparklesIcon } from '../IconComponents';
-import { STYLES } from '../../styles';
 
 interface Props {
   campaignData: CampaignState;
@@ -14,15 +14,15 @@ interface Props {
 const MOCK_FILTERS = ['مستقر در ایران', 'ایمیل آخر را باز کرده‌اند', 'در ۳۰ روز گذشته روی لینکی کلیک کرده‌اند', 'بیش از ۳ بار خرید کرده‌اند'];
 
 const healthColorMap = {
-    'Excellent': STYLES.health.excellent,
-    'Good': STYLES.health.good,
-    'Poor': STYLES.health.poor,
+    'Excellent': 'health-excellent',
+    'Good': 'health-good',
+    'Poor': 'health-poor',
 };
 
 const healthIndicatorMap = {
-    'Excellent': STYLES.health.indicatorExcellent,
-    'Good': STYLES.health.indicatorGood,
-    'Poor': STYLES.health.indicatorPoor,
+    'Excellent': 'health-indicator-excellent',
+    'Good': 'health-indicator-good',
+    'Poor': 'health-indicator-poor',
 };
 
 const healthTranslationMap = {
@@ -34,8 +34,8 @@ const healthTranslationMap = {
 const CategoryCard: React.FC<{ category: AudienceCategory; isSelected: boolean; onSelect: (id: string) => void }> = ({ category, isSelected, onSelect }) => (
     <div
         onClick={() => onSelect(category.id)}
-        className={`${STYLES.card.categoryBase} ${
-            isSelected ? STYLES.card.categorySelected : STYLES.card.categoryUnselected
+        className={`card-category ${
+            isSelected ? 'card-category-selected' : 'card-category-unselected'
         }`}
     >
         <div className="flex justify-between items-start">
@@ -76,17 +76,17 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
     return (
         <div className="animate-slide-in-up">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-                <h2 className={STYLES.typography.h2}>افراد خود را انتخاب کنید</h2>
+                <h2 className="h2">افراد خود را انتخاب کنید</h2>
                 <button 
                     onClick={onOpenAIAssistant}
-                    className={STYLES.button.ai}
+                    className="btn-ai mt-4 sm:mt-0"
                 >
                     <SparklesIcon className="w-6 h-6" />
                     ایجاد با هوش مصنوعی
                 </button>
             </div>
 
-            <p className={STYLES.typography.p}>مخاطبان عالی خود را انتخاب کنید—یا اجازه دهید هوش مصنوعی این کار را برای شما انجام دهد.</p>
+            <p className="p-description">مخاطبان عالی خود را انتخاب کنید—یا اجازه دهید هوش مصنوعی این کار را برای شما انجام دهد.</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
@@ -110,10 +110,10 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                             <button
                                 key={filter}
                                 onClick={() => handleFilterToggle(filter)}
-                                className={`${STYLES.button.filterBase} ${
+                                className={`btn-filter ${
                                     audience.filters.includes(filter)
-                                    ? STYLES.button.filterSelected
-                                    : STYLES.button.filterUnselected
+                                    ? 'btn-filter-selected'
+                                    : 'btn-filter-unselected'
                                 }`}
                             >
                                 {filter}
@@ -122,7 +122,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                     </div>
                 </div>
 
-                <div className={STYLES.card.container}>
+                <div className="card">
                     <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
                         <UsersIcon className="w-6 h-6 text-brand-mint"/>
                         خلاصه مخاطبان
@@ -130,16 +130,16 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                     {selectedCategory ? (
                         <div className="mt-4 space-y-4">
                             <div>
-                                <div className={STYLES.typography.summaryLabel}>بخش</div>
-                                <div className={STYLES.typography.summaryValue}>{summaryName}</div>
+                                <div className="summary-label">بخش</div>
+                                <div className="summary-value">{summaryName}</div>
                             </div>
                             <div>
-                                <div className={STYLES.typography.summaryLabel}>گیرندگان تخمینی</div>
-                                <div className={STYLES.typography.summaryValue}>{summaryCount?.toLocaleString('fa-IR')}</div>
+                                <div className="summary-label">گیرندگان تخمینی</div>
+                                <div className="summary-value">{summaryCount?.toLocaleString('fa-IR')}</div>
                             </div>
                              {selectedCategory && (
                                 <div>
-                                    <div className={`${STYLES.typography.summaryLabel} mb-2`}>سلامت لیست</div>
+                                    <div className="summary-label mb-2">سلامت لیست</div>
                                     <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
                                         <div 
                                             className={`${healthIndicatorMap[selectedCategory.health]} h-2.5 rounded-full transition-all duration-500`} 
@@ -153,7 +153,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                              )}
                             {audience.filters.length > 0 && (
                                 <div>
-                                    <div className={STYLES.typography.summaryLabel}>فیلترهای فعال</div>
+                                    <div className="summary-label">فیلترهای فعال</div>
                                     <ul className="list-disc list-inside mr-4 mt-2 text-slate-700 dark:text-slate-300 text-sm">
                                         {audience.filters.map(f => <li key={f}>{f}</li>)}
                                     </ul>

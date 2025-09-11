@@ -1,9 +1,9 @@
 
+
 import React, { useState } from 'react';
 import { TEMPLATES } from '../constants';
 import type { Template } from '../types';
 import { XIcon, GiftIcon, NewspaperIcon, TagIcon } from './IconComponents';
-import { STYLES } from '../styles';
 
 interface Props {
   isOpen: boolean;
@@ -29,16 +29,16 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
 
   return (
     <div
-      className={STYLES.modal.overlay}
+      className="modal-overlay"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
       <div
-        className={`${STYLES.modal.container} max-w-6xl`}
+        className="modal-container max-w-6xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`${STYLES.modal.header} flex-shrink-0`}>
+        <div className="modal-header flex-shrink-0">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">انتخاب یک قالب</h2>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
             <XIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
@@ -78,7 +78,7 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
                 </div>
 
                 {/* Preview Pane */}
-                <div className={`${STYLES.card.container} hidden lg:block h-full flex flex-col`}>
+                <div className="card hidden lg:block h-full flex flex-col">
                     {previewTemplate && (
                         <>
                            <div className="p-4 flex-shrink-0">

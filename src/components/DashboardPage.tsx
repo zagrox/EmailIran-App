@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { SparklesIcon, MailIcon, UsersIcon, ChartBarIcon, CalendarDaysIcon } from './IconComponents';
-import { STYLES } from '../styles';
 import { AUDIENCE_CATEGORIES, MOCK_REPORTS } from '../constants';
 import PageHeader from './PageHeader';
 
@@ -49,7 +48,7 @@ const AIAssistantDashboardWidget: React.FC<{ onGenerate: (prompt: string) => voi
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full bg-white dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg p-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-brand-purple focus:border-brand-purple resize-none transition-colors"
+                    className="input resize-none"
                     placeholder="اینجا بنویسید..."
                 />
             </div>
@@ -57,7 +56,7 @@ const AIAssistantDashboardWidget: React.FC<{ onGenerate: (prompt: string) => voi
                 <button
                     onClick={handleGenerateClick}
                     disabled={!prompt.trim()}
-                    className="w-full px-6 py-3 bg-brand-purple text-white rounded-lg hover:bg-violet-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="btn btn-primary w-full py-3"
                 >
                     <SparklesIcon className="w-5 h-5" />
                     تولید پیش‌نویس
@@ -76,14 +75,14 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                 description="نقطه شروع خلاقانه برای ایجاد، مدیریت و تحلیل کمپین‌های ایمیل"
             />
 
-            <div className={STYLES.dashboard.gridContainer}>
+            <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
                 {/* AI Assistant Widget */}
                 <AIAssistantDashboardWidget theme={theme} onGenerate={(prompt) => onOpenAIAssistant(prompt)} />
 
                 {/* Create Campaign Card - now smaller */}
-                <div className={`${STYLES.dashboard.cardBase} lg:col-span-2 ${STYLES.dashboard.cardHover} cursor-pointer`} onClick={() => onNavigate('wizard')}>
+                <div className="card-dashboard card-dashboard-hover lg:col-span-2 cursor-pointer" onClick={() => onNavigate('wizard')}>
                      <div>
-                        <div className={`${STYLES.dashboard.iconContainer} bg-brand-mint/20`}>
+                        <div className="dashboard-icon-container bg-brand-mint/20">
                             <MailIcon className="w-6 h-6 text-brand-mint" />
                         </div>
                         <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">ایجاد کمپین جدید</h2>
@@ -95,9 +94,9 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                 </div>
 
                 {/* Audiences Card */}
-                 <div className={`${STYLES.dashboard.cardBase} lg:col-span-2 ${STYLES.dashboard.cardHover} cursor-pointer`} onClick={() => onNavigate('audiences')}>
+                 <div className="card-dashboard card-dashboard-hover lg:col-span-2 cursor-pointer" onClick={() => onNavigate('audiences')}>
                      <div>
-                        <div className={`${STYLES.dashboard.iconContainer} bg-sky-500/20`}>
+                        <div className="dashboard-icon-container bg-sky-500/20">
                             <UsersIcon className="w-6 h-6 text-sky-500" />
                         </div>
                         <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">مخاطبان</h2>
@@ -111,9 +110,9 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                 </div>
                 
                 {/* Reports Card */}
-                 <div className={`${STYLES.dashboard.cardBase} lg:col-span-2 ${STYLES.dashboard.cardHover} cursor-pointer`} onClick={() => onNavigate('reports')}>
+                 <div className="card-dashboard card-dashboard-hover lg:col-span-2 cursor-pointer" onClick={() => onNavigate('reports')}>
                      <div>
-                        <div className={`${STYLES.dashboard.iconContainer} bg-amber-500/20`}>
+                        <div className="dashboard-icon-container bg-amber-500/20">
                             <ChartBarIcon className="w-6 h-6 text-amber-500" />
                         </div>
                         <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">گزارش‌ها</h2>
@@ -125,9 +124,9 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                 </div>
                 
                 {/* Calendar Card */}
-                 <div className={`${STYLES.dashboard.cardBase} lg:col-span-2 ${STYLES.dashboard.cardHover} cursor-pointer`} onClick={() => onNavigate('calendar')}>
+                 <div className="card-dashboard card-dashboard-hover lg:col-span-2 cursor-pointer" onClick={() => onNavigate('calendar')}>
                      <div>
-                        <div className={`${STYLES.dashboard.iconContainer} bg-rose-500/20`}>
+                        <div className="dashboard-icon-container bg-rose-500/20">
                             <CalendarDaysIcon className="w-6 h-6 text-rose-500" />
                         </div>
                         <h2 className="mt-4 text-xl font-bold text-slate-900 dark:text-white">تقویم</h2>
