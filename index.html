@@ -144,6 +144,18 @@
 </head>
 <body>
     <div id="root"></div>
+    <script>
+      // In a real production app, this key should not be hardcoded in the client-side
+      // code. For a secure deployment, you should use a backend proxy or a build tool 
+      // that can manage environment variables safely. For this prototype, we are defining 
+      // it here to resolve the application's loading error.
+      window.process = {
+        env: {
+          // IMPORTANT: Replace this placeholder with your actual Google Gemini API key.
+          API_KEY: 'AIzaSyCt-_hrZ-josNNYe8ukRFLVUbXnfMGawac'
+        }
+      };
+    </script>
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>

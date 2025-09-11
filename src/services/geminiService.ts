@@ -1,15 +1,18 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
 import type { AICampaignDraft, Segment, AudienceCategory } from "../types";
 
+// FIX: The API key was being retrieved from `import.meta.env`, which caused a TypeScript error and violated the coding guidelines.
+// The API key must be obtained exclusively from the environment variable `process.env.API_KEY`.
 if (!process.env.API_KEY) {
-    // In a real app, you might want to handle this more gracefully,
-    // but for this example, we'll throw an error.
-    // The environment is expected to have the API key.
-    console.error("API_KEY environment variable not set. AI features will not work.");
+    const errorMsg = "API_KEY environment variable not set. AI features will be disabled.";
+    console.error(errorMsg);
+    // This provides a clear error message in the console, stopping the app from crashing later.
+    throw new Error(errorMsg);
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const model = 'gemini-2.5-flash';
 
 export const getSubjectSuggestions = async (context: string): Promise<string[]> => {

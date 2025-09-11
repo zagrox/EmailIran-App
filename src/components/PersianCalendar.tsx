@@ -11,8 +11,7 @@ interface Props {
     footerContent?: React.ReactNode;
 }
 
-// FIX: Removed optional `isPlaceholder` to create a strict discriminated union
-// between a real day and a placeholder, resolving type narrowing errors.
+// FIX: Removed a stale comment. The discriminated union is correctly implemented.
 interface DayObject {
     gregorianDate: Date;
     persianDay: number;
@@ -147,8 +146,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                     </div>
                     <div className="grid grid-cols-7 gap-1">
                         {calendarGrid.map((day, index) =>
-                            // FIX: Using a robust type guard (`in` operator) to help TypeScript
-                            // correctly narrow the type of `day`, resolving property access errors.
+                            // FIX: Removed a stale comment. The type guard is correct.
                             'isPlaceholder' in day ? <div key={index}></div> : (
                                 <button
                                     key={index}

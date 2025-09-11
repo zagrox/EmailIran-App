@@ -54,7 +54,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ reports, onViewReport }) => {
             />
             <div className="space-y-6">
                 {reports.map(report => (
-                    // FIX: Passed the `onViewReport` function prop to the `ReportCard` component instead of the `report` object.
+                    // FIX: Removed a stale comment. The code is correct.
                     <ReportCard key={report.id} report={report} onViewReport={onViewReport} />
                 ))}
             </div>
