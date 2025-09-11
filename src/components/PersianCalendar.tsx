@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
-import { EVENTS_BY_MONTH, Event } from '../data/persian-events.ts';
+import { EVENTS_BY_MONTH } from '../data/persian-events.ts';
 
 interface Props {
     selectedDate: string; // YYYY-MM-DD
