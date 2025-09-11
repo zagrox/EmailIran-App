@@ -1,6 +1,4 @@
 
-
-
 import React, { useState } from 'react';
 import { CampaignState } from '../../types.ts';
 import { getSubjectSuggestions, improveEmailBody } from '../../services/geminiService.ts';

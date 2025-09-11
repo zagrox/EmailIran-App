@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useEffect } from 'react';
 import { generateCampaignFromPrompt } from '../services/geminiService.ts';
 import { AUDIENCE_CATEGORIES } from '../constants.ts';

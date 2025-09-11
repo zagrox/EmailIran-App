@@ -1,5 +1,4 @@
 
-
 import React, { useMemo } from 'react';
 import { CampaignState, AudienceCategory } from '../../types.ts';
 import { AUDIENCE_CATEGORIES } from '../../constants.ts';

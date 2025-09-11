@@ -1,6 +1,4 @@
 
-
-
 import React from 'react';
 import { CampaignState } from '../../types.ts';
 import { STYLES } from '../../styles.ts';

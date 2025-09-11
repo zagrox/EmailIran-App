@@ -1,7 +1,6 @@
-
-
 import React, { useState, useMemo } from 'react';
-import { EVENTS_BY_MONTH } from '../data/persian-events.ts';
+// FIX: Import Event type to use for type assertion.
+import { EVENTS_BY_MONTH, Event } from '../data/persian-events.ts';
 
 interface Props {
     selectedDate: string; // YYYY-MM-DD
@@ -101,7 +100,8 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
     }, [viewDate, selectedDate]);
     
     const eventsList = Object.entries(currentEvents)
-      .flatMap(([day, events]) => events.map(event => ({ day: parseInt(day), ...event })))
+      // FIX: Add type assertion to resolve 'unknown' type for `events` from Object.entries on a union type.
+      .flatMap(([day, events]) => (events as Event[]).map(event => ({ day: parseInt(day), ...event })))
       .sort((a, b) => a.day - b.day);
 
     const getFullPersianYear = (date: Date) => new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(date);

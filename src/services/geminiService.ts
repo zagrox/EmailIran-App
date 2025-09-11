@@ -1,8 +1,6 @@
 
-
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { AICampaignDraft, Segment, AudienceCategory } from "../types.ts";
+import { AICampaignDraft, Segment, AudienceCategory } from "./types.ts";
 
 if (!process.env.API_KEY) {
     // In a real app, you might want to handle this more gracefully,

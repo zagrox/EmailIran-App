@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { Report } from '../types.ts';
 import { ClockIcon } from './IconComponents.tsx';

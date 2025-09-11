@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { SparklesIcon, MailIcon, UsersIcon, ChartBarIcon, CalendarDaysIcon } from './IconComponents.tsx';
 import { STYLES } from '../styles.ts';

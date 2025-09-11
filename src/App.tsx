@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { STEPS, AUDIENCE_CATEGORIES, MOCK_REPORTS } from './constants.ts';
 import { CampaignState, AICampaignDraft, Report } from './types.ts';
@@ -95,7 +93,7 @@ const App: React.FC = () => {
     
     const handlePrev = () => {
         if (currentStep > 1) {
-            setCurrentStep(prev => prev - 1);
+            setCurrentStep(prev => prev + 1);
         }
     };
 
