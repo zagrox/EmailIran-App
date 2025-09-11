@@ -7,17 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <script>
-        // Shim for process.env. In a real build environment, this would be populated by the build tool.
-        // This makes the API_KEY accessible in the browser's execution context.
-        window.process = {
-          env: {
-            // The platform is responsible for providing the API_KEY.
-            // As per the guidelines, we must assume it is pre-configured and valid.
-            API_KEY: "YOUR_API_KEY_HERE"
-          }
-        };
-      </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -75,12 +64,9 @@
   }
 }
 </script>
-<!-- 1. Add Babel Standalone for in-browser transpilation. The TS preset is built-in. -->
-<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 </head>
 <body class="font-sans antialiased">
     <div id="root"></div>
-    <!-- 2. Change script type to tell Babel to transpile our TSX code -->
-    <script type="text/babel" data-type="module" data-presets="react,typescript" src="index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
