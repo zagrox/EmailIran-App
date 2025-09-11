@@ -1,10 +1,10 @@
 
 
 import React, { useState } from 'react';
-import { SparklesIcon, MailIcon, UsersIcon, ChartBarIcon, CalendarDaysIcon } from './IconComponents';
-import { STYLES } from '../styles';
-import { AUDIENCE_CATEGORIES, MOCK_REPORTS } from '../constants';
-import PageHeader from './PageHeader';
+import { SparklesIcon, MailIcon, UsersIcon, ChartBarIcon, CalendarDaysIcon } from './IconComponents.tsx';
+import { STYLES } from '../styles.ts';
+import { AUDIENCE_CATEGORIES, MOCK_REPORTS } from '../constants.ts';
+import PageHeader from './PageHeader.tsx';
 
 type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar';
 

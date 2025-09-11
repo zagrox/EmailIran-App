@@ -1,8 +1,9 @@
 
+
 import React, { useState } from 'react';
-import PageHeader from './PageHeader';
-import { STYLES } from '../styles';
-import { SunIcon, MoonIcon, DesktopIcon } from './IconComponents';
+import PageHeader from './PageHeader.tsx';
+import { STYLES } from '../styles.ts';
+import { SunIcon, MoonIcon, DesktopIcon } from './IconComponents.tsx';
 
 type Theme = 'light' | 'dark' | 'system';
 

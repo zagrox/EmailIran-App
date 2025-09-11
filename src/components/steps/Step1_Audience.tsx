@@ -1,9 +1,9 @@
 
 import React, { useMemo } from 'react';
-import type { CampaignState, AudienceCategory } from '../../types';
-import { AUDIENCE_CATEGORIES } from '../../constants';
-import { UsersIcon, SparklesIcon } from '../IconComponents';
-import { STYLES } from '../../styles';
+import type { CampaignState, AudienceCategory } from '../../types.ts';
+import { AUDIENCE_CATEGORIES } from '../../constants.ts';
+import { UsersIcon, SparklesIcon } from '../IconComponents.tsx';
+import { STYLES } from '../../styles.ts';
 
 interface Props {
   campaignData: CampaignState;

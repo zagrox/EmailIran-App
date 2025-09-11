@@ -1,11 +1,11 @@
 
 
 import React, { useState } from 'react';
-import type { CampaignState } from '../../types';
-import { getBestSendTime } from '../../services/geminiService';
-import { SparklesIcon, LoadingSpinner } from '../IconComponents';
-import { STYLES } from '../../styles';
-import PersianCalendar from '../PersianCalendar';
+import type { CampaignState } from '../../types.ts';
+import { getBestSendTime } from '../../services/geminiService.ts';
+import { SparklesIcon, LoadingSpinner } from '../IconComponents.tsx';
+import { STYLES } from '../../styles.ts';
+import PersianCalendar from '../PersianCalendar.tsx';
 
 interface Props {
     campaignData: CampaignState;

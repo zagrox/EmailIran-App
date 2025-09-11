@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { TEMPLATES } from '../constants';
-import type { Template } from '../types';
-import { XIcon, GiftIcon, NewspaperIcon, TagIcon } from './IconComponents';
-import { STYLES } from '../styles';
+import { TEMPLATES } from '../constants.ts';
+import type { Template } from '../types.ts';
+import { XIcon, GiftIcon, NewspaperIcon, TagIcon } from './IconComponents.tsx';
+import { STYLES } from '../styles.ts';
 
 interface Props {
   isOpen: boolean;

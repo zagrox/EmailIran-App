@@ -1,7 +1,7 @@
 
 
 import React, { useState } from 'react';
-import { MenuIcon, XIcon, UserIcon } from './IconComponents';
+import { MenuIcon, XIcon, UserIcon } from './IconComponents.tsx';
 
 type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar' | 'profile';
 

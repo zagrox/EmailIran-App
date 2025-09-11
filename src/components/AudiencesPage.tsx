@@ -1,8 +1,9 @@
+
 import React from 'react';
-import { AUDIENCE_CATEGORIES } from '../constants';
-import { MailIcon } from './IconComponents';
-import { STYLES } from '../styles';
-import PageHeader from './PageHeader';
+import { AUDIENCE_CATEGORIES } from '../constants.ts';
+import { MailIcon } from './IconComponents.tsx';
+import { STYLES } from '../styles.ts';
+import PageHeader from './PageHeader.tsx';
 
 interface AudienceCardProps {
     category: typeof AUDIENCE_CATEGORIES[0];

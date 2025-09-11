@@ -1,8 +1,9 @@
+
 import React from 'react';
-import type { Report } from '../types';
-import { ChartBarIcon, ClockIcon } from './IconComponents';
-import { STYLES } from '../styles';
-import PageHeader from './PageHeader';
+import type { Report } from '../types.ts';
+import { ClockIcon } from './IconComponents.tsx';
+import { STYLES } from '../styles.ts';
+import PageHeader from './PageHeader.tsx';
 
 interface ReportCardProps {
     report: Report;

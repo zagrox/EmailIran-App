@@ -1,11 +1,11 @@
 
 
 import React, { useState } from 'react';
-import type { CampaignState } from '../../types';
-import { getSubjectSuggestions, improveEmailBody } from '../../services/geminiService';
-import { SparklesIcon, LoadingSpinner, DocumentDuplicateIcon } from '../IconComponents';
-import TemplateBrowser from '../TemplateBrowser';
-import { STYLES } from '../../styles';
+import type { CampaignState } from '../../types.ts';
+import { getSubjectSuggestions, improveEmailBody } from '../../services/geminiService.ts';
+import { SparklesIcon, LoadingSpinner, DocumentDuplicateIcon } from '../IconComponents.tsx';
+import TemplateBrowser from '../TemplateBrowser.tsx';
+import { STYLES } from '../../styles.ts';
 
 interface Props {
   campaignData: CampaignState;

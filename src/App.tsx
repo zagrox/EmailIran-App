@@ -1,22 +1,22 @@
 
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { STEPS, AUDIENCE_CATEGORIES, MOCK_REPORTS } from './constants';
-import type { CampaignState, AICampaignDraft, Report } from './types';
-import Stepper from './components/Stepper';
-import Header from './components/Header';
-import Step1Audience from './components/steps/Step1_Audience';
-import Step2Message from './components/steps/Step2_Message';
-import Step3Schedule from './components/steps/Step3_Schedule';
-import Step4Review from './components/steps/Step4_Review';
-import Step5Analytics from './components/steps/Step5_Analytics';
-import AIAssistantModal from './components/AIAssistantModal';
-import AudiencesPage from './components/AudiencesPage';
-import ReportsPage from './components/ReportsPage';
-import { STYLES } from './styles';
-import DashboardPage from './components/DashboardPage';
-import CalendarPage from './components/CalendarPage';
-import UserProfilePage from './components/UserProfilePage';
+import { STEPS, AUDIENCE_CATEGORIES, MOCK_REPORTS } from './constants.ts';
+import type { CampaignState, AICampaignDraft, Report } from './types.ts';
+import Stepper from './components/Stepper.tsx';
+import Header from './components/Header.tsx';
+import Step1Audience from './components/steps/Step1_Audience.tsx';
+import Step2Message from './components/steps/Step2_Message.tsx';
+import Step3Schedule from './components/steps/Step3_Schedule.tsx';
+import Step4Review from './components/steps/Step4_Review.tsx';
+import Step5Analytics from './components/steps/Step5_Analytics.tsx';
+import AIAssistantModal from './components/AIAssistantModal.tsx';
+import AudiencesPage from './components/AudiencesPage.tsx';
+import ReportsPage from './components/ReportsPage.tsx';
+import { STYLES } from './styles.ts';
+import DashboardPage from './components/DashboardPage.tsx';
+import CalendarPage from './components/CalendarPage.tsx';
+import UserProfilePage from './components/UserProfilePage.tsx';
 
 type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar' | 'profile';
 type Theme = 'light' | 'dark' | 'system';

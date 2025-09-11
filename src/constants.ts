@@ -1,4 +1,5 @@
-import type { Template, Segment, AudienceCategory, Report } from './types';
+
+import type { Template, Segment, AudienceCategory, Report } from './types.ts';
 
 export const STEPS = [
   {

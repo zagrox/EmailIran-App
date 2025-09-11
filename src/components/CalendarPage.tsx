@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
-import PersianCalendar from './PersianCalendar';
-import PageHeader from './PageHeader';
+import PersianCalendar from './PersianCalendar.tsx';
+import PageHeader from './PageHeader.tsx';
 
 interface CalendarPageProps {
     onStartCampaign: (date: string) => void;
