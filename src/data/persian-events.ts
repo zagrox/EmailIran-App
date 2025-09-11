@@ -5,7 +5,7 @@ export interface Event {
 }
 
 // Month Name -> Day Number -> Array of Events
-export const EVENTS_BY_MONTH: Record<string, Record<number, Event[]>> = {
+export const EVENTS_BY_MONTH: { [key: string]: { [key: number]: Event[] } } = {
     'فروردین': {
         1: [
             { description: 'جشن نوروز/جشن سال نو', isHoliday: true },
