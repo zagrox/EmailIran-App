@@ -1,6 +1,4 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MenuIcon, XIcon, UserIcon } from './IconComponents';
 
 type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar' | 'profile';
@@ -12,6 +10,27 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchLogo = async () => {
+            try {
+                const response = await fetch('https://crm.ir48.com/items/projects/d0749635-72fb-481e-9d87-e7bcdc8bd2ac');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const logoId = data.data.project_logo;
+                if (logoId) {
+                    setLogoUrl(`https://crm.ir48.com/assets/${logoId}`);
+                }
+            } catch (error) {
+                console.error('Failed to fetch logo:', error);
+            }
+        };
+
+        fetchLogo();
+    }, []);
     
     const handleNav = (page: Page) => {
         setCurrentPage(page);
@@ -43,16 +62,12 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage }) => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo and Title */}
                     <button onClick={() => handleNav('dashboard')} className="flex items-center focus:outline-none focus:ring-2 focus:ring-brand-purple rounded-lg">
-                        <div className="hidden md:block">
-                            <h1 className="text-xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
-                               ایمیل ایران
-                            </h1>
-                        </div>
-                         <div className="md:hidden">
-                            <h1 className="text-xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
-                               ایمیل ایران
-                            </h1>
-                        </div>
+                        {logoUrl && (
+                            <img src={logoUrl} alt="ایمیل ایران" className="h-10 w-auto" />
+                        )}
+                        <h1 className="text-xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                           ایمیل ایران
+                        </h1>
                     </button>
                     
                     {/* Desktop Nav and Profile Button */}
