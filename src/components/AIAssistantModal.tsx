@@ -1,9 +1,10 @@
 
 
+
 import React, { useState, useEffect } from 'react';
 import { generateCampaignFromPrompt } from '../services/geminiService.ts';
 import { AUDIENCE_CATEGORIES } from '../constants.ts';
-import type { AICampaignDraft } from '../types.ts';
+import { AICampaignDraft } from '../types.ts';
 import { XIcon, SparklesIcon, LoadingSpinner, UsersIcon, MailIcon, ClockIcon } from './IconComponents.tsx';
 import { STYLES } from '../styles.ts';
 

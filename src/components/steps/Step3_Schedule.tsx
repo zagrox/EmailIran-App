@@ -1,7 +1,8 @@
 
 
+
 import React, { useState } from 'react';
-import type { CampaignState } from '../../types.ts';
+import { CampaignState } from '../../types.ts';
 import { getBestSendTime } from '../../services/geminiService.ts';
 import { SparklesIcon, LoadingSpinner } from '../IconComponents.tsx';
 import { STYLES } from '../../styles.ts';

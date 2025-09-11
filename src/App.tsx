@@ -1,8 +1,9 @@
 
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { STEPS, AUDIENCE_CATEGORIES, MOCK_REPORTS } from './constants.ts';
-import type { CampaignState, AICampaignDraft, Report } from './types.ts';
+import { CampaignState, AICampaignDraft, Report } from './types.ts';
 import Stepper from './components/Stepper.tsx';
 import Header from './components/Header.tsx';
 import Step1Audience from './components/steps/Step1_Audience.tsx';

@@ -1,7 +1,8 @@
 
+
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import type { Report } from '../../types.ts';
+import { Report } from '../../types.ts';
 import { STYLES } from '../../styles.ts';
 
 interface Props {

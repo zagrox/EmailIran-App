@@ -1,7 +1,8 @@
 
 
+
 import React from 'react';
-import type { CampaignState } from '../../types.ts';
+import { CampaignState } from '../../types.ts';
 import { STYLES } from '../../styles.ts';
 
 interface Props {

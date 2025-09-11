@@ -1,6 +1,7 @@
 
+
 import React from 'react';
-import type { Report } from '../types.ts';
+import { Report } from '../types.ts';
 import { ClockIcon } from './IconComponents.tsx';
 import { STYLES } from '../styles.ts';
 import PageHeader from './PageHeader.tsx';

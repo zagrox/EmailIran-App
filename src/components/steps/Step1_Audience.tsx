@@ -1,6 +1,7 @@
 
+
 import React, { useMemo } from 'react';
-import type { CampaignState, AudienceCategory } from '../../types.ts';
+import { CampaignState, AudienceCategory } from '../../types.ts';
 import { AUDIENCE_CATEGORIES } from '../../constants.ts';
 import { UsersIcon, SparklesIcon } from '../IconComponents.tsx';
 import { STYLES } from '../../styles.ts';
