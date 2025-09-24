@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { EVENTS_BY_MONTH, Event } from '../data/persian-events';
 
@@ -8,10 +7,8 @@ interface Props {
     onDateSelect: (date: string) => void;
     ctaText?: string;
     onCtaClick?: () => void;
-    footerContent?: React.ReactNode;
 }
 
-// FIX: Removed a stale comment. The discriminated union is correctly implemented.
 interface DayObject {
     gregorianDate: Date;
     persianDay: number;
@@ -19,6 +16,7 @@ interface DayObject {
     isToday: boolean;
     isSelected: boolean;
     isHoliday: boolean;
+    isPast: boolean;
 }
 
 const getPersianDateParts = (date: Date) => {
@@ -33,22 +31,15 @@ const getPersianDateParts = (date: Date) => {
 
 const toYYYYMMDD = (date: Date) => date.toISOString().split('T')[0];
 
-const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText, onCtaClick, footerContent }) => {
+const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText, onCtaClick }) => {
     const [viewDate, setViewDate] = useState(new Date(selectedDate || Date.now()));
-    const today = new Date();
-    const todayStr = toYYYYMMDD(today);
-    const selectedDateObj = selectedDate ? new Date(selectedDate + 'T00:00:00') : null;
+    const todayStr = toYYYYMMDD(new Date());
 
     const navigateMonth = (amount: number) => {
         const newDate = new Date(viewDate);
         newDate.setMonth(newDate.getMonth() + amount);
         setViewDate(newDate);
     };
-
-    const goToToday = () => {
-        setViewDate(new Date());
-        onDateSelect(toYYYYMMDD(new Date()));
-    }
 
     const { calendarGrid, currentPersianMonthName, currentEvents } = useMemo(() => {
         const grid: (DayObject | { isPlaceholder: true })[] = [];
@@ -77,7 +68,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
             const pDayStr = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { day: 'numeric' }).format(tempDate);
             const pDay = parseInt(pDayStr.replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))));
 
-
+            const isPast = currentDateStr < todayStr;
             const eventsForDay = EVENTS_BY_MONTH[viewDatePersian.monthName]?.[pDay] || [];
             const isHoliday = eventsForDay.some(e => e.isHoliday);
 
@@ -88,6 +79,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                 isToday: currentDateStr === todayStr,
                 isSelected: currentDateStr === selectedDate,
                 isHoliday: isHoliday,
+                isPast: isPast,
             });
             tempDate.setDate(tempDate.getDate() + 1);
         }
@@ -97,7 +89,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
             currentPersianMonthName: viewDatePersian.monthName,
             currentEvents: EVENTS_BY_MONTH[viewDatePersian.monthName] || {}
         };
-    }, [viewDate, selectedDate]);
+    }, [viewDate, selectedDate, todayStr]);
     
     // FIX: The `events` variable from `Object.entries` was being inferred as `unknown`.
     // Added a type assertion to `Event[]` which is safe based on the structure of `EVENTS_BY_MONTH`.
@@ -153,12 +145,14 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                                 <button
                                     key={index}
                                     onClick={() => onDateSelect(toYYYYMMDD(day.gregorianDate))}
+                                    disabled={day.isPast}
                                     className={`
                                         p-2 rounded-lg transition-colors text-center
-                                        ${day.isHoliday ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}
+                                        disabled:opacity-50 disabled:cursor-not-allowed disabled:text-slate-400 dark:disabled:text-slate-600
                                         ${day.isSelected ? 'ring-2 ring-amber-500' : ''}
                                         ${day.isToday && !day.isSelected ? 'bg-brand-mint/30' : ''}
                                         ${!day.isSelected ? 'hover:bg-slate-200 dark:hover:bg-slate-700' : ''}
+                                        ${day.isHoliday ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}
                                     `}
                                 >
                                     <span className="font-bold text-lg">{day.persianDay.toLocaleString('fa-IR')}</span>
@@ -168,25 +162,16 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                         )}
                     </div>
                 </div>
-                <div className="mt-auto pt-4">
-                    {footerContent !== undefined ? footerContent : (
-                        ctaText && onCtaClick ? (
-                            <button
-                                onClick={onCtaClick}
-                                className="w-full py-2 bg-brand-purple text-white font-bold rounded-lg hover:bg-violet-700 transition-colors"
-                            >
-                                {ctaText}
-                            </button>
-                        ) : (
-                            <button
-                                onClick={goToToday}
-                                className="w-full py-2 bg-amber-400 text-slate-900 font-bold rounded-lg hover:bg-amber-500 transition-colors"
-                            >
-                                برو به امروز
-                            </button>
-                        )
-                    )}
-                </div>
+                 {ctaText && onCtaClick && (
+                    <div className="mt-auto pt-4">
+                        <button
+                            onClick={onCtaClick}
+                            className="w-full py-2 bg-brand-purple text-white font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                        >
+                            {ctaText}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
