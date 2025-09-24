@@ -16,22 +16,22 @@ const ReportCard: React.FC<ReportCardProps> = ({ report, onViewReport }) => {
         >
             <div className="flex-grow">
                 <h3 className="font-bold text-lg text-slate-900 dark:text-white">{report.name}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">
+                <p className="text-base text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">
                     <ClockIcon className="w-4 h-4" />
                     ارسال شده در {new Date(report.sentDate).toLocaleDateString('fa-IR', { dateStyle: 'medium' })}
                 </p>
             </div>
             <div className="flex-shrink-0 grid grid-cols-3 gap-4 text-center mt-4 sm:mt-0 sm:text-right">
                 <div>
-                    <div className="text-sm text-slate-500 dark:text-slate-400">باز شدن</div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">باز شدن</div>
                     <div className="font-bold text-xl text-brand-purple">{report.stats.openRate}%</div>
                 </div>
                 <div>
-                    <div className="text-sm text-slate-500 dark:text-slate-400">کلیک</div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">کلیک</div>
                     <div className="font-bold text-xl text-brand-mint">{report.stats.clickRate}%</div>
                 </div>
                  <div>
-                    <div className="text-sm text-slate-500 dark:text-slate-400">تبدیل</div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">تبدیل</div>
                     <div className="font-bold text-xl text-yellow-400">{report.stats.conversions}</div>
                 </div>
             </div>

@@ -164,7 +164,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                                     }`}
                                 >
                                     {option.icon}
-                                    <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{option.name}</span>
+                                    <span className="font-semibold text-base text-slate-700 dark:text-slate-200">{option.name}</span>
                                 </button>
                             ))}
                          </div>
@@ -186,7 +186,7 @@ const NotificationToggle: React.FC<NotificationToggleProps> = ({ label, descript
     <div className="flex justify-between items-start">
         <div className="pr-4">
             <h4 className="font-semibold text-slate-800 dark:text-slate-200">{label}</h4>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
+            <p className="text-base text-slate-500 dark:text-slate-400">{description}</p>
         </div>
         <button
             onClick={onToggle}

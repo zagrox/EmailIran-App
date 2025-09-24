@@ -99,8 +99,10 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
         };
     }, [viewDate, selectedDate]);
     
+    // FIX: The `events` variable from `Object.entries` was being inferred as `unknown`.
+    // Added a type assertion to `Event[]` which is safe based on the structure of `EVENTS_BY_MONTH`.
     const eventsList = Object.entries(currentEvents)
-      .flatMap(([day, events]) => events.map(event => ({ day: parseInt(day), ...event })))
+      .flatMap(([day, events]) => (events as Event[]).map(event => ({ day: parseInt(day), ...event })))
       .sort((a, b) => a.day - b.day);
 
     const getFullPersianYear = (date: Date) => new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(date);
@@ -119,7 +121,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
             {/* Events List */}
             <div className="md:col-span-1 bg-slate-100 dark:bg-slate-900/70 p-4 rounded-xl">
                 <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-4">مناسبت‌های ماه {currentPersianMonthName}</h3>
-                <ul className="space-y-3 text-sm h-96 overflow-y-auto pr-2">
+                <ul className="space-y-3 text-base h-96 overflow-y-auto pr-2">
                     {eventsList.map((event, index) => (
                         <li key={index} className="flex items-start">
                             <span className={`font-bold w-10 text-right ml-3 ${event.isHoliday ? 'text-red-500' : 'text-slate-800 dark:text-slate-200'}`}>{event.day}</span>
@@ -136,12 +138,12 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                         <button onClick={() => navigateMonth(-1)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">ماه قبل &rarr;</button>
                         <div className="text-center">
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white">{currentPersianMonthName} {getFullPersianYear(viewDate)}</h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">{getGregorianRange(viewDate)}</p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500">{getHijriDate(viewDate)}</p>
+                            <p className="text-base text-slate-500 dark:text-slate-400">{getGregorianRange(viewDate)}</p>
+                            <p className="text-sm text-slate-400 dark:text-slate-500">{getHijriDate(viewDate)}</p>
                         </div>
                         <button onClick={() => navigateMonth(1)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">&larr; ماه بعد</button>
                     </div>
-                    <div className="grid grid-cols-7 gap-1 text-center font-semibold text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    <div className="grid grid-cols-7 gap-1 text-center font-semibold text-base text-slate-500 dark:text-slate-400 mb-2">
                         <span>ش</span><span>ی</span><span>د</span><span>س</span><span>چ</span><span>پ</span><span>ج</span>
                     </div>
                     <div className="grid grid-cols-7 gap-1">
@@ -160,7 +162,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                                     `}
                                 >
                                     <span className="font-bold text-lg">{day.persianDay.toLocaleString('fa-IR')}</span>
-                                    <span className="block text-xs text-slate-400 dark:text-slate-500 mt-1">{day.gregorianDay}</span>
+                                    <span className="block text-sm text-slate-400 dark:text-slate-500 mt-1">{day.gregorianDay}</span>
                                 </button>
                             )
                         )}

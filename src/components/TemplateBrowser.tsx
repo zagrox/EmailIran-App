@@ -63,7 +63,7 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
                                     </div>
                                     <div className="flex-grow pt-4">
                                         <h3 className="font-bold text-lg text-slate-900 dark:text-white">{template.name}</h3>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 min-h-[60px]">{template.description}</p>
+                                        <p className="text-base text-slate-500 dark:text-slate-400 mt-2 min-h-[60px]">{template.description}</p>
                                     </div>
                                     <button
                                         onClick={() => handleSelect(template)}
@@ -87,10 +87,10 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
                            <div className="flex-grow p-4 pt-0 overflow-y-auto">
                                 <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
                                     <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{previewTemplate.subject}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400">از: تیم شما &lt;team@yourcompany.com&gt;</p>
+                                        <p className="text-base font-bold text-slate-800 dark:text-slate-200 truncate">{previewTemplate.subject}</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">از: تیم شما &lt;team@yourcompany.com&gt;</p>
                                     </div>
-                                    <div className="p-4 text-sm text-slate-700 dark:text-slate-300">
+                                    <div className="p-4 text-base text-slate-700 dark:text-slate-300">
                                         <p className="whitespace-pre-wrap">{previewTemplate.body}</p>
                                     </div>
                                 </div>

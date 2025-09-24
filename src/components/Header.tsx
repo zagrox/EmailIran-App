@@ -41,11 +41,11 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage }) => {
         return `${baseClasses} ${currentPage === page ? activeClasses : inactiveClasses}`;
     };
 
-    const navLinkBase = "transition-colors px-3 py-2 rounded-md text-sm font-medium";
+    const navLinkBase = "transition-colors px-3 py-2 rounded-md text-base font-medium";
     const navLinkActive = "text-slate-900 dark:text-white bg-slate-200 dark:bg-slate-700";
     const navLinkInactive = "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
     
-    const mobileNavLinkBase = "block px-3 py-2 rounded-md text-base font-medium";
+    const mobileNavLinkBase = "block px-3 py-2 rounded-md text-lg font-medium";
     const mobileNavLinkActive = "bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white";
     const mobileNavLinkInactive = "text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white";
 
@@ -65,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage }) => {
                         {logoUrl && (
                             <img src={logoUrl} alt="ایمیل ایران" className="h-10 w-auto" />
                         )}
-                        <h1 className="text-xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                        <h1 className="text-2xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
                            ایمیل ایران
                         </h1>
                     </button>

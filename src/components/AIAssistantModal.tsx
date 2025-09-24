@@ -97,7 +97,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                             <label htmlFor="campaign-goal" className="block text-lg font-medium text-slate-700 dark:text-slate-300">
                                 ۱. هدف کمپین خود را توصیف کنید
                             </label>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-3">مثال: «یک فروش ویژه ۲۴ ساعته برای مجموعه تابستانی ما برای مشتریان وفادار اعلام کن.»</p>
+                            <p className="text-base text-slate-500 dark:text-slate-400 mt-1 mb-3">مثال: «یک فروش ویژه ۲۴ ساعته برای مجموعه تابستانی ما برای مشتریان وفادار اعلام کن.»</p>
                             <textarea
                                 id="campaign-goal"
                                 rows={4}
@@ -128,7 +128,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                         <UsersIcon className="w-5 h-5 mt-1 text-brand-mint"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">مخاطب پیشنهادی</h4>
-                                            <p className="text-sm text-slate-600 dark:text-slate-300">{selectedAudienceName}</p>
+                                            <p className="text-base text-slate-600 dark:text-slate-300">{selectedAudienceName}</p>
                                         </div>
                                     </div>
                                     <div className="border-t border-slate-200 dark:border-slate-700"></div>
@@ -136,9 +136,9 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                         <MailIcon className="w-5 h-5 mt-1 text-brand-mint"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">پیام پیشنهادی</h4>
-                                            <p className="text-sm font-bold mt-2">موضوع اصلی: <span className="font-normal">"{draft.subject}"</span></p>
-                                            <p className="text-sm font-bold mt-1 text-brand-mint">موضوع تست A/B: <span className="font-normal text-slate-600 dark:text-slate-300">"{draft.subjectB}"</span></p>
-                                            <p className="text-sm mt-2 whitespace-pre-wrap border-l-4 border-slate-200 dark:border-slate-700 pl-3 py-1">{draft.body}</p>
+                                            <p className="text-base font-bold mt-2">موضوع اصلی: <span className="font-normal">"{draft.subject}"</span></p>
+                                            <p className="text-base font-bold mt-1 text-brand-mint">موضوع تست A/B: <span className="font-normal text-slate-600 dark:text-slate-300">"{draft.subjectB}"</span></p>
+                                            <p className="text-base mt-2 whitespace-pre-wrap border-l-4 border-slate-200 dark:border-slate-700 pl-3 py-1">{draft.body}</p>
                                         </div>
                                     </div>
                                     <div className="border-t border-slate-200 dark:border-slate-700"></div>
@@ -146,7 +146,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                         <ClockIcon className="w-5 h-5 mt-1 text-brand-mint"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">زمان ارسال پیشنهادی</h4>
-                                            <p className="text-sm text-slate-600 dark:text-slate-300">{draft.sendTime}</p>
+                                            <p className="text-base text-slate-600 dark:text-slate-300">{draft.sendTime}</p>
                                         </div>
                                     </div>
                                 </div>

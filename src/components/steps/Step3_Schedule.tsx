@@ -82,13 +82,13 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
                     <button
                         onClick={handleGetTimeSuggestion}
                         disabled={isTimeSuggestionLoading}
-                        className="w-full flex items-center justify-center gap-2 text-sm px-4 py-2 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 transition-colors disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-2 text-base px-4 py-2 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 transition-colors disabled:opacity-50"
                     >
                         {isTimeSuggestionLoading ? <LoadingSpinner className="w-5 h-5" /> : <SparklesIcon className="w-5 h-5" />}
                         پیشنهاد بهترین زمان ارسال
                     </button>
                     {timeSuggestion && (
-                        <div className="mt-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-md text-center text-sm text-slate-600 dark:text-slate-300">
+                        <div className="mt-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-md text-center text-base text-slate-600 dark:text-slate-300">
                             <p><strong>پیشنهاد هوش مصنوعی:</strong> {timeSuggestion}</p>
                         </div>
                     )}

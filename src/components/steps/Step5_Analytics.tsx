@@ -29,9 +29,9 @@ const defaultAnalyticsData = {
 
 const StatCard: React.FC<{ title: string; value: string; description: string }> = ({ title, value, description }) => (
     <div className="card">
-        <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{title}</h3>
+        <h3 className="text-base font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{title}</h3>
         <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{description}</p>
+        <p className="mt-1 text-base text-slate-500 dark:text-slate-400">{description}</p>
     </div>
 );
 

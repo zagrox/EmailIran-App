@@ -13,14 +13,14 @@ const AudienceCard: React.FC<AudienceCardProps> = ({ category, onStartCampaign }
         <div className="card-audience">
             <div className="sm:pl-5 flex-grow w-full">
                 <h3 className="text-lg font-bold text-blue-600 dark:text-blue-400">{category.name_fa}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider">{category.name_en}</p>
-                <div className="flex items-center text-slate-600 dark:text-slate-300 mt-3 text-sm">
+                <p className="text-base text-slate-500 dark:text-slate-400 uppercase tracking-wider">{category.name_en}</p>
+                <div className="flex items-center text-slate-600 dark:text-slate-300 mt-3 text-base">
                     <MailIcon className="w-5 h-5 ml-2 text-slate-400" />
                     <span>{category.count.toLocaleString('fa-IR')} ایمیل</span>
                 </div>
                 <button 
                     onClick={() => onStartCampaign(category.id)}
-                    className="mt-4 w-full sm:w-auto px-5 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-purple hover:text-white dark:hover:bg-brand-purple transition-colors duration-200 font-semibold text-sm"
+                    className="mt-4 w-full sm:w-auto px-5 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-purple hover:text-white dark:hover:bg-brand-purple transition-colors duration-200 font-semibold text-base"
                 >
                     ساخت کمپین
                 </button>

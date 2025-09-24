@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 
 interface Step {
@@ -54,7 +55,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
                 </div>
               </>
             )}
-             <span className="absolute top-10 w-max -ml-2 text-center text-sm font-medium text-slate-500 dark:text-slate-400">{step.title}</span>
+             <span className="absolute top-10 w-max -ml-2 text-center text-base font-medium text-slate-500 dark:text-slate-400">{step.title}</span>
           </li>
         ))}
       </ol>

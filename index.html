@@ -15,7 +15,11 @@
 
         @layer base {
           body {
-            @apply min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 font-sans antialiased;
+            @apply min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 font-sans antialiased text-base;
+          }
+          html.dark {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 2rem 2rem;
           }
         }
 
@@ -31,8 +35,8 @@
           .btn-secondary { @apply px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600; }
           .btn-launch { @apply px-8 py-3 bg-gradient-to-r from-brand-pink to-brand-mint text-white rounded-md hover:opacity-90 transition-opacity duration-200 font-bold text-lg; }
           .btn-ai { @apply flex items-center justify-center gap-3 px-5 py-3 bg-gradient-to-r from-brand-purple to-brand-pink text-white rounded-lg font-semibold shadow-lg shadow-brand-purple/30 dark:shadow-brand-pink/20 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-brand-purple/40 dark:hover:shadow-brand-pink/30 active:translate-y-0 active:scale-100 active:shadow-lg; }
-          .btn-ai-suggestion { @apply text-sm px-3 py-1.5 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 disabled:cursor-wait flex items-center gap-2; }
-          .btn-filter { @apply px-4 py-2 text-sm rounded-full border transition-colors duration-200; }
+          .btn-ai-suggestion { @apply text-base px-3 py-1.5 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 disabled:cursor-wait flex items-center gap-2; }
+          .btn-filter { @apply px-4 py-2 text-base rounded-full border transition-colors duration-200; }
           .btn-filter-selected { @apply bg-brand-mint/20 border-brand-mint text-slate-800 dark:text-white; }
           .btn-filter-unselected { @apply bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300; }
 
@@ -43,19 +47,28 @@
           .card-category-unselected { @apply bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600; }
           .card-audience { @apply bg-white dark:bg-slate-800/50 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden flex flex-col sm:flex-row items-center p-5 transition-transform duration-300 hover:-translate-y-1; }
           .card-report { @apply bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 flex flex-col sm:flex-row items-center justify-between transition-all duration-300 hover:shadow-xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple cursor-pointer; }
-          .card-dashboard { @apply bg-white dark:bg-slate-800/50 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 p-6 flex flex-col justify-between transition-all duration-300; }
-          .card-dashboard-hover { @apply hover:transform hover:-translate-y-1 hover:shadow-2xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple; }
-
+          .modern-stat-card { @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl cursor-pointer; }
+          .ai-hero-card {
+            @apply p-8 rounded-2xl shadow-2xl flex flex-col justify-between ring-1;
+            @apply bg-gradient-to-br from-slate-50 to-violet-100 text-slate-900 ring-black/5; /* Light mode */
+            @apply dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 dark:text-white dark:ring-white/10; /* Dark mode */
+          }
+          
           /* Inputs */
           .input { @apply w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md p-3 text-slate-900 dark:text-white focus:ring-brand-purple focus:border-brand-purple transition-colors; }
           .input-range { @apply w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700; }
+          .ai-hero-textarea {
+            @apply w-full rounded-md p-3 transition-colors resize-none;
+            @apply bg-white/50 border border-slate-300 text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-brand-purple focus:border-brand-purple; /* Light mode */
+            @apply dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-slate-400 dark:focus:ring-brand-pink dark:focus:border-brand-pink; /* Dark mode */
+          }
 
           /* Typography */
           .h2 { @apply text-2xl font-bold text-slate-900 dark:text-white; }
-          .p-description { @apply text-slate-500 dark:text-slate-400 mb-8; }
-          .label { @apply block text-sm font-medium text-slate-700 dark:text-slate-300; }
-          .summary-label { @apply text-sm text-slate-500 dark:text-slate-400; }
-          .summary-value { @apply text-lg font-semibold text-slate-900 dark:text-white; }
+          .p-description { @apply text-lg text-slate-600 dark:text-slate-400 mb-8; }
+          .label { @apply block text-base font-medium text-slate-700 dark:text-slate-300; }
+          .summary-label { @apply text-base text-slate-500 dark:text-slate-400; }
+          .summary-value { @apply text-xl font-semibold text-slate-900 dark:text-white; }
 
           /* Modals */
           .modal-overlay { @apply fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in; }

@@ -40,9 +40,9 @@ const CategoryCard: React.FC<{ category: AudienceCategory; isSelected: boolean; 
     >
         <div className="flex justify-between items-start">
             <h4 className="font-bold text-slate-900 dark:text-white">{category.name_fa}</h4>
-            <div className={`text-xs font-semibold px-2 py-0.5 rounded-full ${healthColorMap[category.health]}`}>{healthTranslationMap[category.health]}</div>
+            <div className={`text-sm font-semibold px-2 py-0.5 rounded-full ${healthColorMap[category.health]}`}>{healthTranslationMap[category.health]}</div>
         </div>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{category.count.toLocaleString('fa-IR')} مشترک</p>
+        <p className="text-base text-slate-500 dark:text-slate-400 mt-1">{category.count.toLocaleString('fa-IR')} مشترک</p>
     </div>
 );
 
@@ -146,7 +146,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                                             style={{width: `${audience.healthScore}%`}}
                                         ></div>
                                     </div>
-                                    <div className={`text-left text-sm mt-1 font-semibold ${healthColorMap[selectedCategory.health].split(' ')[0]}`}>
+                                    <div className={`text-left text-base mt-1 font-semibold ${healthColorMap[selectedCategory.health].split(' ')[0]}`}>
                                         {healthTranslationMap[selectedCategory.health]}
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                             {audience.filters.length > 0 && (
                                 <div>
                                     <div className="summary-label">فیلترهای فعال</div>
-                                    <ul className="list-disc list-inside mr-4 mt-2 text-slate-700 dark:text-slate-300 text-sm">
+                                    <ul className="list-disc list-inside mr-4 mt-2 text-slate-700 dark:text-slate-300 text-base">
                                         {audience.filters.map(f => <li key={f}>{f}</li>)}
                                     </ul>
                                 </div>

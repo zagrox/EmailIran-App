@@ -87,7 +87,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                 <h2 className="h2">پیام خود را بسازید</h2>
                 <button
                     onClick={() => setIsTemplateBrowserOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-brand-mint text-slate-900 rounded-md hover:opacity-90 transition-opacity duration-200 font-semibold text-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-brand-mint text-slate-900 rounded-md hover:opacity-90 transition-opacity duration-200 font-semibold text-base"
                 >
                     <DocumentDuplicateIcon className="w-5 h-5" />
                     انتخاب از قالب‌ها
@@ -113,9 +113,9 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                         />
                          {subjectSuggestions.length > 0 && (
                             <div className="mt-2 space-y-2 bg-slate-100 dark:bg-slate-900 p-3 rounded-md border border-slate-200 dark:border-slate-700">
-                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">پیشنهادات:</p>
+                                <p className="text-base font-semibold text-slate-700 dark:text-slate-300">پیشنهادات:</p>
                                 {subjectSuggestions.map((s, i) => (
-                                    <button key={i} onClick={() => applySuggestion(s)} className="block w-full text-right p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 text-sm text-slate-600 dark:text-slate-200 transition-colors">
+                                    <button key={i} onClick={() => applySuggestion(s)} className="block w-full text-right p-2 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 text-base text-slate-600 dark:text-slate-200 transition-colors">
                                         "{s}"
                                     </button>
                                 ))}
@@ -126,7 +126,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                     {/* A/B Test Section */}
                     <div className="card !p-4">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-base font-semibold text-slate-900 dark:text-white">آزمون A/B برای موضوع</h3>
+                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">آزمون A/B برای موضوع</h3>
                             <button
                                 onClick={handleAbTestEnableToggle}
                                 className={`toggle-switch ${isAbTestEnabled ? 'toggle-switch-ab-on' : 'toggle-switch-off'}`}
@@ -196,10 +196,10 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                         <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">پیش‌نمایش زنده</h3>
                         <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
                             <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">{message.subject || <span className="text-slate-400">[موضوع شما در اینجا]</span>}</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">از: تیم شما &lt;team@yourcompany.com&gt;</p>
+                                <p className="text-base font-bold text-slate-800 dark:text-slate-200 truncate">{message.subject || <span className="text-slate-400">[موضوع شما در اینجا]</span>}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">از: تیم شما &lt;team@yourcompany.com&gt;</p>
                             </div>
-                            <div className="p-4 text-sm text-slate-700 dark:text-slate-300 max-h-[350px] overflow-y-auto">
+                            <div className="p-4 text-base text-slate-700 dark:text-slate-300 max-h-[350px] overflow-y-auto">
                                 <p className="whitespace-pre-wrap">{message.body || <span className="text-slate-400">[محتوای ایمیل شما در اینجا نمایش داده می‌شود.]</span>}</p>
                             </div>
                         </div>
@@ -210,19 +210,19 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">پیش‌نمایش آزمون A/B</h3>
                             <div className="space-y-3 p-4 bg-white dark:bg-slate-900 rounded-md border border-slate-300 dark:border-slate-600">
                                 <div>
-                                    <span className="text-xs font-bold uppercase text-brand-purple">نسخه الف</span>
+                                    <span className="text-sm font-bold uppercase text-brand-purple">نسخه الف</span>
                                     <div className="mt-1 p-2 border-l-4 border-brand-purple bg-slate-50 dark:bg-slate-800 rounded-r-md">
-                                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{message.subject}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">سلام علی، ما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم...</p>
+                                        <p className="text-base font-semibold text-slate-800 dark:text-slate-200 truncate">{message.subject}</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 truncate">سلام علی، ما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم...</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <span className="text-xs font-bold uppercase text-brand-mint">نسخه ب</span>
+                                    <span className="text-sm font-bold uppercase text-brand-mint">نسخه ب</span>
                                     <div className="mt-1 p-2 border-l-4 border-brand-mint bg-slate-50 dark:bg-slate-800 rounded-r-md">
-                                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
+                                        <p className="text-base font-semibold text-slate-800 dark:text-slate-200 truncate">
                                             {message.abTest.subjectB || <span className="text-slate-400 dark:text-slate-500">[موضوع جایگزین شما در اینجا]</span>}
                                         </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">سلام علی، ما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم...</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 truncate">سلام علی، ما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم...</p>
                                     </div>
                                 </div>
                             </div>

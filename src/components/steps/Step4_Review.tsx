@@ -9,7 +9,7 @@ interface Props {
 
 const SummaryItem: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
     <div>
-        <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</h4>
+        <h4 className="text-base font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</h4>
         <div className="mt-1 text-slate-800 dark:text-slate-200">{children}</div>
     </div>
 );
@@ -40,7 +40,7 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
                     <SummaryItem label="پیام">
                         <p className="font-semibold">موضوع: "{message.subject}"</p>
                         <div className="mt-2 p-4 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-800 max-h-40 overflow-y-auto">
-                            <p className="text-sm whitespace-pre-wrap">{message.body}</p>
+                            <p className="text-base whitespace-pre-wrap">{message.body}</p>
                         </div>
                     </SummaryItem>
 
@@ -94,7 +94,7 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
                                 <p className="text-sm text-slate-500 dark:text-slate-400">انقضا ۱۲/۲۰۲۵</p>
                             </div>
                         </div>
-                        <button className="text-sm text-brand-mint hover:opacity-80 mt-3">تغییر روش پرداخت</button>
+                        <button className="text-base text-brand-mint hover:opacity-80 mt-3">تغییر روش پرداخت</button>
                     </div>
                 </div>
             </div>
