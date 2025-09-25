@@ -2,13 +2,13 @@
 
 import React, { useMemo } from 'react';
 import type { CampaignState, AudienceCategory } from '../../types';
-import { AUDIENCE_CATEGORIES } from '../../constants';
 import { UsersIcon, SparklesIcon } from '../IconComponents';
 
 interface Props {
   campaignData: CampaignState;
   updateCampaignData: <K extends keyof CampaignState>(field: K, value: CampaignState[K]) => void;
   onOpenAIAssistant: () => void;
+  audienceCategories: AudienceCategory[];
 }
 
 const MOCK_FILTERS = ['مستقر در ایران', 'ایمیل آخر را باز کرده‌اند', 'در ۳۰ روز گذشته روی لینکی کلیک کرده‌اند', 'بیش از ۳ بار خرید کرده‌اند'];
@@ -47,11 +47,11 @@ const CategoryCard: React.FC<{ category: AudienceCategory; isSelected: boolean; 
 );
 
 
-const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOpenAIAssistant }) => {
+const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOpenAIAssistant, audienceCategories }) => {
     const { audience } = campaignData;
 
     const handleCategorySelect = (categoryId: string) => {
-        const selectedCategory = AUDIENCE_CATEGORIES.find(c => c.id === categoryId);
+        const selectedCategory = audienceCategories.find(c => c.id === categoryId);
         const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
         updateCampaignData('audience', {
             ...audience,
@@ -68,7 +68,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
         updateCampaignData('audience', { ...audience, filters: newFilters });
     };
     
-    const selectedCategory = useMemo(() => AUDIENCE_CATEGORIES.find(c => c.id === audience.categoryId), [audience.categoryId]);
+    const selectedCategory = useMemo(() => audienceCategories.find(c => c.id === audience.categoryId), [audience.categoryId, audienceCategories]);
 
     const summaryName = selectedCategory?.name_fa;
     const summaryCount = selectedCategory?.count;
@@ -93,7 +93,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">مخاطبان تخصصی</h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
-                        {AUDIENCE_CATEGORIES.map(category => (
+                        {audienceCategories.map(category => (
                             <CategoryCard
                                 key={category.id}
                                 category={category}

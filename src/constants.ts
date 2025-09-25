@@ -1,4 +1,4 @@
-import type { Template, Segment, AudienceCategory, Report } from './types';
+import type { Template, Segment, Report } from './types';
 
 export const STEPS = [
   {
@@ -64,24 +64,6 @@ export const TEMPLATES: Template[] = [
     icon: 'tag',
     iconBgColor: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400',
   },
-];
-
-export const AUDIENCE_CATEGORIES: AudienceCategory[] = [
-  { id: 'bus1', name_fa: 'تجاری بازرگانی', name_en: 'BUSINESS', count: 450000, imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'ind1', name_fa: 'صنعتی و تولیدی', name_en: 'INDUSTRY', count: 300000, imageUrl: 'https://images.unsplash.com/photo-1567789884554-0b844b597180?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'edu1', name_fa: 'علمی آموزشی', name_en: 'EDUCATION', count: 250000, imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
-  { id: 'hea1', name_fa: 'پزشکی درمانی', name_en: 'HEALTH', count: 300000, imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'act1', name_fa: 'کاربران فعال', name_en: 'ACTIVE-USERS', count: 850000, imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
-  { id: 'ict1', name_fa: 'فناوری اطلاعات', name_en: 'ICT', count: 550000, imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
-  { id: 'con1', name_fa: 'خانه ساختمان', name_en: 'CONSTRUCTION', count: 350000, imageUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'tra1', name_fa: 'سفر گردشگری', name_en: 'TRAVEL', count: 250000, imageUrl: 'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?q=80&w=800&auto=format&fit=crop', health: 'Poor' },
-  { id: 'art1', name_fa: 'هنری فرهنگی', name_en: 'ART', count: 150000, imageUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'foo1', name_fa: 'غذا و خوراک', name_en: 'FOODS', count: 150000, imageUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
-  { id: 'spo1', name_fa: 'ورزشی تفریحی', name_en: 'SPORT', count: 100000, imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=800&auto=format&fit=crop', health: 'Poor' },
-  { id: 'trn1', name_fa: 'حمل و نقل', name_en: 'TRANSPORT', count: 200000, imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'fin1', name_fa: 'مالی و رمزارز', name_en: 'FINANCIAL', count: 250000, imageUrl: 'https://images.unsplash.com/photo-1554224155-1696413565d3?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
-  { id: 'rel1', name_fa: 'مذهبی اسلامی', name_en: 'RELIGIOUS', count: 200000, imageUrl: 'https://images.unsplash.com/photo-1508273590289-55d61de6c29b?q=80&w=800&auto=format&fit=crop', health: 'Good' },
-  { id: 'adv1', name_fa: 'بازاریابی دیجیتال', name_en: 'ADVERTISE', count: 350000, imageUrl: 'https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=800&auto=format&fit=crop', health: 'Excellent' },
 ];
 
 export const MOCK_REPORTS: Report[] = [

@@ -1,10 +1,13 @@
 
 
+
 import React from 'react';
-import type { CampaignState } from '../../types';
+import type { CampaignState, AudienceCategory } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Props {
   campaignData: CampaignState;
+  audienceCategories: AudienceCategory[];
 }
 
 const SummaryItem: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
@@ -14,16 +17,27 @@ const SummaryItem: React.FC<{ label: string; children: React.ReactNode }> = ({ l
     </div>
 );
 
-const Step4Review: React.FC<Props> = ({ campaignData }) => {
+const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
     const { audience, message, schedule } = campaignData;
-    const recipientCount = 12540; // Mocked from Step 1
+    const { isAuthenticated } = useAuth();
+
+    const selectedCategory = audienceCategories.find(c => c.id === audience.categoryId);
+    
+    const recipientCount = selectedCategory?.count || 0;
+    const segmentName = selectedCategory?.name_fa || 'مخاطب انتخاب نشده';
+
     const pricePerEmail = 0.001;
     const totalCost = recipientCount * pricePerEmail;
 
     return (
         <div className="animate-slide-in-up">
-            <h2 className="h2">تایید نهایی</h2>
-            <p className="p-description">جزئیات کمپین خود را بررسی کنید، قیمت‌گذاری شفاف را ببینید و برای ارسال آماده شوید.</p>
+            <h2 className="h2">{isAuthenticated ? 'تایید نهایی' : 'بررسی و ورود'}</h2>
+            <p className="p-description">
+                {isAuthenticated
+                    ? 'جزئیات کمپین خود را بررسی کنید، قیمت‌گذاری شفاف را ببینید و برای ارسال آماده شوید.'
+                    : 'جزئیات کمپین خود را بررسی کنید. برای تکمیل و ارسال باید وارد شوید.'
+                }
+            </p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Campaign Details */}
@@ -31,7 +45,7 @@ const Step4Review: React.FC<Props> = ({ campaignData }) => {
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">خلاصه کمپین</h3>
                     
                     <SummaryItem label="مخاطبان">
-                        <p>بخش: <span className="font-semibold">مشترکین فعال</span></p>
+                        <p>بخش: <span className="font-semibold">{segmentName}</span></p>
                         <p>گیرندگان تخمینی: <span className="font-semibold">{recipientCount.toLocaleString('fa-IR')}</span></p>
                     </SummaryItem>
                     

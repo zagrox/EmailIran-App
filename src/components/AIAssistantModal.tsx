@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { generateCampaignFromPrompt } from '../services/geminiService';
-import { AUDIENCE_CATEGORIES } from '../constants';
-import type { AICampaignDraft } from '../types';
+import type { AICampaignDraft, AudienceCategory } from '../types';
 import { XIcon, SparklesIcon, LoadingSpinner, UsersIcon, MailIcon, ClockIcon } from './IconComponents';
 
 interface Props {
@@ -11,9 +10,10 @@ interface Props {
   onClose: () => void;
   onApply: (draft: AICampaignDraft) => void;
   initialPrompt?: string;
+  audienceCategories: AudienceCategory[];
 }
 
-const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPrompt }) => {
+const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPrompt, audienceCategories }) => {
     const [prompt, setPrompt] = useState(initialPrompt || '');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
         setError(null);
         setDraft(null);
         try {
-            const result = await generateCampaignFromPrompt(currentPrompt, AUDIENCE_CATEGORIES);
+            const result = await generateCampaignFromPrompt(currentPrompt, audienceCategories);
             setDraft(result);
         } catch (err) {
             console.error(err);
@@ -66,7 +66,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
         setDraft(null);
     }
     
-    const selectedCategory = AUDIENCE_CATEGORIES.find(c => c.id === draft?.audienceCategoryId);
+    const selectedCategory = audienceCategories.find(c => c.id === draft?.audienceCategoryId);
     const selectedAudienceName = selectedCategory?.name_fa || 'مخاطب نامشخص';
 
 

@@ -1,4 +1,8 @@
 
+
+// FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
+export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile';
+
 export interface CampaignState {
   audience: {
     segmentId: string | null;
@@ -38,6 +42,16 @@ export interface AudienceCategory {
   health: 'Excellent' | 'Good' | 'Poor';
 }
 
+export interface ApiAudienceItem {
+    id: number;
+    status: string;
+    audience_title: string;
+    audience_contacts: number;
+    audience_thumbnail: string;
+    audience_slug: string;
+    audience_engage: 'great' | 'good' | 'poor' | string;
+}
+
 export interface Template {
     id: string;
     name: string;
@@ -66,4 +80,23 @@ export interface Report {
     conversions: number;
   };
   chartData: { name: string; opens: number; clicks: number }[];
+}
+
+export interface DirectusUser {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+    company?: string;
+    role?: string;
+}
+
+export interface EmailMarketingCampaign {
+    id: number;
+    status: string;
+    campaign_subject: string;
+    campaign_date: string; // ISO date string
+    campaign_color: string | null;
+    campaign_link: string | null;
+    campaign_sender: string | null;
 }

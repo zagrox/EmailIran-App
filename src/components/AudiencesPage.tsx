@@ -1,10 +1,10 @@
 import React from 'react';
-import { AUDIENCE_CATEGORIES } from '../constants';
+import type { AudienceCategory } from '../types';
 import { MailIcon } from './IconComponents';
 import PageHeader from './PageHeader';
 
 interface AudienceCardProps {
-    category: typeof AUDIENCE_CATEGORIES[0];
+    category: AudienceCategory;
     onStartCampaign: (categoryId: string) => void;
 }
 
@@ -39,9 +39,10 @@ const AudienceCard: React.FC<AudienceCardProps> = ({ category, onStartCampaign }
 
 interface AudiencesPageProps {
     onStartCampaign: (categoryId: string) => void;
+    audienceCategories: AudienceCategory[];
 }
 
-const AudiencesPage: React.FC<AudiencesPageProps> = ({ onStartCampaign }) => {
+const AudiencesPage: React.FC<AudiencesPageProps> = ({ onStartCampaign, audienceCategories }) => {
     return (
         <div>
             <PageHeader 
@@ -49,7 +50,7 @@ const AudiencesPage: React.FC<AudiencesPageProps> = ({ onStartCampaign }) => {
                 description="از میان لیست‌های ایمیل تخصصی ما انتخاب کنید تا پیام شما به دست افراد مناسب برسد."
             />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {AUDIENCE_CATEGORIES.map(category => (
+                {audienceCategories.map(category => (
                     <AudienceCard key={category.id} category={category} onStartCampaign={onStartCampaign} />
                 ))}
             </div>

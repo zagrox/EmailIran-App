@@ -1,8 +1,7 @@
-
-
 import React, { useState, useCallback, useEffect } from 'react';
-import { STEPS, AUDIENCE_CATEGORIES, MOCK_REPORTS } from './constants';
-import type { CampaignState, AICampaignDraft, Report } from './types';
+import { STEPS, MOCK_REPORTS } from './constants';
+// FIX: Import the centralized Page type to resolve conflicting type definitions.
+import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page } from './types';
 import Stepper from './components/Stepper';
 import Header from './components/Header';
 import Step1Audience from './components/steps/Step1_Audience';
@@ -16,8 +15,10 @@ import ReportsPage from './components/ReportsPage';
 import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
+import CampaignsPage from './components/CampaignsPage';
+import { useAuth } from './contexts/AuthContext';
 
-type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar' | 'profile';
+// FIX: The local 'Page' type definition was removed to use the centralized one from src/types.ts.
 type Theme = 'light' | 'dark' | 'system';
 
 const initialCampaignState: CampaignState = {
@@ -43,9 +44,45 @@ const initialCampaignState: CampaignState = {
     },
 };
 
+const mapHealth = (engage: string): 'Excellent' | 'Good' | 'Poor' => {
+  switch (engage) {
+    case 'great':
+      return 'Excellent';
+    case 'good':
+      return 'Good';
+    default:
+      return 'Poor';
+  }
+};
+
+const fetchAudienceCategories = async (): Promise<AudienceCategory[]> => {
+  try {
+    const response = await fetch('https://crm.ir48.com/items/audiences');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const { data } = await response.json();
+
+    return data
+        .filter((item: ApiAudienceItem) => item.status === 'published')
+        .map((item: ApiAudienceItem): AudienceCategory => ({
+            id: item.id.toString(),
+            name_fa: item.audience_title,
+            name_en: item.audience_slug.toUpperCase(),
+            count: item.audience_contacts,
+            imageUrl: `https://crm.ir48.com/assets/${item.audience_thumbnail}`,
+            health: mapHealth(item.audience_engage),
+    }));
+  } catch (error) {
+    console.error('Failed to fetch audience categories:', error);
+    return [];
+  }
+};
+
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+    const [isWizardActive, setIsWizardActive] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [campaignData, setCampaignData] = useState<CampaignState>(initialCampaignState);
     const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'system');
@@ -53,6 +90,10 @@ const App: React.FC = () => {
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
     const [viewedReport, setViewedReport] = useState<Report | null>(null);
     const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>();
+    const [audienceCategories, setAudienceCategories] = useState<AudienceCategory[]>([]);
+    const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
+
+    const { isAuthenticated, openLoginModal } = useAuth();
 
     useEffect(() => {
         localStorage.setItem('theme', theme);
@@ -70,11 +111,22 @@ const App: React.FC = () => {
         return () => mediaQuery.removeEventListener('change', updateEffectiveTheme);
     }, [theme]);
 
+    useEffect(() => {
+        const loadAudiences = async () => {
+            setIsLoadingAudiences(true);
+            const categories = await fetchAudienceCategories();
+            setAudienceCategories(categories);
+            setIsLoadingAudiences(false);
+        };
+        loadAudiences();
+    }, []);
+
 
     const handleNavigation = (page: Page) => {
         if (currentPage === 'reports' && page !== 'reports') {
             setViewedReport(null);
         }
+        setIsWizardActive(false);
         setCurrentPage(page);
     };
 
@@ -98,6 +150,10 @@ const App: React.FC = () => {
     };
 
     const handleLaunch = () => {
+        if (!isAuthenticated) {
+            openLoginModal();
+            return;
+        }
         console.log("کمپین ارسال شد:", campaignData);
         setViewedReport(null);
         setCurrentStep(5);
@@ -106,21 +162,33 @@ const App: React.FC = () => {
     const resetCampaign = () => {
         setCampaignData(initialCampaignState);
         setCurrentStep(1);
+        setIsWizardActive(false);
         handleNavigation('dashboard');
         setViewedReport(null);
     }
+
+    const handleStartNewCampaign = () => {
+        setCampaignData(initialCampaignState);
+        setCurrentStep(1);
+        setViewedReport(null);
+        setIsWizardActive(true);
+    };
     
     const handleStartCampaign = (categoryId: string) => {
+        const selectedCategory = audienceCategories.find(c => c.id === categoryId);
+        const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
+
         setCampaignData({
             ...initialCampaignState,
             audience: {
                 ...initialCampaignState.audience,
                 categoryId: categoryId,
+                healthScore: healthScore,
             },
         });
-        handleNavigation('wizard');
         setCurrentStep(1);
         setViewedReport(null);
+        setIsWizardActive(true);
     };
 
     const handleStartCampaignFromCalendar = (date: string) => {
@@ -131,13 +199,13 @@ const App: React.FC = () => {
                 sendDate: date,
             },
         });
-        handleNavigation('wizard');
         setCurrentStep(1);
         setViewedReport(null);
+        setIsWizardActive(true);
     };
 
     const handleApplyAIDraft = (draft: AICampaignDraft) => {
-        const selectedCategory = AUDIENCE_CATEGORIES.find(c => c.id === draft.audienceCategoryId);
+        const selectedCategory = audienceCategories.find(c => c.id === draft.audienceCategoryId);
         const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
        
         const audienceUpdate: Partial<CampaignState['audience']> = {
@@ -170,6 +238,7 @@ const App: React.FC = () => {
 
         setIsAIAssistantOpen(false);
         setCurrentStep(1); 
+        setIsWizardActive(true);
     };
     
     const handleViewReport = (report: Report) => {
@@ -197,13 +266,14 @@ const App: React.FC = () => {
                     campaignData={campaignData} 
                     updateCampaignData={updateCampaignData}
                     onOpenAIAssistant={() => handleOpenAIAssistant()}
+                    audienceCategories={audienceCategories}
                 />;
             case 2:
                 return <Step2Message campaignData={campaignData} updateCampaignData={updateCampaignData} />;
             case 3:
                 return <Step3Schedule campaignData={campaignData} updateCampaignData={updateCampaignData} />;
             case 4:
-                return <Step4Review campaignData={campaignData} />;
+                return <Step4Review campaignData={campaignData} audienceCategories={audienceCategories} />;
             case 5:
                 return <Step5Analytics 
                     theme={effectiveTheme}
@@ -216,32 +286,76 @@ const App: React.FC = () => {
                     campaignData={campaignData} 
                     updateCampaignData={updateCampaignData}
                     onOpenAIAssistant={() => handleOpenAIAssistant()}
+                    audienceCategories={audienceCategories}
                 />;
         }
     };
 
+    const renderWizard = () => (
+        <div className="page-container animate-fade-in">
+            {currentStep <= 4 && <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />}
+            
+            <main className="page-main-content">
+                {renderWizardStep()}
+            </main>
+            
+            {currentStep <= 4 && (
+                <footer className="mt-8 flex justify-between items-center">
+                    <div>
+                        {currentStep > 1 && (
+                            <button
+                                onClick={handlePrev}
+                                className="btn btn-secondary"
+                            >
+                                بازگشت
+                            </button>
+                        )}
+                    </div>
+                    <div>
+                        {currentStep < 4 ? (
+                            <button
+                                onClick={handleNext}
+                                className="btn btn-primary"
+                            >
+                                بعدی
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleLaunch}
+                                className="btn btn-launch"
+                            >
+                                {isAuthenticated ? 'پرداخت و ارسال کمپین' : 'ورود و ارسال کمپین'}
+                            </button>
+                        )}
+                    </div>
+                </footer>
+            )}
+        </div>
+    );
+
     const renderPage = () => {
-        switch (currentPage) {
-             case 'dashboard':
-                return (
-                    <div className="w-full max-w-7xl animate-fade-in">
+        const pageContent = () => {
+            switch (currentPage) {
+                 case 'dashboard':
+                    return (
                         <DashboardPage 
                             theme={effectiveTheme}
                             onNavigate={handleNavigation} 
                             onOpenAIAssistant={handleOpenAIAssistant} 
+                            audienceCategories={audienceCategories}
                         />
-                    </div>
-                );
-            case 'audiences':
-                return (
-                    <div className="w-full max-w-7xl animate-fade-in">
-                        <AudiencesPage onStartCampaign={handleStartCampaign} />
-                    </div>
-                );
-            case 'reports':
-                return (
-                     <div className="w-full max-w-7xl animate-fade-in">
-                        {viewedReport ? (
+                    );
+                case 'audiences':
+                    return (
+                        <AudiencesPage onStartCampaign={handleStartCampaign} audienceCategories={audienceCategories} />
+                    );
+                case 'campaigns':
+                    return (
+                        <CampaignsPage onStartNewCampaign={handleStartNewCampaign} />
+                    );
+                case 'reports':
+                    return (
+                        viewedReport ? (
                             <Step5Analytics 
                                 theme={effectiveTheme}
                                 viewedReport={viewedReport}
@@ -250,70 +364,30 @@ const App: React.FC = () => {
                             />
                         ) : (
                             <ReportsPage reports={MOCK_REPORTS} onViewReport={handleViewReport} />
-                        )}
-                    </div>
-                );
-             case 'calendar':
-                return (
-                    <div className="w-full max-w-7xl animate-fade-in">
+                        )
+                    );
+                 case 'calendar':
+                    return (
                         <CalendarPage onStartCampaign={handleStartCampaignFromCalendar} />
-                    </div>
-                );
-            case 'profile':
-                return (
-                    <div className="w-full max-w-7xl animate-fade-in">
-                        <UserProfilePage theme={theme} setTheme={setTheme} />
-                    </div>
-                );
-            case 'wizard':
-                return (
-                    <div className="page-container">
-                        {currentStep <= 4 && <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />}
-                        
-                        <main className="page-main-content">
-                            {renderWizardStep()}
-                        </main>
-                        
-                        {currentStep <= 4 && (
-                            <footer className="mt-8 flex justify-between items-center">
-                                <div>
-                                    {currentStep > 1 && (
-                                        <button
-                                            onClick={handlePrev}
-                                            className="btn btn-secondary"
-                                        >
-                                            بازگشت
-                                        </button>
-                                    )}
-                                </div>
-                                <div>
-                                    {currentStep < 4 ? (
-                                        <button
-                                            onClick={handleNext}
-                                            className="btn btn-primary"
-                                        >
-                                            بعدی
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={handleLaunch}
-                                            className="btn btn-launch"
-                                        >
-                                            پرداخت و ارسال کمپین
-                                        </button>
-                                    )}
-                                </div>
-                            </footer>
-                        )}
-                    </div>
-                );
-        }
+                    );
+                case 'profile':
+                    return (
+                        <UserProfilePage theme={theme} setTheme={setTheme} onNavigate={handleNavigation} />
+                    );
+            }
+        };
+
+        return <div className="w-full max-w-7xl animate-fade-in">{pageContent()}</div>
     }
 
 
     return (
         <div className="app-container">
-            <Header setCurrentPage={handleNavigation} currentPage={currentPage} />
+            <Header 
+                setCurrentPage={handleNavigation} 
+                currentPage={currentPage}
+                onStartNewCampaign={handleStartNewCampaign}
+            />
             
             {isAIAssistantOpen && (
                 <AIAssistantModal 
@@ -321,10 +395,11 @@ const App: React.FC = () => {
                     onClose={handleCloseAIAssistant}
                     onApply={handleApplyAIDraft}
                     initialPrompt={aiInitialPrompt}
+                    audienceCategories={audienceCategories}
                 />
             )}
 
-            {renderPage()}
+            {isWizardActive ? renderWizard() : renderPage()}
         </div>
     );
 };

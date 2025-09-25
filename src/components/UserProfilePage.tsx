@@ -1,64 +1,67 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHeader from './PageHeader';
-import { SunIcon, MoonIcon, DesktopIcon } from './IconComponents';
+import { SunIcon, MoonIcon, DesktopIcon, UserIcon } from './IconComponents';
+import { useAuth } from '../contexts/AuthContext';
+// FIX: Import the centralized Page type to resolve conflicting type definitions.
+import type { Page } from '../types';
 
 type Theme = 'light' | 'dark' | 'system';
 
+// FIX: The local, incorrect 'Page' type definition was removed to use the centralized one from src/types.ts.
+// This was the primary source of the build error.
 interface UserProfilePageProps {
     theme: Theme;
     setTheme: (theme: Theme) => void;
+    onNavigate: (page: Page) => void;
 }
 
-const mockUser = {
-    name: 'آواتر احمدی',
-    email: 'avatar.ahmadi@example.com',
-    company: 'شرکت نوآوران پیشرو',
-    role: 'مدیر بازاریابی',
-    notifications: {
+const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNavigate }) => {
+    const { user, isAuthenticated, logout, openLoginModal } = useAuth();
+    
+    // Local state for UI elements, initialized with user data if available
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [company, setCompany] = useState('');
+    const [role, setRole] = useState('');
+    const [notifications, setNotifications] = useState({
         campaignSummary: true,
         weeklyReports: true,
         productUpdates: false,
-    }
-};
-
-const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) => {
-    const [user, setUser] = useState(mockUser);
+    });
     const [password, setPassword] = useState({ current: '', new: '', confirm: ''});
 
-    const handleInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({ ...user, [e.target.name]: e.target.value });
+    useEffect(() => {
+        if (user) {
+            setName(`${user.first_name || ''} ${user.last_name || ''}`.trim());
+            setEmail(user.email || '');
+            setCompany(user.company || 'شرکت نوآوران پیشرو');
+            setRole(user.role || 'مدیر بازاریابی');
+        }
+    }, [user]);
+
+    const handleNotificationToggle = (key: keyof typeof notifications) => {
+        setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    const handleNotificationToggle = (key: keyof typeof user.notifications) => {
-        setUser(prev => ({
-            ...prev,
-            notifications: {
-                ...prev.notifications,
-                [key]: !prev.notifications[key]
-            }
-        }));
-    };
-    
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword({ ...password, [e.target.name]: e.target.value });
+    const handleLogout = () => {
+        logout();
+        onNavigate('dashboard');
     };
 
-    const handleSaveChanges = () => {
-        console.log('Saving profile...', user);
-        // In a real app, this would make an API call.
-        alert('اطلاعات با موفقیت ذخیره شد.');
-    };
-    
-    const handleChangePassword = () => {
-         console.log('Changing password...');
-        // Add validation logic here
-        alert('رمز عبور با موفقیت تغییر کرد.');
-        setPassword({ current: '', new: '', confirm: '' });
+    if (!isAuthenticated) {
+        return (
+            <div className="text-center py-20 animate-fade-in">
+                 <div className="mx-auto w-24 h-24 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 mb-6">
+                    <UserIcon className="w-12 h-12 text-slate-500 dark:text-slate-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">به حساب کاربری خود وارد شوید</h2>
+                <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">برای مشاهده و ویرایش پروفایل خود، لطفاً وارد شوید.</p>
+                <button onClick={openLoginModal} className="btn btn-primary mt-8">
+                    ورود به حساب کاربری
+                </button>
+            </div>
+        )
     }
-
-    const isPasswordFormValid = password.new && password.new === password.confirm && password.current;
 
     const themeOptions = [
         { key: 'light', name: 'روشن', icon: <SunIcon className="w-6 h-6 mx-auto mb-2" /> },
@@ -81,23 +84,24 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="name" className="label">نام کامل</label>
-                                <input type="text" id="name" name="name" value={user.name} onChange={handleInfoChange} className="input mt-1" />
+                                <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} className="input mt-1" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="label">آدرس ایمیل</label>
-                                <input type="email" id="email" name="email" value={user.email} onChange={handleInfoChange} className="input mt-1" />
+                                <input type="email" id="email" name="email" value={email} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
                             </div>
                             <div>
                                 <label htmlFor="company" className="label">شرکت</label>
-                                <input type="text" id="company" name="company" value={user.company} onChange={handleInfoChange} className="input mt-1" />
+                                <input type="text" id="company" name="company" value={company} onChange={(e) => setCompany(e.target.value)} className="input mt-1" />
                             </div>
                             <div>
                                 <label htmlFor="role" className="label">نقش</label>
-                                <input type="text" id="role" name="role" value={user.role} onChange={handleInfoChange} className="input mt-1" />
+                                <input type="text" id="role" name="role" value={role} onChange={(e) => setRole(e.target.value)} className="input mt-1" />
                             </div>
                         </div>
-                        <div className="mt-6 text-right">
-                            <button onClick={handleSaveChanges} className="btn btn-primary">ذخیره تغییرات</button>
+                        <div className="mt-6 flex justify-end gap-4">
+                             <button onClick={handleLogout} className="btn btn-secondary bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900">خروج</button>
+                            <button disabled className="btn btn-primary">ذخیره تغییرات</button>
                         </div>
                     </div>
 
@@ -107,19 +111,19 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                          <div className="space-y-4">
                             <div>
                                 <label htmlFor="current" className="label">رمز عبور فعلی</label>
-                                <input type="password" id="current" name="current" value={password.current} onChange={handlePasswordChange} className="input mt-1" />
+                                <input type="password" id="current" name="current" value={password.current} onChange={(e) => setPassword({ ...password, current: e.target.value })} className="input mt-1" />
                             </div>
                             <div>
                                 <label htmlFor="new" className="label">رمز عبور جدید</label>
-                                <input type="password" id="new" name="new" value={password.new} onChange={handlePasswordChange} className="input mt-1" />
+                                <input type="password" id="new" name="new" value={password.new} onChange={(e) => setPassword({ ...password, new: e.target.value })} className="input mt-1" />
                             </div>
                             <div>
                                 <label htmlFor="confirm" className="label">تکرار رمز عبور جدید</label>
-                                <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={handlePasswordChange} className="input mt-1" />
+                                <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={(e) => setPassword({ ...password, confirm: e.target.value })} className="input mt-1" />
                             </div>
                          </div>
                           <div className="mt-6 text-right">
-                            <button onClick={handleChangePassword} disabled={!isPasswordFormValid} className="btn btn-secondary">بروزرسانی رمز عبور</button>
+                            <button disabled className="btn btn-secondary">بروزرسانی رمز عبور</button>
                         </div>
                     </div>
                 </div>
@@ -131,19 +135,19 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme }) =>
                             <NotificationToggle 
                                 label="خلاصه عملکرد کمپین"
                                 description="گزارش خلاصه ۲۴ ساعته پس از ارسال."
-                                enabled={user.notifications.campaignSummary}
+                                enabled={notifications.campaignSummary}
                                 onToggle={() => handleNotificationToggle('campaignSummary')}
                             />
                              <NotificationToggle 
                                 label="گزارش‌های هفتگی"
                                 description="خلاصه فعالیت هفتگی حساب."
-                                enabled={user.notifications.weeklyReports}
+                                enabled={notifications.weeklyReports}
                                 onToggle={() => handleNotificationToggle('weeklyReports')}
                             />
                              <NotificationToggle 
                                 label="بروزرسانی‌های محصول"
                                 description="اخبار ویژگی‌های جدید و بهترین شیوه‌ها."
-                                enabled={user.notifications.productUpdates}
+                                enabled={notifications.productUpdates}
                                 onToggle={() => handleNotificationToggle('productUpdates')}
                             />
                          </div>

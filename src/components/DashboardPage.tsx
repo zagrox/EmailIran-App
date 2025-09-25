@@ -1,19 +1,17 @@
-
-
 import React, { useState } from 'react';
 import { SparklesIcon, UsersIcon, ChartBarIcon, CalendarDaysIcon } from './IconComponents';
-import { AUDIENCE_CATEGORIES, MOCK_REPORTS } from '../constants';
+import { MOCK_REPORTS } from '../constants';
+// FIX: Import the centralized Page type to resolve conflicting type definitions.
+import type { AudienceCategory, Page } from '../types';
 import PageHeader from './PageHeader';
-
-type Page = 'dashboard' | 'audiences' | 'wizard' | 'reports' | 'calendar';
 
 interface DashboardProps {
     theme: 'light' | 'dark';
     onNavigate: (page: Page) => void;
     onOpenAIAssistant: (initialPrompt?: string) => void;
+    audienceCategories: AudienceCategory[];
 }
 
-const totalSubscribers = AUDIENCE_CATEGORIES.reduce((acc, category) => acc + category.count, 0);
 const totalReports = MOCK_REPORTS.length;
 
 const StatCard: React.FC<{
@@ -43,8 +41,10 @@ const StatCard: React.FC<{
 );
 
 
-const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAssistant }) => {
+const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAssistant, audienceCategories }) => {
     const [prompt, setPrompt] = useState('');
+    
+    const totalSubscribers = audienceCategories.reduce((acc, category) => acc + category.count, 0);
 
     const handleGenerateClick = () => {
         if (prompt.trim()) {
@@ -97,7 +97,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                             تولید با هوش مصنوعی
                         </button>
                          <button
-                            onClick={() => onNavigate('wizard')}
+                            onClick={() => onNavigate('campaigns')}
                             className="btn btn-secondary flex-grow py-3 text-lg"
                         >
                             یا، ساخت دستی
@@ -110,7 +110,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onNavigate, onOpenAIAs
                     <StatCard
                         icon={<UsersIcon className="w-6 h-6 text-sky-400" />}
                         title="مخاطبان"
-                        description={`${totalSubscribers.toLocaleString('fa-IR')} مشترک در ${AUDIENCE_CATEGORIES.length} لیست.`}
+                        description={`${totalSubscribers.toLocaleString('fa-IR')} مشترک در ${audienceCategories.length} لیست.`}
                         onClick={() => onNavigate('audiences')}
                         hoverRingColor="hover:ring-2 hover:ring-sky-500/50"
                     />
