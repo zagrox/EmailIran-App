@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { login as apiLogin, getCurrentUser, logout as apiLogout } from '../services/authService';
+import { login as apiLogin, getCurrentUser, logout as apiLogout, signup as apiSignup, createUserProfile } from '../services/authService';
 import type { DirectusUser } from '../types';
 import LoginModal from '../components/LoginModal';
 
@@ -9,6 +9,7 @@ interface AuthContextType {
     isLoading: boolean;
     accessToken: string | null;
     login: (email: string, password: string) => Promise<void>;
+    signup: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
     logout: () => void;
     openLoginModal: () => void;
 }
@@ -59,6 +60,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData);
         closeLoginModal();
     };
+    
+    const signup = async (firstName: string, lastName: string, email: string, password: string) => {
+        // Step 1: Create the user account in Directus Users collection
+        const newUser = await apiSignup(firstName, lastName, email, password);
+
+        // Step 2: Immediately log in with the new credentials to get an access token
+        const loginData = await apiLogin(email, password);
+        
+        // Step 3: Use the new user's ID and access token to create their corresponding profile
+        await createUserProfile(newUser.id, loginData.access_token);
+
+        // Step 4: Finalize the authentication state in the app
+        localStorage.setItem('accessToken', loginData.access_token);
+        localStorage.setItem('refreshToken', loginData.refresh_token);
+        setAccessToken(loginData.access_token);
+        setRefreshToken(loginData.refresh_token);
+        
+        // The user object from the signup response is sufficient, no need to call /users/me again
+        setUser(newUser);
+        closeLoginModal();
+    };
 
     const logout = useCallback(async () => {
         if (refreshToken) {
@@ -78,6 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isLoading,
             accessToken,
             login,
+            signup,
             logout,
             openLoginModal,
         }}>

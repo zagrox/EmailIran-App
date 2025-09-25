@@ -8,11 +8,14 @@ interface Props {
 }
 
 const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
+    const [mode, setMode] = useState<'login' | 'signup'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, signup } = useAuth();
 
     if (!isOpen) return null;
 
@@ -21,23 +24,40 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
         setError(null);
         setIsLoading(true);
         try {
-            await login(email, password);
-            // On successful login, the modal is closed by the AuthContext
+            if (mode === 'signup') {
+                await signup(firstName, lastName, email, password);
+            } else {
+                await login(email, password);
+            }
+            // On successful login/signup, the modal is closed by the AuthContext
         } catch (err: any) {
             setError(err.message || 'An unexpected error occurred.');
         } finally {
             setIsLoading(false);
         }
     };
-
-    const handleClose = () => {
+    
+    const resetForm = () => {
         setError(null);
         setIsLoading(false);
         setEmail('');
         setPassword('');
+        setFirstName('');
+        setLastName('');
+    };
+
+    const handleClose = () => {
+        resetForm();
+        setMode('login'); // Reset to login view when modal is closed
         onClose();
     };
 
+    const toggleMode = () => {
+        resetForm();
+        setMode(prev => prev === 'login' ? 'signup' : 'login');
+    };
+
+    const isSignup = mode === 'signup';
 
     return (
         <div
@@ -53,7 +73,7 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 <div className="modal-header">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <UserIcon className="w-7 h-7 text-brand-purple" />
-                        ورود به حساب کاربری
+                        {isSignup ? 'ایجاد حساب کاربری' : 'ورود به حساب کاربری'}
                     </h2>
                     <button onClick={handleClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
                         <XIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
@@ -68,6 +88,36 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                             </div>
                         )}
                         <div className="space-y-4">
+                            {isSignup && (
+                                <div className="grid grid-cols-2 gap-4">
+                                     <div>
+                                        <label htmlFor="firstName" className="label">نام</label>
+                                        <input
+                                            type="text"
+                                            id="firstName"
+                                            name="firstName"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            required
+                                            className="input mt-1"
+                                            placeholder="علی"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="lastName" className="label">نام خانوادگی</label>
+                                        <input
+                                            type="text"
+                                            id="lastName"
+                                            name="lastName"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            required
+                                            className="input mt-1"
+                                            placeholder="رضایی"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                             <div>
                                 <label htmlFor="email" className="label">آدرس ایمیل</label>
                                 <input
@@ -94,6 +144,11 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                                 />
                             </div>
                         </div>
+                        <div className="mt-6 text-center">
+                            <button type="button" onClick={toggleMode} className="text-base text-brand-purple hover:underline focus:outline-none">
+                                {isSignup ? 'قبلاً حساب کاربری دارید؟ وارد شوید' : 'حساب کاربری ندارید؟ ثبت‌نام کنید'}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="modal-footer">
@@ -109,7 +164,7 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                             disabled={isLoading}
                             className="btn btn-primary w-32"
                         >
-                            {isLoading ? <LoadingSpinner className="w-5 h-5"/> : 'ورود'}
+                            {isLoading ? <LoadingSpinner className="w-5 h-5"/> : (isSignup ? 'ثبت‌نام' : 'ورود')}
                         </button>
                     </div>
                 </form>
