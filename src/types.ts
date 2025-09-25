@@ -91,6 +91,16 @@ export interface DirectusUser {
     role?: string;
 }
 
+export interface Profile {
+    id: number;
+    mobile?: string | null;
+    website?: string | null;
+    type?: 'personal' | 'business' | null;
+    company?: string | null;
+    display?: 'light' | 'dark' | 'auto' | null;
+    user_created: string;
+}
+
 export interface EmailMarketingCampaign {
     id: number;
     status: string;

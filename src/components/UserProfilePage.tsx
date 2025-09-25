@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from './PageHeader';
-import { SunIcon, MoonIcon, DesktopIcon, UserIcon } from './IconComponents';
+import { SunIcon, MoonIcon, DesktopIcon, UserIcon, LoadingSpinner } from './IconComponents';
 import { useAuth } from '../contexts/AuthContext';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { Page } from '../types';
@@ -16,13 +16,21 @@ interface UserProfilePageProps {
 }
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNavigate }) => {
-    const { user, isAuthenticated, logout, openLoginModal } = useAuth();
+    const { user, profile, isAuthenticated, logout, openLoginModal, updateProfileAndUser } = useAuth();
     
-    // Local state for UI elements, initialized with user data if available
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [company, setCompany] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [website, setWebsite] = useState('');
+    const [accountType, setAccountType] = useState<'personal' | 'business'>('personal');
     const [role, setRole] = useState('');
+
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+    
     const [notifications, setNotifications] = useState({
         campaignSummary: true,
         weeklyReports: true,
@@ -30,18 +38,71 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
     });
     const [password, setPassword] = useState({ current: '', new: '', confirm: ''});
 
+    const mapDisplayToTheme = useCallback((display: 'light' | 'dark' | 'auto' | null | undefined): Theme => {
+        if (display === 'auto') return 'system';
+        if (display === 'dark') return 'dark';
+        return 'light';
+    }, []);
+
     useEffect(() => {
         if (user) {
-            setName(`${user.first_name || ''} ${user.last_name || ''}`.trim());
+            setFirstName(user.first_name || '');
+            setLastName(user.last_name || '');
             setEmail(user.email || '');
-            setCompany(user.company || 'شرکت نوآوران پیشرو');
             setRole(user.role || 'مدیر بازاریابی');
         }
-    }, [user]);
-
+        if (profile) {
+            setCompany(profile.company || '');
+            setMobile(profile.mobile || '');
+            setWebsite(profile.website || '');
+            setAccountType(profile.type || 'personal');
+            // Sync theme from profile data without triggering a save
+            const profileTheme = mapDisplayToTheme(profile.display);
+            if (theme !== profileTheme) {
+                setTheme(profileTheme);
+            }
+        }
+    }, [user, profile, theme, setTheme, mapDisplayToTheme]);
+    
     const handleNotificationToggle = (key: keyof typeof notifications) => {
         setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
     };
+
+    const handleSaveChanges = async () => {
+        setIsSaving(true);
+        setSaveSuccess(false);
+        setSaveError(null);
+        try {
+            const userData = {
+                first_name: firstName,
+                last_name: lastName,
+            };
+            const profileData = {
+                company,
+                mobile,
+                website,
+                type: accountType,
+            };
+            await updateProfileAndUser(userData, profileData);
+            setSaveSuccess(true);
+            setTimeout(() => setSaveSuccess(false), 3000);
+        } catch (error: any) {
+            setSaveError(error.message || 'An error occurred while saving.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleThemeSelect = async (newTheme: Theme) => {
+        setTheme(newTheme);
+        try {
+            const displayValue = newTheme === 'system' ? 'auto' : newTheme;
+            await updateProfileAndUser({}, { display: displayValue });
+        } catch (error) {
+            console.error("Couldn't save theme preference:", error);
+            // Optionally show a small toast notification here
+        }
+    }
 
     const handleLogout = () => {
         logout();
@@ -83,25 +144,48 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اطلاعات کاربری</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="name" className="label">نام کامل</label>
-                                <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} className="input mt-1" />
+                                <label htmlFor="firstName" className="label">نام</label>
+                                <input type="text" id="firstName" name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="input mt-1" />
+                            </div>
+                             <div>
+                                <label htmlFor="lastName" className="label">نام خانوادگی</label>
+                                <input type="text" id="lastName" name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="input mt-1" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="label">آدرس ایمیل</label>
                                 <input type="email" id="email" name="email" value={email} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
                             </div>
                             <div>
+                                <label htmlFor="mobile" className="label">موبایل</label>
+                                <input type="tel" id="mobile" name="mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} className="input mt-1" placeholder="09123456789" />
+                            </div>
+                            <div>
                                 <label htmlFor="company" className="label">شرکت</label>
                                 <input type="text" id="company" name="company" value={company} onChange={(e) => setCompany(e.target.value)} className="input mt-1" />
                             </div>
                             <div>
+                                <label htmlFor="website" className="label">وب‌سایت</label>
+                                <input type="url" id="website" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} className="input mt-1" placeholder="https://example.com" />
+                            </div>
+                             <div>
+                                <label className="label">نوع حساب</label>
+                                <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
+                                    <button onClick={() => setAccountType('personal')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'personal' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>شخصی</button>
+                                    <button onClick={() => setAccountType('business')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'business' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>تجاری</button>
+                                </div>
+                            </div>
+                            <div>
                                 <label htmlFor="role" className="label">نقش</label>
-                                <input type="text" id="role" name="role" value={role} onChange={(e) => setRole(e.target.value)} className="input mt-1" />
+                                <input type="text" id="role" name="role" value={role} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
                             </div>
                         </div>
-                        <div className="mt-6 flex justify-end gap-4">
+                        <div className="mt-6 flex justify-end items-center gap-4">
+                            {saveError && <p className="text-sm text-red-500">{saveError}</p>}
+                            {saveSuccess && <p className="text-sm text-green-500">با موفقیت ذخیره شد!</p>}
                              <button onClick={handleLogout} className="btn btn-secondary bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900">خروج</button>
-                            <button disabled className="btn btn-primary">ذخیره تغییرات</button>
+                            <button onClick={handleSaveChanges} disabled={isSaving} className="btn btn-primary w-36">
+                                {isSaving ? <LoadingSpinner className="w-5 h-5" /> : 'ذخیره تغییرات'}
+                            </button>
                         </div>
                     </div>
 
@@ -159,7 +243,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                             {themeOptions.map(option => (
                                 <button
                                     key={option.key}
-                                    onClick={() => setTheme(option.key as Theme)}
+                                    onClick={() => handleThemeSelect(option.key as Theme)}
                                     aria-label={`Switch to ${option.key} theme`}
                                     className={`flex-1 p-4 rounded-lg border-2 text-center transition-all duration-200 ${
                                         theme === option.key

@@ -1,10 +1,20 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { login as apiLogin, getCurrentUser, logout as apiLogout, signup as apiSignup, createUserProfile } from '../services/authService';
-import type { DirectusUser } from '../types';
+import { 
+    login as apiLogin, 
+    getCurrentUser, 
+    logout as apiLogout, 
+    signup as apiSignup, 
+    createUserProfile,
+    fetchUserProfile,
+    updateDirectusUser,
+    updateUserProfile
+} from '../services/authService';
+import type { DirectusUser, Profile } from '../types';
 import LoginModal from '../components/LoginModal';
 
 interface AuthContextType {
     user: DirectusUser | null;
+    profile: Profile | null;
     isAuthenticated: boolean;
     isLoading: boolean;
     accessToken: string | null;
@@ -12,12 +22,14 @@ interface AuthContextType {
     signup: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
     logout: () => void;
     openLoginModal: () => void;
+    updateProfileAndUser: (userData: Partial<DirectusUser>, profileData: Partial<Profile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<DirectusUser | null>(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,25 +38,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const openLoginModal = () => setIsLoginModalOpen(true);
     const closeLoginModal = () => setIsLoginModalOpen(false);
 
+    const fetchUserDataAndProfile = useCallback(async (token: string) => {
+        const userData = await getCurrentUser(token);
+        setUser(userData);
+        if (userData) {
+            const userProfile = await fetchUserProfile(userData.id, token);
+            setProfile(userProfile);
+        }
+    }, []);
+
     const initAuth = useCallback(async () => {
         setIsLoading(true);
         const storedAccessToken = localStorage.getItem('accessToken');
         const storedRefreshToken = localStorage.getItem('refreshToken');
         if (storedAccessToken && storedRefreshToken) {
             try {
-                const userData = await getCurrentUser(storedAccessToken);
-                setUser(userData);
                 setAccessToken(storedAccessToken);
                 setRefreshToken(storedRefreshToken);
+                await fetchUserDataAndProfile(storedAccessToken);
             } catch (error) {
                 console.error("Session expired, logging out.", error);
-                // Token is invalid, clear it
+                setUser(null);
+                setProfile(null);
+                setAccessToken(null);
+                setRefreshToken(null);
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
             }
         }
         setIsLoading(false);
-    }, []);
+    }, [fetchUserDataAndProfile]);
 
     useEffect(() => {
         initAuth();
@@ -56,29 +79,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('refreshToken', data.refresh_token);
         setAccessToken(data.access_token);
         setRefreshToken(data.refresh_token);
-        const userData = await getCurrentUser(data.access_token);
-        setUser(userData);
+        await fetchUserDataAndProfile(data.access_token);
         closeLoginModal();
     };
     
     const signup = async (firstName: string, lastName: string, email: string, password: string) => {
-        // Step 1: Create the user account in Directus Users collection
         const newUser = await apiSignup(firstName, lastName, email, password);
-
-        // Step 2: Immediately log in with the new credentials to get an access token
         const loginData = await apiLogin(email, password);
-        
-        // Step 3: Use the new user's ID and access token to create their corresponding profile
         await createUserProfile(newUser.id, loginData.access_token);
-
-        // Step 4: Finalize the authentication state in the app
         localStorage.setItem('accessToken', loginData.access_token);
         localStorage.setItem('refreshToken', loginData.refresh_token);
         setAccessToken(loginData.access_token);
         setRefreshToken(loginData.refresh_token);
-        
-        // The user object from the signup response is sufficient, no need to call /users/me again
-        setUser(newUser);
+        await fetchUserDataAndProfile(loginData.access_token);
         closeLoginModal();
     };
 
@@ -87,15 +100,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await apiLogout(refreshToken);
         }
         setUser(null);
+        setProfile(null);
         setAccessToken(null);
         setRefreshToken(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
     }, [refreshToken]);
 
+    const updateProfileAndUser = async (userData: Partial<DirectusUser>, profileData: Partial<Profile>) => {
+        if (!accessToken || !profile || !user) {
+            throw new Error("Not authenticated or profile not loaded.");
+        }
+
+        const promises = [];
+
+        // Update user details if there's data to update
+        if (Object.keys(userData).length > 0) {
+            promises.push(
+                updateDirectusUser(userData, accessToken).then(updatedUser => {
+                    setUser(updatedUser);
+                })
+            );
+        }
+
+        // Update profile details if there's data to update
+        if (Object.keys(profileData).length > 0 && profile.id) {
+            promises.push(
+                updateUserProfile(profile.id, profileData, accessToken).then(updatedProfile => {
+                    setProfile(updatedProfile);
+                })
+            );
+        }
+
+        // Await all promises to run in parallel, and throw if any of them fail
+        await Promise.all(promises);
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
+            profile,
             isAuthenticated: !!user,
             isLoading,
             accessToken,
@@ -103,6 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             signup,
             logout,
             openLoginModal,
+            updateProfileAndUser,
         }}>
             {children}
             <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />

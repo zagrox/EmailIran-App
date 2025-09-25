@@ -1,4 +1,4 @@
-import type { DirectusUser } from '../types';
+import type { DirectusUser, Profile } from '../types';
 
 const API_BASE_URL = 'https://crm.ir48.com';
 
@@ -57,9 +57,7 @@ export const createUserProfile = async (userId: string, accessToken: string): Pr
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-            user: userId,
-        }),
+        body: JSON.stringify({}),
     });
 
     if (!response.ok) {
@@ -85,6 +83,61 @@ export const getCurrentUser = async (accessToken: string): Promise<DirectusUser>
     const { data } = await response.json();
     return data;
 };
+
+export const fetchUserProfile = async (userId: string, accessToken: string): Promise<Profile | null> => {
+    const response = await fetch(`${API_BASE_URL}/items/profiles?filter[user_created][_eq]=${userId}&limit=1`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    if (!response.ok) {
+        console.error('Failed to fetch user profile.');
+        return null;
+    }
+    const { data } = await response.json();
+    return data.length > 0 ? data[0] : null;
+};
+
+export const updateDirectusUser = async (userData: Partial<DirectusUser>, accessToken: string): Promise<DirectusUser> => {
+     const response = await fetch(`${API_BASE_URL}/users/me`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errors?.[0]?.message || 'Failed to update user details.');
+    }
+
+    const { data } = await response.json();
+    return data;
+};
+
+export const updateUserProfile = async (profileId: number, profileData: Partial<Profile>, accessToken: string): Promise<Profile> => {
+    const response = await fetch(`${API_BASE_URL}/items/profiles/${profileId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(profileData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errors?.[0]?.message || 'Failed to update user profile.');
+    }
+
+    const { data } = await response.json();
+    return data;
+};
+
 
 export const logout = async (refreshToken: string) => {
     try {
