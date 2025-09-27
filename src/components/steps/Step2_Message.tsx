@@ -145,7 +145,6 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                                         value={message.abTest.subjectB}
                                         onChange={handleAbTestChange}
                                         className="input"
-                                        placeholder="موضوع جایگزین را وارد کنید"
                                     />
                                 </div>
                                 <div>

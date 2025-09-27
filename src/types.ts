@@ -1,7 +1,6 @@
 
-
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
-export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile';
+export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile' | 'login';
 
 export interface CampaignState {
   audience: {

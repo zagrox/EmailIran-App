@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from './PageHeader';
-import { SunIcon, MoonIcon, DesktopIcon, UserIcon, LoadingSpinner } from './IconComponents';
+import { SunIcon, MoonIcon, DesktopIcon, UserIcon, LoadingSpinner, XIcon } from './IconComponents';
 import { useAuth } from '../contexts/AuthContext';
+import { useUI } from '../contexts/UIContext';
+import { useNotification } from '../contexts/NotificationContext';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { Page } from '../types';
 
@@ -16,7 +18,9 @@ interface UserProfilePageProps {
 }
 
 const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNavigate }) => {
-    const { user, profile, isAuthenticated, logout, openLoginModal, updateProfileAndUser } = useAuth();
+    const { user, profile, isAuthenticated, logout, updateProfileAndUser, changePassword } = useAuth();
+    const { navigateToLogin } = useUI();
+    const { addNotification } = useNotification();
     
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -25,11 +29,10 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
     const [mobile, setMobile] = useState('');
     const [website, setWebsite] = useState('');
     const [accountType, setAccountType] = useState<'personal' | 'business'>('personal');
-    const [role, setRole] = useState('');
 
     const [isSaving, setIsSaving] = useState(false);
-    const [saveSuccess, setSaveSuccess] = useState(false);
-    const [saveError, setSaveError] = useState<string | null>(null);
+    const [isPasswordSaving, setIsPasswordSaving] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     
     const [notifications, setNotifications] = useState({
         campaignSummary: true,
@@ -49,7 +52,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
             setFirstName(user.first_name || '');
             setLastName(user.last_name || '');
             setEmail(user.email || '');
-            setRole(user.role || 'مدیر بازاریابی');
         }
         if (profile) {
             setCompany(profile.company || '');
@@ -70,26 +72,46 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
 
     const handleSaveChanges = async () => {
         setIsSaving(true);
-        setSaveSuccess(false);
-        setSaveError(null);
         try {
             const userData = {
                 first_name: firstName,
                 last_name: lastName,
             };
             const profileData = {
-                company,
+                company: accountType === 'business' ? company : null,
                 mobile,
                 website,
                 type: accountType,
             };
             await updateProfileAndUser(userData, profileData);
-            setSaveSuccess(true);
-            setTimeout(() => setSaveSuccess(false), 3000);
-        } catch (error: any) {
-            setSaveError(error.message || 'An error occurred while saving.');
+        } catch (error) {
+            // Error is handled by the AuthContext notification
+            console.error(error);
         } finally {
             setIsSaving(false);
+        }
+    };
+    
+    const handleChangePassword = async () => {
+        if (password.new.length < 8) {
+            addNotification('رمز عبور جدید باید حداقل ۸ کاراکتر باشد.', 'error');
+            return;
+        }
+        if (password.new !== password.confirm) {
+            addNotification('رمز عبور جدید و تکرار آن مطابقت ندارند.', 'error');
+            return;
+        }
+
+        setIsPasswordSaving(true);
+        try {
+            await changePassword(password.current, password.new);
+            setPassword({ current: '', new: '', confirm: '' }); // Clear fields on success
+            setIsPasswordModalOpen(false);
+        } catch (error) {
+            // Error is handled by AuthContext, no need to do anything here
+            console.error(error);
+        } finally {
+            setIsPasswordSaving(false);
         }
     };
 
@@ -117,7 +139,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">به حساب کاربری خود وارد شوید</h2>
                 <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">برای مشاهده و ویرایش پروفایل خود، لطفاً وارد شوید.</p>
-                <button onClick={openLoginModal} className="btn btn-primary mt-8">
+                <button onClick={navigateToLogin} className="btn btn-primary mt-8">
                     ورود به حساب کاربری
                 </button>
             </div>
@@ -142,72 +164,60 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                     {/* Profile Details Card */}
                     <div className="card">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اطلاعات کاربری</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="firstName" className="label">نام</label>
-                                <input type="text" id="firstName" name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="input mt-1" />
-                            </div>
-                             <div>
-                                <label htmlFor="lastName" className="label">نام خانوادگی</label>
-                                <input type="text" id="lastName" name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="input mt-1" />
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="label">آدرس ایمیل</label>
-                                <input type="email" id="email" name="email" value={email} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
-                            </div>
-                            <div>
-                                <label htmlFor="mobile" className="label">موبایل</label>
-                                <input type="tel" id="mobile" name="mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} className="input mt-1" placeholder="09123456789" />
-                            </div>
-                            <div>
-                                <label htmlFor="company" className="label">شرکت</label>
-                                <input type="text" id="company" name="company" value={company} onChange={(e) => setCompany(e.target.value)} className="input mt-1" />
-                            </div>
-                            <div>
-                                <label htmlFor="website" className="label">وب‌سایت</label>
-                                <input type="url" id="website" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} className="input mt-1" placeholder="https://example.com" />
-                            </div>
-                             <div>
-                                <label className="label">نوع حساب</label>
-                                <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
-                                    <button onClick={() => setAccountType('personal')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'personal' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>شخصی</button>
-                                    <button onClick={() => setAccountType('business')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'business' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>تجاری</button>
+                        <div className="space-y-6">
+                            {/* Row 1: Account Type & Email */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="label">نوع حساب</label>
+                                    <div className="mt-1 grid grid-cols-2 gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
+                                        <button onClick={() => setAccountType('personal')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'personal' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>شخصی</button>
+                                        <button onClick={() => setAccountType('business')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'business' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>تجاری</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="email" className="label">آدرس ایمیل</label>
+                                    <input type="email" id="email" name="email" value={email} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
                                 </div>
                             </div>
-                            <div>
-                                <label htmlFor="role" className="label">نقش</label>
-                                <input type="text" id="role" name="role" value={role} readOnly className="input mt-1 bg-slate-100 dark:bg-slate-800 cursor-not-allowed" />
+                            
+                            {/* Row 2: Company (Conditional) */}
+                            {accountType === 'business' && (
+                                <div className="animate-fade-in">
+                                    <label htmlFor="company" className="label">شرکت</label>
+                                    <input type="text" id="company" name="company" value={company} onChange={(e) => setCompany(e.target.value)} className="input mt-1" />
+                                </div>
+                            )}
+
+                            {/* Row 3: First & Last Name */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label htmlFor="firstName" className="label">نام</label>
+                                    <input type="text" id="firstName" name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="input mt-1" />
+                                </div>
+                                 <div>
+                                    <label htmlFor="lastName" className="label">نام خانوادگی</label>
+                                    <input type="text" id="lastName" name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} className="input mt-1" />
+                                </div>
+                            </div>
+
+                            {/* Row 4: Mobile & Website */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label htmlFor="mobile" className="label">موبایل</label>
+                                    <input type="tel" id="mobile" name="mobile" value={mobile} onChange={(e) => setMobile(e.target.value)} className="input mt-1" />
+                                </div>
+                                <div>
+                                    <label htmlFor="website" className="label">وب‌سایت</label>
+                                    <input type="url" id="website" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} className="input mt-1" />
+                                </div>
                             </div>
                         </div>
-                        <div className="mt-6 flex justify-end items-center gap-4">
-                            {saveError && <p className="text-sm text-red-500">{saveError}</p>}
-                            {saveSuccess && <p className="text-sm text-green-500">با موفقیت ذخیره شد!</p>}
+                        <div className="mt-8 flex justify-end items-center gap-4">
                              <button onClick={handleLogout} className="btn btn-secondary bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900">خروج</button>
+                             <button onClick={() => setIsPasswordModalOpen(true)} className="btn btn-secondary">تغییر رمز عبور</button>
                             <button onClick={handleSaveChanges} disabled={isSaving} className="btn btn-primary w-36">
                                 {isSaving ? <LoadingSpinner className="w-5 h-5" /> : 'ذخیره تغییرات'}
                             </button>
-                        </div>
-                    </div>
-
-                    {/* Change Password Card */}
-                    <div className="card">
-                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">تغییر رمز عبور</h3>
-                         <div className="space-y-4">
-                            <div>
-                                <label htmlFor="current" className="label">رمز عبور فعلی</label>
-                                <input type="password" id="current" name="current" value={password.current} onChange={(e) => setPassword({ ...password, current: e.target.value })} className="input mt-1" />
-                            </div>
-                            <div>
-                                <label htmlFor="new" className="label">رمز عبور جدید</label>
-                                <input type="password" id="new" name="new" value={password.new} onChange={(e) => setPassword({ ...password, new: e.target.value })} className="input mt-1" />
-                            </div>
-                            <div>
-                                <label htmlFor="confirm" className="label">تکرار رمز عبور جدید</label>
-                                <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={(e) => setPassword({ ...password, confirm: e.target.value })} className="input mt-1" />
-                            </div>
-                         </div>
-                          <div className="mt-6 text-right">
-                            <button disabled className="btn btn-secondary">بروزرسانی رمز عبور</button>
                         </div>
                     </div>
                 </div>
@@ -259,6 +269,46 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                     </div>
                 </div>
             </div>
+            
+            {isPasswordModalOpen && (
+                 <div className="modal-overlay">
+                    <div className="modal-container max-w-lg" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">تغییر رمز عبور</h3>
+                            <button onClick={() => setIsPasswordModalOpen(false)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                                <XIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+                            </button>
+                        </div>
+                        <div className="modal-content">
+                             <div className="space-y-4">
+                                <div>
+                                    <label htmlFor="current" className="label">رمز عبور فعلی</label>
+                                    <input type="password" id="current" name="current" value={password.current} onChange={(e) => setPassword({ ...password, current: e.target.value })} className="input mt-1" />
+                                </div>
+                                <div>
+                                    <label htmlFor="new" className="label">رمز عبور جدید</label>
+                                    <input type="password" id="new" name="new" value={password.new} onChange={(e) => setPassword({ ...password, new: e.target.value })} className="input mt-1" />
+                                </div>
+                                <div>
+                                    <label htmlFor="confirm" className="label">تکرار رمز عبور جدید</label>
+                                    <input type="password" id="confirm" name="confirm" value={password.confirm} onChange={(e) => setPassword({ ...password, confirm: e.target.value })} className="input mt-1" />
+                                </div>
+                             </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={() => setIsPasswordModalOpen(false)} className="btn btn-secondary">لغو</button>
+                            <button 
+                                onClick={handleChangePassword}
+                                disabled={isPasswordSaving || !password.current || !password.new || !password.confirm}
+                                className="btn btn-primary w-48"
+                            >
+                                {isPasswordSaving ? <LoadingSpinner className="w-5 h-5" /> : 'بروزرسانی رمز عبور'}
+                            </button>
+                        </div>
+                    </div>
+                 </div>
+            )}
+
         </div>
     );
 };

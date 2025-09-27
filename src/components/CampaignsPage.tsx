@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useUI } from '../contexts/UIContext';
 import { fetchCampaigns } from '../services/campaignService';
 import type { EmailMarketingCampaign } from '../types';
 import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon } from './IconComponents';
@@ -66,7 +67,8 @@ interface CampaignsPageProps {
 }
 
 const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign }) => {
-    const { isAuthenticated, accessToken, openLoginModal } = useAuth();
+    const { isAuthenticated, accessToken } = useAuth();
+    const { navigateToLogin } = useUI();
     const [campaigns, setCampaigns] = useState<EmailMarketingCampaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -100,7 +102,7 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign }) => 
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 dark:text-white">وارد شوید تا کمپین‌های خود را ببینید</h2>
                 <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">برای مشاهده و مدیریت کمپین‌های خود، لطفاً وارد شوید.</p>
-                <button onClick={openLoginModal} className="btn btn-primary mt-8">
+                <button onClick={navigateToLogin} className="btn btn-primary mt-8">
                     ورود به حساب کاربری
                 </button>
             </div>

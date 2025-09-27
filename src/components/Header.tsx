@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MenuIcon, XIcon, UserIcon } from './IconComponents';
 import { useAuth } from '../contexts/AuthContext';
+import { useUI } from '../contexts/UIContext';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { Page } from '../types';
 
@@ -8,32 +9,13 @@ interface HeaderProps {
     setCurrentPage: (page: Page) => void;
     currentPage: Page;
     onStartNewCampaign: () => void;
+    logoUrl: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNewCampaign }) => {
+const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNewCampaign, logoUrl }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [logoUrl, setLogoUrl] = useState<string | null>(null);
-    const { isAuthenticated, openLoginModal } = useAuth();
-
-    useEffect(() => {
-        const fetchLogo = async () => {
-            try {
-                const response = await fetch('https://crm.ir48.com/items/projects/d0749635-72fb-481e-9d87-e7bcdc8bd2ac');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                const logoId = data.data.project_logo;
-                if (logoId) {
-                    setLogoUrl(`https://crm.ir48.com/assets/${logoId}`);
-                }
-            } catch (error) {
-                console.error('Failed to fetch logo:', error);
-            }
-        };
-
-        fetchLogo();
-    }, []);
+    const { isAuthenticated } = useAuth();
+    const { navigateToLogin } = useUI();
     
     const handleNav = (page: Page) => {
         setCurrentPage(page);
@@ -44,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
         if (isAuthenticated) {
             handleNav('profile');
         } else {
-            openLoginModal();
+            navigateToLogin();
         }
         setIsMenuOpen(false);
     }
@@ -80,12 +62,13 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                     {/* Logo, Title and New Campaign Button */}
                     <div className="flex items-center">
                         <button onClick={() => handleNav('dashboard')} className="flex items-center focus:outline-none focus:ring-2 focus:ring-brand-purple rounded-lg">
-                            {logoUrl && (
-                                <img src={logoUrl} alt="ایمیل ایران" className="h-10 w-auto" />
+                            {logoUrl ? (
+                                <img src={logoUrl} alt="ایمیل ایران" className="h-14 object-contain" />
+                            ) : (
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                                   ایمیل ایران
+                                </h1>
                             )}
-                            <h1 className="text-2xl font-bold mr-3 bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
-                               ایمیل ایران
-                            </h1>
                         </button>
                         <button
                             onClick={handleStartWizard}

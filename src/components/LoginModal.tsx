@@ -100,7 +100,6 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                                             onChange={(e) => setFirstName(e.target.value)}
                                             required
                                             className="input mt-1"
-                                            placeholder="علی"
                                         />
                                     </div>
                                     <div>
@@ -113,7 +112,6 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                                             onChange={(e) => setLastName(e.target.value)}
                                             required
                                             className="input mt-1"
-                                            placeholder="رضایی"
                                         />
                                     </div>
                                 </div>
@@ -128,7 +126,6 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="input mt-1"
-                                    placeholder="your@email.com"
                                 />
                             </div>
                              <div>

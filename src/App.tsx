@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { STEPS, MOCK_REPORTS } from './constants';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page } from './types';
@@ -16,7 +16,10 @@ import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
 import CampaignsPage from './components/CampaignsPage';
+import LoginPage from './components/LoginPage';
 import { useAuth } from './contexts/AuthContext';
+import { UIProvider } from './contexts/UIContext';
+import NotificationContainer from './components/NotificationContainer';
 
 // FIX: The local 'Page' type definition was removed to use the centralized one from src/types.ts.
 type Theme = 'light' | 'dark' | 'system';
@@ -92,8 +95,28 @@ const App: React.FC = () => {
     const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>();
     const [audienceCategories, setAudienceCategories] = useState<AudienceCategory[]>([]);
     const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
-    const { isAuthenticated, openLoginModal } = useAuth();
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        const fetchProjectDetails = async () => {
+            try {
+                const response = await fetch('https://crm.ir48.com/items/projects/d0749635-72fb-481e-9d87-e7bcdc8bd2ac');
+                if (response.ok) {
+                    const { data } = await response.json();
+                    if (data.project_logo) {
+                        setLogoUrl(`https://crm.ir48.com/assets/${data.project_logo}`);
+                    }
+                } else {
+                     console.error('Failed to fetch project details');
+                }
+            } catch (error) {
+                console.error('Error fetching project logo:', error);
+            }
+        };
+        fetchProjectDetails();
+    }, []);
 
     useEffect(() => {
         localStorage.setItem('theme', theme);
@@ -122,13 +145,19 @@ const App: React.FC = () => {
     }, []);
 
 
-    const handleNavigation = (page: Page) => {
-        if (currentPage === 'reports' && page !== 'reports') {
-            setViewedReport(null);
-        }
+    const handleNavigation = useCallback((page: Page) => {
+        setCurrentPage(prevPage => {
+            if (prevPage === 'reports' && page !== 'reports') {
+                setViewedReport(null);
+            }
+            return page;
+        });
         setIsWizardActive(false);
-        setCurrentPage(page);
-    };
+    }, []);
+    
+    const navigateToLogin = useCallback(() => {
+        handleNavigation('login');
+    }, [handleNavigation]);
 
     const updateCampaignData = useCallback(<K extends keyof CampaignState>(field: K, value: CampaignState[K]) => {
         setCampaignData(prev => ({
@@ -151,7 +180,7 @@ const App: React.FC = () => {
 
     const handleLaunch = () => {
         if (!isAuthenticated) {
-            openLoginModal();
+            navigateToLogin();
             return;
         }
         console.log("کمپین ارسال شد:", campaignData);
@@ -374,33 +403,48 @@ const App: React.FC = () => {
                     return (
                         <UserProfilePage theme={theme} setTheme={setTheme} onNavigate={handleNavigation} />
                     );
+                case 'login':
+                    return <LoginPage />;
             }
         };
 
         return <div className="w-full max-w-7xl animate-fade-in">{pageContent()}</div>
     }
+    
+    const uiContextValue = useMemo(() => ({
+        navigateToLogin,
+        navigate: handleNavigation
+    }), [navigateToLogin, handleNavigation]);
 
+    const showHeader = currentPage !== 'login' || isAuthenticated;
 
     return (
-        <div className="app-container">
-            <Header 
-                setCurrentPage={handleNavigation} 
-                currentPage={currentPage}
-                onStartNewCampaign={handleStartNewCampaign}
-            />
-            
-            {isAIAssistantOpen && (
-                <AIAssistantModal 
-                    isOpen={isAIAssistantOpen}
-                    onClose={handleCloseAIAssistant}
-                    onApply={handleApplyAIDraft}
-                    initialPrompt={aiInitialPrompt}
-                    audienceCategories={audienceCategories}
-                />
-            )}
+        <UIProvider value={uiContextValue}>
+            <div className="app-container">
+                {showHeader && (
+                    <Header 
+                        setCurrentPage={handleNavigation} 
+                        currentPage={currentPage}
+                        onStartNewCampaign={handleStartNewCampaign}
+                        logoUrl={logoUrl}
+                    />
+                )}
+                
+                <NotificationContainer />
 
-            {isWizardActive ? renderWizard() : renderPage()}
-        </div>
+                {isAIAssistantOpen && (
+                    <AIAssistantModal 
+                        isOpen={isAIAssistantOpen}
+                        onClose={handleCloseAIAssistant}
+                        onApply={handleApplyAIDraft}
+                        initialPrompt={aiInitialPrompt}
+                        audienceCategories={audienceCategories}
+                    />
+                )}
+
+                {isWizardActive ? renderWizard() : renderPage()}
+            </div>
+        </UIProvider>
     );
 };
 
