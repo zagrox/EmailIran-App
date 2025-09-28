@@ -1,6 +1,5 @@
 
 
-
 import React from 'react';
 import type { CampaignState, AudienceCategory } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
@@ -21,11 +20,10 @@ const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
     const { audience, message, schedule } = campaignData;
     const { isAuthenticated } = useAuth();
 
-    const selectedCategory = audienceCategories.find(c => c.id === audience.categoryId);
+    const selectedCategories = audienceCategories.filter(c => audience.categoryIds.includes(c.id));
+    const recipientCount = selectedCategories.reduce((sum, c) => sum + c.count, 0);
+    const segmentNames = selectedCategories.map(c => c.name_fa).join('، ') || 'مخاطب انتخاب نشده';
     
-    const recipientCount = selectedCategory?.count || 0;
-    const segmentName = selectedCategory?.name_fa || 'مخاطب انتخاب نشده';
-
     const pricePerEmail = 0.001;
     const totalCost = recipientCount * pricePerEmail;
 
@@ -45,8 +43,8 @@ const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">خلاصه کمپین</h3>
                     
                     <SummaryItem label="مخاطبان">
-                        <p>بخش: <span className="font-semibold">{segmentName}</span></p>
-                        <p>گیرندگان تخمینی: <span className="font-semibold">{recipientCount.toLocaleString('fa-IR')}</span></p>
+                        <p>بخش ها: <span className="font-semibold">{segmentNames}</span></p>
+                        <p>مجموع گیرندگان تخمینی: <span className="font-semibold">{recipientCount.toLocaleString('fa-IR')}</span></p>
                     </SummaryItem>
                     
                     <div className="border-t border-slate-200 dark:border-slate-700"></div>

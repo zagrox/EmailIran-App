@@ -1,7 +1,9 @@
+
+
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { STEPS, MOCK_REPORTS } from './constants';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
-import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page } from './types';
+import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Stepper from './components/Stepper';
 import Header from './components/Header';
 import Step1Audience from './components/steps/Step1_Audience';
@@ -16,10 +18,14 @@ import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
 import CampaignsPage from './components/CampaignsPage';
+import CampaignDetailsPage from './components/CampaignDetailsPage';
 import LoginPage from './components/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
+import { createCampaign } from './services/campaignService';
+import { useNotification } from './contexts/NotificationContext';
+import { LoadingSpinner } from './components/IconComponents';
 
 // FIX: The local 'Page' type definition was removed to use the centralized one from src/types.ts.
 type Theme = 'light' | 'dark' | 'system';
@@ -27,7 +33,7 @@ type Theme = 'light' | 'dark' | 'system';
 const initialCampaignState: CampaignState = {
     audience: {
         segmentId: null,
-        categoryId: null,
+        categoryIds: [],
         filters: [],
         healthScore: 0,
     },
@@ -92,12 +98,15 @@ const App: React.FC = () => {
     const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
     const [viewedReport, setViewedReport] = useState<Report | null>(null);
+    const [viewedCampaignId, setViewedCampaignId] = useState<number | null>(null);
     const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>();
     const [audienceCategories, setAudienceCategories] = useState<AudienceCategory[]>([]);
     const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [isLaunching, setIsLaunching] = useState(false);
 
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user, accessToken } = useAuth();
+    const { addNotification } = useNotification();
 
     useEffect(() => {
         const fetchProjectDetails = async () => {
@@ -150,6 +159,9 @@ const App: React.FC = () => {
             if (prevPage === 'reports' && page !== 'reports') {
                 setViewedReport(null);
             }
+            if (page !== 'campaigns') {
+                setViewedCampaignId(null);
+            }
             return page;
         });
         setIsWizardActive(false);
@@ -178,14 +190,44 @@ const App: React.FC = () => {
         }
     };
 
-    const handleLaunch = () => {
+    const handleLaunch = async () => {
         if (!isAuthenticated) {
             navigateToLogin();
             return;
         }
-        console.log("کمپین ارسال شد:", campaignData);
-        setViewedReport(null);
-        setCurrentStep(5);
+
+        if (!accessToken) {
+            addNotification('Authentication token is missing. Please log in again.', 'error');
+            return;
+        }
+        
+        setIsLaunching(true);
+
+        const campaignPayload: Partial<Omit<EmailMarketingCampaign, 'id'>> = {
+            campaign_subject: campaignData.message.subject,
+            campaign_content: campaignData.message.body,
+            campaign_ab: campaignData.message.abTest.enabled,
+            campaign_subject_b: campaignData.message.abTest.subjectB,
+            campaign_date: `${campaignData.schedule.sendDate}T${campaignData.schedule.sendTime}:00`,
+            campaign_status: 'scheduled',
+            campaign_sender: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Campaign Wizard',
+            status: 'published',
+            // FIX: The payload now sends only the audience ID. This tells the API to link to an existing audience rather than trying to update it, resolving the permission error and removing the need for users to have update access on the audiences collection.
+            campaign_audiences: campaignData.audience.categoryIds.map(id => ({
+                audiences_id: parseInt(id, 10)
+            }))
+        };
+
+        try {
+            await createCampaign(campaignPayload, accessToken);
+            addNotification('کمپین با موفقیت زمان‌بندی شد!', 'success');
+            setViewedReport(null);
+            setCurrentStep(5);
+        } catch (error: any) {
+            addNotification(error.message || 'خطا در ارسال کمپین.', 'error');
+        } finally {
+            setIsLaunching(false);
+        }
     };
     
     const resetCampaign = () => {
@@ -194,12 +236,14 @@ const App: React.FC = () => {
         setIsWizardActive(false);
         handleNavigation('dashboard');
         setViewedReport(null);
+        setViewedCampaignId(null);
     }
 
     const handleStartNewCampaign = () => {
         setCampaignData(initialCampaignState);
         setCurrentStep(1);
         setViewedReport(null);
+        setViewedCampaignId(null);
         setIsWizardActive(true);
     };
     
@@ -211,12 +255,13 @@ const App: React.FC = () => {
             ...initialCampaignState,
             audience: {
                 ...initialCampaignState.audience,
-                categoryId: categoryId,
+                categoryIds: [categoryId],
                 healthScore: healthScore,
             },
         });
         setCurrentStep(1);
         setViewedReport(null);
+        setViewedCampaignId(null);
         setIsWizardActive(true);
     };
 
@@ -230,6 +275,7 @@ const App: React.FC = () => {
         });
         setCurrentStep(1);
         setViewedReport(null);
+        setViewedCampaignId(null);
         setIsWizardActive(true);
     };
 
@@ -239,7 +285,7 @@ const App: React.FC = () => {
        
         const audienceUpdate: Partial<CampaignState['audience']> = {
             segmentId: null,
-            categoryId: draft.audienceCategoryId,
+            categoryIds: [draft.audienceCategoryId],
             healthScore: healthScore,
         };
         
@@ -277,6 +323,14 @@ const App: React.FC = () => {
     const handleBackToReports = () => {
         setViewedReport(null);
     }
+    
+    const handleViewCampaign = (id: number) => {
+        setViewedCampaignId(id);
+    };
+    
+    const handleBackToCampaigns = () => {
+        setViewedCampaignId(null);
+    };
 
     const handleOpenAIAssistant = (prompt?: string) => {
         setAiInitialPrompt(prompt);
@@ -351,9 +405,10 @@ const App: React.FC = () => {
                         ) : (
                             <button
                                 onClick={handleLaunch}
+                                disabled={isLaunching}
                                 className="btn btn-launch"
                             >
-                                {isAuthenticated ? 'پرداخت و ارسال کمپین' : 'ورود و ارسال کمپین'}
+                                {isLaunching ? <LoadingSpinner className="w-6 h-6" /> : (isAuthenticated ? 'پرداخت و ارسال کمپین' : 'ورود و ارسال کمپین')}
                             </button>
                         )}
                     </div>
@@ -379,8 +434,16 @@ const App: React.FC = () => {
                         <AudiencesPage onStartCampaign={handleStartCampaign} audienceCategories={audienceCategories} />
                     );
                 case 'campaigns':
-                    return (
-                        <CampaignsPage onStartNewCampaign={handleStartNewCampaign} />
+                    return viewedCampaignId ? (
+                        <CampaignDetailsPage 
+                            campaignId={viewedCampaignId} 
+                            onBack={handleBackToCampaigns}
+                        />
+                    ) : (
+                        <CampaignsPage 
+                            onStartNewCampaign={handleStartNewCampaign}
+                            onViewCampaign={handleViewCampaign}
+                        />
                     );
                 case 'reports':
                     return (

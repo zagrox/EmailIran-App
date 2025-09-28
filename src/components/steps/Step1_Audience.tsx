@@ -50,14 +50,23 @@ const CategoryCard: React.FC<{ category: AudienceCategory; isSelected: boolean; 
 const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOpenAIAssistant, audienceCategories }) => {
     const { audience } = campaignData;
 
-    const handleCategorySelect = (categoryId: string) => {
-        const selectedCategory = audienceCategories.find(c => c.id === categoryId);
-        const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
+    const handleCategoryToggle = (categoryId: string) => {
+        const newCategoryIds = audience.categoryIds.includes(categoryId)
+            ? audience.categoryIds.filter(id => id !== categoryId)
+            : [...audience.categoryIds, categoryId];
+
+        const selectedCategories = audienceCategories.filter(c => newCategoryIds.includes(c.id));
+        const totalHealthScore = selectedCategories.reduce((acc, c) => {
+            const score = c.health === 'Excellent' ? 95 : c.health === 'Good' ? 75 : 25;
+            return acc + score;
+        }, 0);
+        const avgHealthScore = selectedCategories.length > 0 ? totalHealthScore / selectedCategories.length : 0;
+
         updateCampaignData('audience', {
             ...audience,
-            categoryId,
+            categoryIds: newCategoryIds,
             segmentId: null,
-            healthScore,
+            healthScore: avgHealthScore,
         });
     };
 
@@ -68,10 +77,22 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
         updateCampaignData('audience', { ...audience, filters: newFilters });
     };
     
-    const selectedCategory = useMemo(() => audienceCategories.find(c => c.id === audience.categoryId), [audience.categoryId, audienceCategories]);
+    const selectedCategories = useMemo(() => 
+        audienceCategories.filter(c => audience.categoryIds.includes(c.id)), 
+        [audience.categoryIds, audienceCategories]
+    );
 
-    const summaryName = selectedCategory?.name_fa;
-    const summaryCount = selectedCategory?.count;
+    const totalRecipients = useMemo(() =>
+        selectedCategories.reduce((sum, c) => sum + c.count, 0),
+        [selectedCategories]
+    );
+
+    const averageHealthStatus = useMemo(() => {
+        if (audience.healthScore >= 85) return 'Excellent';
+        if (audience.healthScore >= 60) return 'Good';
+        return 'Poor';
+    }, [audience.healthScore]);
+
 
     return (
         <div className="animate-slide-in-up">
@@ -97,8 +118,8 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                             <CategoryCard
                                 key={category.id}
                                 category={category}
-                                isSelected={audience.categoryId === category.id}
-                                onSelect={handleCategorySelect}
+                                isSelected={audience.categoryIds.includes(category.id)}
+                                onSelect={handleCategoryToggle}
                             />
                         ))}
                     </div>
@@ -127,30 +148,32 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                         <UsersIcon className="w-6 h-6 text-brand-mint"/>
                         خلاصه مخاطبان
                     </h3>
-                    {selectedCategory ? (
+                    {selectedCategories.length > 0 ? (
                         <div className="mt-4 space-y-4">
                             <div>
-                                <div className="summary-label">بخش</div>
-                                <div className="summary-value">{summaryName}</div>
+                                <div className="summary-label">بخش های انتخاب شده</div>
+                                <ul className="list-disc list-inside mr-4 mt-2 space-y-1">
+                                {selectedCategories.map(c => (
+                                    <li key={c.id} className="text-lg font-semibold text-slate-900 dark:text-white">{c.name_fa}</li>
+                                ))}
+                                </ul>
                             </div>
                             <div>
-                                <div className="summary-label">گیرندگان تخمینی</div>
-                                <div className="summary-value">{summaryCount?.toLocaleString('fa-IR')}</div>
+                                <div className="summary-label">مجموع گیرندگان تخمینی</div>
+                                <div className="summary-value">{totalRecipients.toLocaleString('fa-IR')}</div>
                             </div>
-                             {selectedCategory && (
-                                <div>
-                                    <div className="summary-label mb-2">سلامت لیست</div>
-                                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
-                                        <div 
-                                            className={`${healthIndicatorMap[selectedCategory.health]} h-2.5 rounded-full transition-all duration-500`} 
-                                            style={{width: `${audience.healthScore}%`}}
-                                        ></div>
-                                    </div>
-                                    <div className={`text-left text-base mt-1 font-semibold ${healthColorMap[selectedCategory.health].split(' ')[0]}`}>
-                                        {healthTranslationMap[selectedCategory.health]}
-                                    </div>
+                            <div>
+                                <div className="summary-label mb-2">میانگین سلامت لیست</div>
+                                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                                    <div 
+                                        className={`${healthIndicatorMap[averageHealthStatus]} h-2.5 rounded-full transition-all duration-500`} 
+                                        style={{width: `${audience.healthScore}%`}}
+                                    ></div>
                                 </div>
-                             )}
+                                <div className={`text-left text-base mt-1 font-semibold ${healthColorMap[averageHealthStatus].split(' ')[0]}`}>
+                                    {healthTranslationMap[averageHealthStatus]}
+                                </div>
+                            </div>
                             {audience.filters.length > 0 && (
                                 <div>
                                     <div className="summary-label">فیلترهای فعال</div>
@@ -162,7 +185,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                         </div>
                     ) : (
                         <div className="mt-4 text-center text-slate-500 dark:text-slate-400 py-10">
-                            برای دیدن جزئیات، یک بخش را انتخاب کنید.
+                            برای دیدن جزئیات، یک یا چند بخش را انتخاب کنید.
                         </div>
                     )}
                 </div>

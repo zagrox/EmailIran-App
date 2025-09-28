@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
@@ -7,9 +8,10 @@ import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon } fr
 
 interface CampaignCardProps {
     campaign: EmailMarketingCampaign;
+    onViewCampaign: (id: number) => void;
 }
 
-const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
+const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign }) => {
     const campaignDate = new Date(campaign.campaign_date);
     const formattedDate = campaignDate.toLocaleDateString('fa-IR', {
         year: 'numeric',
@@ -22,12 +24,22 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
     });
 
     return (
-        <div className="card-report !p-0 overflow-hidden relative">
+        <button 
+            onClick={() => onViewCampaign(campaign.id)}
+            className="card-report !p-0 overflow-hidden relative text-right w-full transition-all duration-300 hover:shadow-xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple cursor-pointer"
+        >
             <div className={`w-2 h-full absolute right-0 top-0`} style={{ backgroundColor: campaign.campaign_color || '#6D28D9' }}></div>
             <div className="p-5 pr-6 w-full">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
                     <div className="flex-grow">
-                        <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
+                         <div className="flex items-center gap-3">
+                            <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
+                            {campaign.campaign_ab && (
+                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-mint/20 text-slate-800 dark:text-white border border-brand-mint">
+                                    A/B
+                                </span>
+                            )}
+                        </div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 text-base text-slate-500 dark:text-slate-400 mt-2">
                             <p className="flex items-center gap-2">
                                 <CalendarDaysIcon className="w-4 h-4" />
@@ -41,32 +53,34 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
                             )}
                         </div>
                     </div>
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 z-10">
                         {campaign.campaign_link ? (
-                            <a 
-                                href={campaign.campaign_link} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
+                             <button
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent card click
+                                    window.open(campaign.campaign_link, '_blank', 'noopener,noreferrer');
+                                }}
                                 className="btn btn-secondary !px-4 !py-1.5"
                             >
                                 مشاهده
-                            </a>
+                            </button>
                         ) : (
                             <span className="text-sm px-3 py-1.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">ارسال شده</span>
                         )}
                     </div>
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 
 
 interface CampaignsPageProps {
     onStartNewCampaign: () => void;
+    onViewCampaign: (id: number) => void;
 }
 
-const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign }) => {
+const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onViewCampaign }) => {
     const { isAuthenticated, accessToken } = useAuth();
     const { navigateToLogin } = useUI();
     const [campaigns, setCampaigns] = useState<EmailMarketingCampaign[]>([]);
@@ -146,7 +160,7 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign }) => 
             {!isLoading && !error && campaigns.length > 0 && (
                 <div className="space-y-6">
                     {campaigns.sort((a,b) => new Date(b.campaign_date).getTime() - new Date(a.campaign_date).getTime()).map(campaign => (
-                        <CampaignCard key={campaign.id} campaign={campaign} />
+                        <CampaignCard key={campaign.id} campaign={campaign} onViewCampaign={onViewCampaign} />
                     ))}
                 </div>
             )}

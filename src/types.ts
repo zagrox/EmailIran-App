@@ -1,11 +1,12 @@
 
+
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
 export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile' | 'login';
 
 export interface CampaignState {
   audience: {
     segmentId: string | null;
-    categoryId: string | null;
+    categoryIds: string[];
     filters: string[];
     healthScore: number;
   };
@@ -100,6 +101,15 @@ export interface Profile {
     user_created: string;
 }
 
+export interface RelatedAudience {
+    // FIX: The type for `audiences_id` now correctly allows either a simple number (for creating a link to an existing audience) or a full object (for reading nested audience data). This resolves the root cause of the permission error.
+    audiences_id: number | {
+        id: number;
+        audience_title: string;
+        audience_contacts: number;
+    }
+}
+
 export interface EmailMarketingCampaign {
     id: number;
     status: string;
@@ -108,4 +118,9 @@ export interface EmailMarketingCampaign {
     campaign_color: string | null;
     campaign_link: string | null;
     campaign_sender: string | null;
+    campaign_status: string;
+    campaign_ab: boolean;
+    campaign_subject_b: string | null;
+    campaign_content: string;
+    campaign_audiences?: RelatedAudience[];
 }
