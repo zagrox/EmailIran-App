@@ -1,10 +1,24 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { fetchCampaigns } from '../services/campaignService';
-import type { EmailMarketingCampaign } from '../types';
+import type { EmailMarketingCampaign, CampaignStatus } from '../types';
 import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon } from './IconComponents';
+import { CAMPAIGN_STATUS_INFO } from '../constants';
+
+const StatusBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
+    const statusInfo = CAMPAIGN_STATUS_INFO[status] || CAMPAIGN_STATUS_INFO.scheduled;
+    const Icon = statusInfo.icon;
+    const animationClass = status === 'sending' ? 'animate-pulse' : '';
+    return (
+        <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.colorClasses} ${animationClass}`}>
+            <Icon className="w-4 h-4" />
+            <span>{statusInfo.label}</span>
+        </div>
+    );
+};
 
 interface CampaignCardProps {
     campaign: EmailMarketingCampaign;
@@ -32,8 +46,9 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
             <div className="p-5 pr-6 w-full">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
                     <div className="flex-grow">
-                         <div className="flex items-center gap-3">
+                         <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
+                            <StatusBadge status={campaign.campaign_status} />
                             {campaign.campaign_ab && (
                                 <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-mint/20 text-slate-800 dark:text-white border border-brand-mint">
                                     A/B

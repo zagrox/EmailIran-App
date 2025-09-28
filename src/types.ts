@@ -3,6 +3,8 @@
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
 export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile' | 'login';
 
+export type CampaignStatus = 'editing' | 'scheduled' | 'payment' | 'processing' | 'sending' | 'completed';
+
 export interface CampaignState {
   audience: {
     segmentId: string | null;
@@ -118,7 +120,7 @@ export interface EmailMarketingCampaign {
     campaign_color: string | null;
     campaign_link: string | null;
     campaign_sender: string | null;
-    campaign_status: string;
+    campaign_status: CampaignStatus;
     campaign_ab: boolean;
     campaign_subject_b: string | null;
     campaign_content: string;

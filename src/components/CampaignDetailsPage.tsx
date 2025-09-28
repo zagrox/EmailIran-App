@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchCampaignById } from '../services/campaignService';
-import type { EmailMarketingCampaign } from '../types';
+import type { EmailMarketingCampaign, CampaignStatus } from '../types';
+import { CAMPAIGN_STATUS_INFO } from '../constants';
 // FIX: Imported ClockIcon to resolve an undefined component error.
 import { LoadingSpinner, MailIcon, UserIcon, UsersIcon, CalendarDaysIcon, CheckCircleIcon, XCircleIcon, LinkIcon, SparklesIcon, ClockIcon } from './IconComponents';
+import CampaignStatusStepper from './CampaignStatusStepper';
 
 interface Props {
     campaignId: number;
@@ -21,6 +23,18 @@ const DetailItem: React.FC<{ icon: React.ReactNode; label: string; children: Rea
         </div>
     </div>
 );
+
+const StatusBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
+    const statusInfo = CAMPAIGN_STATUS_INFO[status] || CAMPAIGN_STATUS_INFO.scheduled;
+    const Icon = statusInfo.icon;
+    const animationClass = status === 'sending' ? 'animate-pulse' : '';
+    return (
+        <div className={`inline-flex items-center gap-2 text-base font-semibold px-3 py-1 rounded-full ${statusInfo.colorClasses} ${animationClass}`}>
+            <Icon className="w-5 h-5" />
+            <span>{statusInfo.label}</span>
+        </div>
+    );
+};
 
 const CampaignDetailsPage: React.FC<Props> = ({ campaignId, onBack }) => {
     const [campaign, setCampaign] = useState<EmailMarketingCampaign | null>(null);
@@ -103,6 +117,10 @@ const CampaignDetailsPage: React.FC<Props> = ({ campaignId, onBack }) => {
                 </button>
             </div>
 
+            <div className="mb-12">
+                <CampaignStatusStepper currentStatus={campaign.campaign_status} />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Panel: Email Preview */}
                 <div className="lg:col-span-2 card">
@@ -145,8 +163,8 @@ const CampaignDetailsPage: React.FC<Props> = ({ campaignId, onBack }) => {
                                 </ul>
                             </DetailItem>
                         )}
-                        <DetailItem icon={campaign.campaign_status === 'sent' ? <CheckCircleIcon /> : <ClockIcon />} label="وضعیت">
-                            <span className="font-semibold capitalize">{campaign.campaign_status}</span>
+                        <DetailItem icon={<ClockIcon />} label="وضعیت">
+                           <StatusBadge status={campaign.campaign_status} />
                         </DetailItem>
                         <DetailItem icon={<SparklesIcon />} label="آزمون A/B">
                             {campaign.campaign_ab ? (

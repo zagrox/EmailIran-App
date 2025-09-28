@@ -1,4 +1,7 @@
-import type { Template, Segment, Report } from './types';
+// FIX: Imported React to resolve the 'Cannot find namespace React' error caused by using React.FC.
+import React from 'react';
+import type { Template, Segment, Report, CampaignStatus } from './types';
+import { ClockIcon, CheckCircleIcon, CreditCardIcon, PencilIcon, PaperAirplaneIcon, EllipsisHorizontalIcon } from './components/IconComponents';
 
 export const STEPS = [
   {
@@ -27,6 +30,17 @@ export const STEPS = [
     description: 'پیگیری کنید. یاد بگیرید. رشد کنید.',
   },
 ];
+
+export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; colorClasses: string; icon: React.FC<any> }> = {
+  editing: { label: 'ویرایش کمپین', colorClasses: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300', icon: PencilIcon },
+  scheduled: { label: 'زمانبندی شده', colorClasses: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300', icon: ClockIcon },
+  payment: { label: 'ثبت و پرداخت', colorClasses: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300', icon: CreditCardIcon },
+  processing: { label: 'در صف ارسال', colorClasses: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300', icon: EllipsisHorizontalIcon },
+  sending: { label: 'در حال ارسال', colorClasses: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300', icon: PaperAirplaneIcon },
+  completed: { label: 'تکمیل ارسال‌ها', colorClasses: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', icon: CheckCircleIcon },
+};
+
+export const CAMPAIGN_STATUS_ORDER: CampaignStatus[] = ['editing', 'scheduled', 'payment', 'processing', 'sending', 'completed'];
 
 export const MOCK_SEGMENTS: Segment[] = [
     { id: 'seg1', name: 'مشترکین فعال', subscribers: 12540, health: 'Excellent' },
