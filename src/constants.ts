@@ -83,8 +83,8 @@ export const TEMPLATES: Template[] = [
 export const MOCK_REPORTS: Report[] = [
     {
         id: 'rep1',
-        name: 'کمپین معرفی محصول بهار ۱۴۰۳',
-        sentDate: '2024-04-15T10:00:00Z',
+        name: 'نمونه گزارش کمپین',
+        sentDate: '2025-04-15T10:00:00Z',
         stats: { openRate: 32.5, clickRate: 5.8, conversions: 210 },
         chartData: [
             { name: '۱ ساعت', opens: 1500, clicks: 200 }, { name: '۳ ساعت', opens: 3100, clicks: 510 },
@@ -92,26 +92,4 @@ export const MOCK_REPORTS: Report[] = [
             { name: '۲۴ ساعت', opens: 4350, clicks: 810 }, { name: '۴۸ ساعت', opens: 4500, clicks: 830 },
         ]
     },
-    {
-        id: 'rep2',
-        name: 'خبرنامه هفتگی - اردیبهشت هفته ۲',
-        sentDate: '2024-05-08T09:00:00Z',
-        stats: { openRate: 25.1, clickRate: 3.2, conversions: 95 },
-        chartData: [
-            { name: '۱ ساعت', opens: 1100, clicks: 120 }, { name: '۳ ساعت', opens: 2200, clicks: 350 },
-            { name: '۶ ساعت', opens: 2600, clicks: 410 }, { name: '۱۲ ساعت', opens: 2900, clicks: 450 },
-            { name: '۲۴ ساعت', opens: 3200, clicks: 490 }, { name: '۴۸ ساعت', opens: 3350, clicks: 510 },
-        ]
-    },
-    {
-        id: 'rep3',
-        name: 'فروش ویژه عید فطر',
-        sentDate: '2024-04-10T14:30:00Z',
-        stats: { openRate: 41.3, clickRate: 9.7, conversions: 542 },
-        chartData: [
-            { name: '۱ ساعت', opens: 2100, clicks: 450 }, { name: '۳ ساعت', opens: 4500, clicks: 1100 },
-            { name: '۶ ساعت', opens: 5100, clicks: 1300 }, { name: '۱۲ ساعت', opens: 5500, clicks: 1450 },
-            { name: '۲۴ ساعت', opens: 5900, clicks: 1550 }, { name: '۴۸ ساعت', opens: 6100, clicks: 1600 },
-        ]
-    }
 ];
