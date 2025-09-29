@@ -21,12 +21,12 @@ const chartData = [
 ];
 
 const features = [
-    { name: 'کمپین هوشمند', icon: <SparklesIcon className="w-8 h-8"/> },
-    { name: 'ثبت سفارش', icon: <ShoppingCartIcon className="w-8 h-8"/> },
-    { name: 'انتشار آنلاین', icon: <ClipboardDocumentListIcon className="w-8 h-8"/> },
-    { name: 'طراحی قالب', icon: <PaintBrushIcon className="w-8 h-8"/> },
-    { name: 'گزارش‌ها', icon: <ChartBarIcon className="w-8 h-8"/> },
-    { name: 'تقویم مناسبت‌ها', icon: <CalendarDaysIcon className="w-8 h-8"/> },
+    { name: 'ساخت کمپین هوشمند', icon: <SparklesIcon className="w-8 h-8"/> },
+    { name: 'ثبت و مدیریت سفارش', icon: <ShoppingCartIcon className="w-8 h-8"/> },
+    { name: 'انتشار آنلاین کمپین', icon: <ClipboardDocumentListIcon className="w-8 h-8"/> },
+    { name: 'طراحی با قالب‌ساز', icon: <PaintBrushIcon className="w-8 h-8"/> },
+    { name: 'کمپین‌ها و گزارشات', icon: <ChartBarIcon className="w-8 h-8"/> },
+    { name: 'رویدادهای رسمی', icon: <CalendarDaysIcon className="w-8 h-8"/> },
 ];
 
 const FeatureCard: React.FC<{ name: string; icon: React.ReactNode }> = ({ name, icon }) => (
@@ -90,10 +90,10 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
 
         return (
             <button onClick={navigateToLogin} className="flex items-center gap-4 text-right">
+                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">ثبت نام رایگان</h3>
                 <div className="text-brand-mint">
                     <SignupArrowIcon />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white">ثبت نام رایگان</h3>
             </button>
         );
     };
@@ -146,9 +146,9 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                 </div>
 
                 <div className="bg-white dark:bg-slate-900/70 p-6 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 h-80">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">رشد مشترکین</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">رشد مشترکین ایمیل ایران</h3>
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: -10 }}>
+                        <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 30 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke={gridStrokeColor} vertical={false}/>
                             <XAxis dataKey="name" stroke={axisStrokeColor} tickLine={false} axisLine={false} dy={10} reversed={true} />
                             <YAxis stroke={axisStrokeColor} tickLine={false} axisLine={false} orientation="right" />

@@ -174,6 +174,6 @@ export const WaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 export const SignupArrowIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
         <circle cx="17" cy="17" r="17" fill="currentColor"/>
-        <path d="M15.0833 21.3333L19.4167 17L15.0833 12.6667" stroke="#111827" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M19.4167 21.3333L15.0833 17L19.4167 12.6667" stroke="#111827" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );

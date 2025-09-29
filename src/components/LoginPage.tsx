@@ -1,16 +1,18 @@
+
+
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { LoadingSpinner, UserIcon, MailIcon } from './IconComponents';
 
 const LockIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
   </svg>
 );
 
 const GoogleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-    <svg xmlns="http://www.w.org/2000/svg" viewBox="0 0 48 48" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" {...props}>
         <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
         <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
         <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.657-3.444-11.297-8.161l-6.571,4.819C9.656,39.663,16.318,44,24,44z"/>
@@ -33,8 +35,11 @@ const MarketingIllustration = () => (
     </svg>
 );
 
+interface LoginPageProps {
+    logoUrl: string | null;
+}
 
-const LoginPage: React.FC = () => {
+const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
     const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -118,21 +123,8 @@ const LoginPage: React.FC = () => {
             <div className="animate-fade-in">
                 <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{isSignup ? 'ایجاد حساب کاربری' : 'خوش آمدید!'}</h2>
                 <p className="mt-2 text-base text-slate-500 dark:text-slate-400">{isSignup ? 'برای شروع ماجراجویی خود ثبت نام کنید.' : 'برای ادامه وارد حساب خود شوید.'}</p>
-                
-                <div className="mt-8">
-                    <button className="w-full inline-flex items-center justify-center gap-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
-                       <GoogleIcon className="w-6 h-6"/>
-                       <span className="font-semibold text-slate-700 dark:text-slate-300">ادامه با گوگل</span>
-                    </button>
-                </div>
 
-                <div className="my-6 flex items-center">
-                    <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
-                    <span className="mx-4 flex-shrink text-sm text-slate-500 dark:text-slate-400">یا ادامه با ایمیل</span>
-                    <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                     {isSignup && (
                         <div className="grid grid-cols-2 gap-4">
                              <div className="relative">
@@ -164,13 +156,19 @@ const LoginPage: React.FC = () => {
                         {isLoading ? <LoadingSpinner className="w-6 h-6"/> : (isSignup ? 'ایجاد حساب' : 'ورود')}
                     </button>
                 </form>
-                
-                <p className="mt-8 text-center text-base">
-                    {isSignup ? 'قبلا حساب کاربری دارید؟' : 'حساب کاربری ندارید؟'}
-                    <button onClick={() => switchMode(isSignup ? 'login' : 'signup')} className="font-semibold text-brand-purple hover:underline mr-2">
-                        {isSignup ? 'وارد شوید' : 'ثبت نام کنید'}
+
+                <div className="my-6 flex items-center">
+                    <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
+                    <span className="mx-4 flex-shrink text-sm text-slate-500 dark:text-slate-400">یا</span>
+                    <div className="flex-grow border-t border-slate-300 dark:border-slate-600"></div>
+                </div>
+
+                <div>
+                    <button className="w-full inline-flex items-center justify-center gap-3 py-2.5 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors">
+                       <GoogleIcon className="w-6 h-6"/>
+                       <span className="font-semibold text-slate-700 dark:text-slate-300">ادامه با گوگل</span>
                     </button>
-                </p>
+                </div>
             </div>
         );
     };
@@ -193,13 +191,40 @@ const LoginPage: React.FC = () => {
                 </div>
 
                 {/* Right Form Panel */}
-                <div className="p-8 sm:p-12">
-                    {error && (
-                        <div className="p-3 mb-6 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg text-sm text-center animate-fade-in">
-                            {error}
+                <div className="p-8 sm:p-12 flex flex-col">
+                    <div className="mb-8">
+                        <button onClick={() => navigate('dashboard')} className="inline-block focus:outline-none focus:ring-2 focus:ring-brand-purple rounded-lg" aria-label="Back to Homepage">
+                            {logoUrl ? (
+                                <img src={logoUrl} alt="ایمیل ایران" className="h-14 object-contain" />
+                            ) : (
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                                   ایمیل ایران
+                                </h1>
+                            )}
+                        </button>
+                    </div>
+
+                    <div className="flex-grow">
+                        {error && (
+                            <div className="p-3 mb-6 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg text-sm text-center animate-fade-in">
+                                {error}
+                            </div>
+                        )}
+                        {renderFormContent()}
+                    </div>
+                    
+                    {mode !== 'reset' && (
+                        <div className="mt-8">
+                             <div className="text-center card !p-4 !bg-slate-100 dark:!bg-slate-800/80">
+                                <p className="text-base text-slate-600 dark:text-slate-300">
+                                    {mode === 'signup' ? 'قبلا حساب کاربری دارید؟' : 'حساب کاربری ندارید؟'}
+                                    <button onClick={() => switchMode(mode === 'signup' ? 'login' : 'signup')} className="font-semibold text-brand-purple hover:underline mr-2">
+                                        {mode === 'signup' ? 'وارد شوید' : 'ثبت نام کنید'}
+                                    </button>
+                                </p>
+                            </div>
                         </div>
                     )}
-                    {renderFormContent()}
                 </div>
             </div>
         </div>

@@ -466,7 +466,7 @@ const App: React.FC = () => {
                         <UserProfilePage theme={theme} setTheme={setTheme} onNavigate={handleNavigation} />
                     );
                 case 'login':
-                    return <LoginPage />;
+                    return <LoginPage logoUrl={logoUrl} />;
             }
         };
 

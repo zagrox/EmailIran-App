@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Report } from '../../types';
@@ -77,7 +76,7 @@ const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onStartNewCampai
 
             <div className="card h-96">
                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 5, right: -10, left: 20, bottom: 5 }}>
+                    <LineChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke={gridStrokeColor} />
                         <XAxis dataKey="name" stroke={axisStrokeColor} reversed={true} />
                         <YAxis stroke={axisStrokeColor} orientation="right" />
