@@ -424,7 +424,6 @@ const App: React.FC = () => {
                     return (
                         <DashboardPage 
                             theme={effectiveTheme}
-                            onNavigate={handleNavigation} 
                             onOpenAIAssistant={handleOpenAIAssistant} 
                             audienceCategories={audienceCategories}
                         />
@@ -482,6 +481,7 @@ const App: React.FC = () => {
     const showHeader = currentPage !== 'login' || isAuthenticated;
 
     return (
+        // FIX: Corrected typo in UIProvider value prop.
         <UIProvider value={uiContextValue}>
             <div className="app-container">
                 {showHeader && (

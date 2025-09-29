@@ -146,3 +146,34 @@ export const EllipsisHorizontalIcon: React.FC<React.SVGProps<SVGSVGElement>> = (
       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
     </svg>
 );
+
+export const ShoppingCartIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c.51 0 .962-.328 1.093-.822l-1.12-4.482c-.11-.44-.528-.748-1.002-.748H5.25M7.5 14.25L5.106 5.162A1.125 1.125 0 004.038 4.5H3.75" />
+  </svg>
+);
+
+export const ClipboardDocumentListIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+    </svg>
+);
+
+export const PaintBrushIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.528-1.032.388-2.357-.44-3.185A4.5 4.5 0 005.78 5.78a4.5 4.5 0 00-2.318 6.58c.828.828 2.153.968 3.185.44l3.03-2.496m-3.03 2.496l-3.356 2.237a5.25 5.25 0 006.402 7.423l2.237-3.356m-2.237-3.356a5.25 5.25 0 00-7.423-6.402" />
+    </svg>
+);
+
+export const WaveIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg width="120" height="60" viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path d="M0 50C20 50 30 20 50 20C70 20 80 40 120 40" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+    </svg>
+);
+
+export const SignupArrowIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <circle cx="17" cy="17" r="17" fill="currentColor"/>
+        <path d="M15.0833 21.3333L19.4167 17L15.0833 12.6667" stroke="#111827" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
