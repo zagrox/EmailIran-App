@@ -1,4 +1,5 @@
 
+
 import type { EmailMarketingCampaign } from '../types';
 
 const API_BASE_URL = 'https://crm.ir48.com';
@@ -50,6 +51,25 @@ export const createCampaign = async (campaignData: Partial<CreateCampaignPayload
     if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.errors?.[0]?.message || 'Failed to create campaign.');
+    }
+
+    const { data } = await response.json();
+    return data;
+};
+
+export const updateCampaign = async (id: number, campaignData: Partial<EmailMarketingCampaign>, accessToken: string): Promise<EmailMarketingCampaign> => {
+    const response = await fetch(`${API_BASE_URL}/items/emailmarketing/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(campaignData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errors?.[0]?.message || 'Failed to update campaign.');
     }
 
     const { data } = await response.json();

@@ -18,7 +18,7 @@ import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
 import CampaignsPage from './components/CampaignsPage';
-import CampaignDetailsPage from './components/CampaignDetailsPage';
+import CampaignWorkflowPage from './components/CampaignWorkflowPage';
 import LoginPage from './components/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
@@ -209,7 +209,7 @@ const App: React.FC = () => {
             campaign_ab: campaignData.message.abTest.enabled,
             campaign_subject_b: campaignData.message.abTest.subjectB,
             campaign_date: `${campaignData.schedule.sendDate}T${campaignData.schedule.sendTime}:00`,
-            campaign_status: 'scheduled',
+            campaign_status: 'editing',
             campaign_sender: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Campaign Wizard',
             status: 'published',
             // FIX: The payload now sends only the audience ID. This tells the API to link to an existing audience rather than trying to update it, resolving the permission error and removing the need for users to have update access on the audiences collection.
@@ -220,11 +220,11 @@ const App: React.FC = () => {
 
         try {
             await createCampaign(campaignPayload, accessToken);
-            addNotification('کمپین با موفقیت زمان‌بندی شد!', 'success');
-            setViewedReport(null);
-            setCurrentStep(5);
+            addNotification('کمپین با موفقیت ایجاد شد!', 'success');
+            setIsWizardActive(false);
+            handleNavigation('campaigns');
         } catch (error: any) {
-            addNotification(error.message || 'خطا در ارسال کمپین.', 'error');
+            addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
         } finally {
             setIsLaunching(false);
         }
@@ -326,6 +326,8 @@ const App: React.FC = () => {
     
     const handleViewCampaign = (id: number) => {
         setViewedCampaignId(id);
+        setCurrentPage('campaigns');
+        setIsWizardActive(false);
     };
     
     const handleBackToCampaigns = () => {
@@ -408,7 +410,7 @@ const App: React.FC = () => {
                                 disabled={isLaunching}
                                 className="btn btn-launch"
                             >
-                                {isLaunching ? <LoadingSpinner className="w-6 h-6" /> : (isAuthenticated ? 'پرداخت و ارسال کمپین' : 'ورود و ارسال کمپین')}
+                                {isLaunching ? <LoadingSpinner className="w-6 h-6" /> : (isAuthenticated ? 'ذخیره و ادامه' : 'ورود و ذخیره')}
                             </button>
                         )}
                     </div>
@@ -434,9 +436,11 @@ const App: React.FC = () => {
                     );
                 case 'campaigns':
                     return viewedCampaignId ? (
-                        <CampaignDetailsPage 
+                        <CampaignWorkflowPage 
                             campaignId={viewedCampaignId} 
                             onBack={handleBackToCampaigns}
+                            audienceCategories={audienceCategories}
+                            theme={effectiveTheme}
                         />
                     ) : (
                         <CampaignsPage 
