@@ -5,6 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import type { AudienceCategory } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
+import TodayViewCard from './TodayViewCard';
 
 interface DashboardProps {
     theme: 'light' | 'dark';
@@ -145,13 +146,15 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                     </div>
                 </div>
 
+                <TodayViewCard onNavigateToCalendar={() => navigate('calendar')} />
+
                 <div className="bg-white dark:bg-slate-900/70 p-6 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 h-80">
                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">رشد مشترکین ایمیل ایران</h3>
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 30 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke={gridStrokeColor} vertical={false}/>
                             <XAxis dataKey="name" stroke={axisStrokeColor} tickLine={false} axisLine={false} dy={10} reversed={true} />
-                            <YAxis stroke={axisStrokeColor} tickLine={false} axisLine={false} orientation="right" />
+                            <YAxis stroke={axisStrokeColor} tickLine={false} axisLine={false} orientation="left" />
                             <Tooltip contentStyle={tooltipStyle} />
                             <Line type="monotone" dataKey="subscribers" stroke="#6EE7B7" strokeWidth={3} name="مشترکین" dot={false} />
                         </LineChart>

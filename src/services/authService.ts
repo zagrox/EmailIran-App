@@ -1,4 +1,4 @@
-import type { DirectusUser, Profile } from '../types';
+import type { DirectusUser, Profile, EmailMarketingCampaign } from '../types';
 
 const API_BASE_URL = 'https://crm.ir48.com';
 
@@ -192,6 +192,27 @@ export const requestPasswordReset = async (email: string): Promise<void> => {
         throw new Error('There was an issue processing your request. Please try again.');
     }
 };
+
+export const refreshAccessToken = async (refreshToken: string): Promise<LoginResponse> => {
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            refresh_token: refreshToken,
+        }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.errors?.[0]?.message || 'Session expired. Please log in again.');
+    }
+
+    const { data } = await response.json();
+    return data;
+};
+
 
 export const logout = async (refreshToken: string) => {
     try {
