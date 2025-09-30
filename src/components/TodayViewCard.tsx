@@ -53,8 +53,6 @@ const TodayViewCard: React.FC<TodayViewCardProps> = ({ onNavigateToCalendar }) =
                 <p className="font-normal text-md text-slate-800 dark:text-white text-center">
                     {formattedGregorianDate}
                 </p>
-
-
             </div>
         </button>
     );

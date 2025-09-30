@@ -5,17 +5,25 @@ import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { fetchCampaigns } from '../services/campaignService';
 import type { EmailMarketingCampaign, CampaignStatus } from '../types';
-import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon } from './IconComponents';
-import { CAMPAIGN_STATUS_INFO } from '../constants';
+import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon, PencilIcon, ClockIcon, CreditCardIcon, EllipsisHorizontalIcon, PaperAirplaneIcon, ChartBarIcon } from './IconComponents';
 
-const StatusBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
-    const statusInfo = CAMPAIGN_STATUS_INFO[status] || CAMPAIGN_STATUS_INFO.scheduled;
-    const Icon = statusInfo.icon;
-    const animationClass = status === 'sending' ? 'animate-pulse' : '';
+const ActionBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
+    const statusInfoMap = {
+        editing: { label: 'ویرایش', icon: PencilIcon, classes: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' },
+        scheduled: { label: 'زمانبندی شده', icon: ClockIcon, classes: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300' },
+        payment: { label: 'پرداخت', icon: CreditCardIcon, classes: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' },
+        processing: { label: 'در حال پردازش', icon: EllipsisHorizontalIcon, classes: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' },
+        sending: { label: 'در حال ارسال', icon: PaperAirplaneIcon, classes: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300' },
+        completed: { label: 'مشاهده گزارش', icon: ChartBarIcon, classes: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
+    };
+
+    const info = statusInfoMap[status] || statusInfoMap.scheduled;
+    const Icon = info.icon;
+
     return (
-        <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${statusInfo.colorClasses} ${animationClass}`}>
+        <div className={`inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full ${info.classes}`}>
             <Icon className="w-4 h-4" />
-            <span>{statusInfo.label}</span>
+            <span>{info.label}</span>
         </div>
     );
 };
@@ -48,7 +56,6 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
                     <div className="flex-grow">
                          <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
-                            <StatusBadge status={campaign.campaign_status} />
                             {campaign.campaign_ab && (
                                 <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-mint/20 text-slate-800 dark:text-white border border-brand-mint">
                                     A/B
@@ -69,19 +76,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
                         </div>
                     </div>
                     <div className="flex-shrink-0 z-10">
-                        {campaign.campaign_link ? (
-                             <button
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Prevent card click
-                                    window.open(campaign.campaign_link, '_blank', 'noopener,noreferrer');
-                                }}
-                                className="btn btn-secondary !px-4 !py-1.5"
-                            >
-                                مشاهده
-                            </button>
-                        ) : (
-                            <span className="text-sm px-3 py-1.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">ارسال شده</span>
-                        )}
+                        <ActionBadge status={campaign.campaign_status} />
                     </div>
                 </div>
             </div>
