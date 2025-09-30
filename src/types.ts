@@ -1,7 +1,7 @@
 
 
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
-export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'reports' | 'calendar' | 'profile' | 'login';
+export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'calendar' | 'profile' | 'login';
 
 export type CampaignStatus = 'editing' | 'scheduled' | 'payment' | 'processing' | 'sending' | 'completed';
 

@@ -1,18 +1,18 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { fetchCampaigns } from '../services/campaignService';
 import type { EmailMarketingCampaign, CampaignStatus } from '../types';
 import { LoadingSpinner, UserIcon, CalendarDaysIcon, SparklesIcon, MailIcon, PencilIcon, ClockIcon, CreditCardIcon, EllipsisHorizontalIcon, PaperAirplaneIcon, ChartBarIcon } from './IconComponents';
+import { CAMPAIGN_STATUS_INFO, CAMPAIGN_STATUS_ORDER } from '../constants';
+import PageHeader from './PageHeader';
 
 const ActionBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
     const statusInfoMap = {
-        editing: { label: 'ویرایش', icon: PencilIcon, classes: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' },
+        editing: { label: 'ویرایش کمپین', icon: PencilIcon, classes: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' },
         scheduled: { label: 'زمانبندی شده', icon: ClockIcon, classes: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300' },
-        payment: { label: 'پرداخت', icon: CreditCardIcon, classes: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' },
-        processing: { label: 'در حال پردازش', icon: EllipsisHorizontalIcon, classes: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' },
+        payment: { label: 'ثبت و پرداخت', icon: CreditCardIcon, classes: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' },
+        processing: { label: 'در صف ارسال', icon: EllipsisHorizontalIcon, classes: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' },
         sending: { label: 'در حال ارسال', icon: PaperAirplaneIcon, classes: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300' },
         completed: { label: 'مشاهده گزارش', icon: ChartBarIcon, classes: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
     };
@@ -44,16 +44,20 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
         hour: '2-digit',
         minute: '2-digit'
     });
+    const statusInfo = CAMPAIGN_STATUS_INFO[campaign.campaign_status];
 
     return (
         <button 
             onClick={() => onViewCampaign(campaign.id)}
             className="card-report !p-0 overflow-hidden relative text-right w-full transition-all duration-300 hover:shadow-xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple cursor-pointer"
         >
-            <div className={`w-2 h-full absolute right-0 top-0`} style={{ backgroundColor: campaign.campaign_color || '#6D28D9' }}></div>
+            <div 
+                className={`w-2 h-full absolute right-0 top-0`} 
+                style={{ backgroundColor: campaign.campaign_color || (statusInfo ? statusInfo.color : '#6D28D9') }}
+            ></div>
             <div className="p-5 pr-6 w-full">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full gap-4">
-                    <div className="flex-grow">
+                <div className="flex flex-col sm:flex-row items-center w-full gap-4">
+                    <div className="flex-grow text-right w-full">
                          <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
                             {campaign.campaign_ab && (
@@ -96,6 +100,7 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onVie
     const [campaigns, setCampaigns] = useState<EmailMarketingCampaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedStatus, setSelectedStatus] = useState<CampaignStatus | 'all'>('all');
 
     useEffect(() => {
         if (isAuthenticated && accessToken) {
@@ -118,6 +123,11 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onVie
         }
     }, [isAuthenticated, accessToken]);
 
+    const filteredCampaigns = campaigns.filter(campaign => {
+        if (selectedStatus === 'all') return true;
+        return campaign.campaign_status === selectedStatus;
+    });
+
     if (!isAuthenticated && !isLoading) {
          return (
             <div className="text-center py-20 animate-fade-in">
@@ -135,19 +145,35 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onVie
 
     return (
         <div>
-            <div className="flex flex-col md:flex-row justify-between md:items-center mb-10 gap-4">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight sm:text-4xl">کمپین‌های شما</h1>
-                    <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">
-                        کمپین‌های ایمیل برنامه‌ریزی شده و ارسال شده خود را مدیریت کنید.
-                    </p>
-                </div>
+            <PageHeader
+                title="کمپین‌های شما"
+                description="کمپین‌های ایمیل برنامه‌ریزی شده و ارسال شده خود را مدیریت کنید."
+            >
                 <button onClick={onStartNewCampaign} className="btn btn-ai flex-shrink-0">
                     <SparklesIcon className="w-5 h-5"/>
                     <span>ساخت کمپین جدید</span>
                 </button>
-            </div>
+            </PageHeader>
             
+            <div className="flex flex-wrap items-center gap-3 mb-8">
+                <h3 className="text-base font-semibold text-slate-600 dark:text-slate-400 mr-2">فیلتر بر اساس وضعیت:</h3>
+                <button
+                    onClick={() => setSelectedStatus('all')}
+                    className={`btn-filter ${selectedStatus === 'all' ? 'btn-filter-selected' : 'btn-filter-unselected'}`}
+                >
+                    همه
+                </button>
+                {CAMPAIGN_STATUS_ORDER.map(status => (
+                    <button
+                        key={status}
+                        onClick={() => setSelectedStatus(status)}
+                        className={`btn-filter ${selectedStatus === status ? 'btn-filter-selected' : 'btn-filter-unselected'}`}
+                    >
+                        {CAMPAIGN_STATUS_INFO[status].label}
+                    </button>
+                ))}
+            </div>
+
             {isLoading && (
                 <div className="flex justify-center items-center py-20">
                     <LoadingSpinner className="w-12 h-12 text-brand-purple" />
@@ -168,11 +194,20 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onVie
                 </div>
             )}
             {!isLoading && !error && campaigns.length > 0 && (
-                <div className="space-y-6">
-                    {campaigns.sort((a,b) => new Date(b.campaign_date).getTime() - new Date(a.campaign_date).getTime()).map(campaign => (
-                        <CampaignCard key={campaign.id} campaign={campaign} onViewCampaign={onViewCampaign} />
-                    ))}
-                </div>
+                <>
+                    {filteredCampaigns.length > 0 ? (
+                        <div className="space-y-6">
+                            {filteredCampaigns.sort((a, b) => new Date(b.campaign_date).getTime() - new Date(a.campaign_date).getTime()).map(campaign => (
+                                <CampaignCard key={campaign.id} campaign={campaign} onViewCampaign={onViewCampaign} />
+                            ))}
+                        </div>
+                    ) : (
+                         <div className="text-center py-20 card">
+                            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">هیچ کمپینی با این وضعیت یافت نشد.</h3>
+                            <p className="mt-2 text-base text-slate-500 dark:text-slate-400">یک فیلتر دیگر را امتحان کنید.</p>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

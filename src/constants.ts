@@ -31,13 +31,13 @@ export const STEPS = [
   },
 ];
 
-export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; colorClasses: string; icon: React.FC<any> }> = {
-  editing: { label: 'ویرایش کمپین', colorClasses: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300', icon: PencilIcon },
-  scheduled: { label: 'زمانبندی شده', colorClasses: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300', icon: ClockIcon },
-  payment: { label: 'ثبت و پرداخت', colorClasses: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300', icon: CreditCardIcon },
-  processing: { label: 'در صف ارسال', colorClasses: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300', icon: EllipsisHorizontalIcon },
-  sending: { label: 'در حال ارسال', colorClasses: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300', icon: PaperAirplaneIcon },
-  completed: { label: 'تکمیل ارسال‌ها', colorClasses: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', icon: CheckCircleIcon },
+export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; colorClasses: string; icon: React.FC<any>; color: string; }> = {
+  editing: { label: 'ویرایش کمپین', colorClasses: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300', icon: PencilIcon, color: '#64748b' },
+  scheduled: { label: 'زمانبندی شده', colorClasses: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300', icon: ClockIcon, color: '#0ea5e9' },
+  payment: { label: 'ثبت و پرداخت', colorClasses: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300', icon: CreditCardIcon, color: '#f59e0b' },
+  processing: { label: 'در صف ارسال', colorClasses: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300', icon: EllipsisHorizontalIcon, color: '#f97316' },
+  sending: { label: 'در حال ارسال', colorClasses: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300', icon: PaperAirplaneIcon, color: '#8b5cf6' },
+  completed: { label: 'تکمیل ارسال‌ها', colorClasses: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', icon: CheckCircleIcon, color: '#22c55e' },
 };
 
 export const CAMPAIGN_STATUS_ORDER: CampaignStatus[] = ['editing', 'scheduled', 'payment', 'processing', 'sending', 'completed'];
@@ -78,18 +78,4 @@ export const TEMPLATES: Template[] = [
     icon: 'tag',
     iconBgColor: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400',
   },
-];
-
-export const MOCK_REPORTS: Report[] = [
-    {
-        id: 'rep1',
-        name: 'نمونه گزارش کمپین',
-        sentDate: '2025-04-15T10:00:00Z',
-        stats: { openRate: 32.5, clickRate: 5.8, conversions: 210 },
-        chartData: [
-            { name: '۱ ساعت', opens: 1500, clicks: 200 }, { name: '۳ ساعت', opens: 3100, clicks: 510 },
-            { name: '۶ ساعت', opens: 3500, clicks: 680 }, { name: '۱۲ ساعت', opens: 3900, clicks: 750 },
-            { name: '۲۴ ساعت', opens: 4350, clicks: 810 }, { name: '۴۸ ساعت', opens: 4500, clicks: 830 },
-        ]
-    },
 ];

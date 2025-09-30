@@ -48,9 +48,10 @@ const CampaignStatusStepper: React.FC<Props> = ({ currentStatus }) => {
                   <div
                     className={`relative flex h-8 w-8 items-center justify-center rounded-full z-10
                       ${isCompleted ? 'bg-brand-purple' : ''}
-                      ${isCurrent ? 'border-2 border-brand-purple bg-slate-50 dark:bg-slate-800' : ''}
+                      ${isCurrent ? 'border-2 bg-slate-50 dark:bg-slate-800' : ''}
                       ${isUpcoming ? 'border-2 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800' : ''}
                     `}
+                    style={isCurrent ? { borderColor: statusInfo.color } : {}}
                     aria-current={isCurrent ? 'step' : undefined}
                   >
                     {isCompleted && (
@@ -64,9 +65,16 @@ const CampaignStatusStepper: React.FC<Props> = ({ currentStatus }) => {
                     )}
                     {isCurrent && (
                       <>
-                        <span className="h-2.5 w-2.5 rounded-full bg-brand-purple" aria-hidden="true" />
+                        <span 
+                          className="h-2.5 w-2.5 rounded-full" 
+                          style={{ backgroundColor: statusInfo.color }}
+                          aria-hidden="true" 
+                        />
                         {status === 'sending' && (
-                          <span className="absolute h-full w-full animate-ping rounded-full bg-brand-purple opacity-75" />
+                          <span 
+                            className="absolute h-full w-full animate-ping rounded-full opacity-75" 
+                            style={{ backgroundColor: statusInfo.color }}
+                          />
                         )}
                       </>
                     )}

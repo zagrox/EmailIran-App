@@ -1,7 +1,7 @@
 
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { STEPS, MOCK_REPORTS } from './constants';
+import { STEPS } from './constants';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Stepper from './components/Stepper';
@@ -13,7 +13,6 @@ import Step4Review from './components/steps/Step4_Review';
 import Step5Analytics from './components/steps/Step5_Analytics';
 import AIAssistantModal from './components/AIAssistantModal';
 import AudiencesPage from './components/AudiencesPage';
-import ReportsPage from './components/ReportsPage';
 import DashboardPage from './components/DashboardPage';
 import CalendarPage from './components/CalendarPage';
 import UserProfilePage from './components/UserProfilePage';
@@ -97,13 +96,12 @@ const App: React.FC = () => {
     const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'system');
     const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
-    const [viewedReport, setViewedReport] = useState<Report | null>(null);
     const [viewedCampaignId, setViewedCampaignId] = useState<number | null>(null);
     const [aiInitialPrompt, setAiInitialPrompt] = useState<string | undefined>();
     const [audienceCategories, setAudienceCategories] = useState<AudienceCategory[]>([]);
     const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
-    const [isLaunching, setIsLaunching] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
 
     const { isAuthenticated, user, accessToken } = useAuth();
     const { addNotification } = useNotification();
@@ -156,9 +154,6 @@ const App: React.FC = () => {
 
     const handleNavigation = useCallback((page: Page) => {
         setCurrentPage(prevPage => {
-            if (prevPage === 'reports' && page !== 'reports') {
-                setViewedReport(null);
-            }
             if (page !== 'campaigns') {
                 setViewedCampaignId(null);
             }
@@ -179,7 +174,7 @@ const App: React.FC = () => {
     }, []);
 
     const handleNext = () => {
-        if (currentStep < 4) {
+        if (currentStep < 2) { // Only 2 steps in the initial wizard now
             setCurrentStep(prev => prev + 1);
         }
     };
@@ -190,7 +185,7 @@ const App: React.FC = () => {
         }
     };
 
-    const handleLaunch = async () => {
+    const handleProceedToSchedule = async () => {
         if (!isAuthenticated) {
             navigateToLogin();
             return;
@@ -201,7 +196,7 @@ const App: React.FC = () => {
             return;
         }
         
-        setIsLaunching(true);
+        setIsCreating(true);
 
         const campaignPayload: Partial<Omit<EmailMarketingCampaign, 'id'>> = {
             campaign_subject: campaignData.message.subject,
@@ -209,24 +204,22 @@ const App: React.FC = () => {
             campaign_ab: campaignData.message.abTest.enabled,
             campaign_subject_b: campaignData.message.abTest.subjectB,
             campaign_date: `${campaignData.schedule.sendDate}T${campaignData.schedule.sendTime}:00`,
-            campaign_status: 'editing',
+            campaign_status: 'scheduled',
             campaign_sender: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Campaign Wizard',
             status: 'published',
-            // FIX: The payload now sends only the audience ID. This tells the API to link to an existing audience rather than trying to update it, resolving the permission error and removing the need for users to have update access on the audiences collection.
             campaign_audiences: campaignData.audience.categoryIds.map(id => ({
                 audiences_id: parseInt(id, 10)
             }))
         };
 
         try {
-            await createCampaign(campaignPayload, accessToken);
-            addNotification('کمپین با موفقیت ایجاد شد!', 'success');
-            setIsWizardActive(false);
-            handleNavigation('campaigns');
+            const newCampaign = await createCampaign(campaignPayload, accessToken);
+            addNotification('کمپین با موفقیت ایجاد شد! اکنون زمانبندی را تنظیم کنید.', 'success');
+            handleViewCampaign(newCampaign.id);
         } catch (error: any) {
             addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
         } finally {
-            setIsLaunching(false);
+            setIsCreating(false);
         }
     };
     
@@ -235,14 +228,12 @@ const App: React.FC = () => {
         setCurrentStep(1);
         setIsWizardActive(false);
         handleNavigation('dashboard');
-        setViewedReport(null);
         setViewedCampaignId(null);
     }
 
     const handleStartNewCampaign = () => {
         setCampaignData(initialCampaignState);
         setCurrentStep(1);
-        setViewedReport(null);
         setViewedCampaignId(null);
         setIsWizardActive(true);
     };
@@ -260,7 +251,6 @@ const App: React.FC = () => {
             },
         });
         setCurrentStep(1);
-        setViewedReport(null);
         setViewedCampaignId(null);
         setIsWizardActive(true);
     };
@@ -274,7 +264,6 @@ const App: React.FC = () => {
             },
         });
         setCurrentStep(1);
-        setViewedReport(null);
         setViewedCampaignId(null);
         setIsWizardActive(true);
     };
@@ -316,14 +305,6 @@ const App: React.FC = () => {
         setIsWizardActive(true);
     };
     
-    const handleViewReport = (report: Report) => {
-        setViewedReport(report);
-    };
-    
-    const handleBackToReports = () => {
-        setViewedReport(null);
-    }
-    
     const handleViewCampaign = (id: number) => {
         setViewedCampaignId(id);
         setCurrentPage('campaigns');
@@ -355,17 +336,6 @@ const App: React.FC = () => {
                 />;
             case 2:
                 return <Step2Message campaignData={campaignData} updateCampaignData={updateCampaignData} />;
-            case 3:
-                return <Step3Schedule campaignData={campaignData} updateCampaignData={updateCampaignData} />;
-            case 4:
-                return <Step4Review campaignData={campaignData} audienceCategories={audienceCategories} />;
-            case 5:
-                return <Step5Analytics 
-                    theme={effectiveTheme}
-                    viewedReport={viewedReport}
-                    onStartNewCampaign={resetCampaign}
-                    onBackToReports={handleBackToReports}
-                />;
             default:
                 return <Step1Audience 
                     campaignData={campaignData} 
@@ -378,44 +348,43 @@ const App: React.FC = () => {
 
     const renderWizard = () => (
         <div className="page-container animate-fade-in">
-            {currentStep <= 4 && <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />}
+            <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />
             
             <main className="page-main-content">
                 {renderWizardStep()}
             </main>
             
-            {currentStep <= 4 && (
-                <footer className="mt-8 flex justify-between items-center">
-                    <div>
-                        {currentStep > 1 && (
-                            <button
-                                onClick={handlePrev}
-                                className="btn btn-secondary"
-                            >
-                                بازگشت
-                            </button>
-                        )}
-                    </div>
-                    <div>
-                        {currentStep < 4 ? (
-                            <button
-                                onClick={handleNext}
-                                className="btn btn-primary"
-                            >
-                                بعدی
-                            </button>
-                        ) : (
-                            <button
-                                onClick={handleLaunch}
-                                disabled={isLaunching}
-                                className="btn btn-launch"
-                            >
-                                {isLaunching ? <LoadingSpinner className="w-6 h-6" /> : (isAuthenticated ? 'ذخیره و ادامه' : 'ورود و ذخیره')}
-                            </button>
-                        )}
-                    </div>
-                </footer>
-            )}
+            <footer className="mt-8 flex justify-between items-center">
+                <div>
+                    {currentStep > 1 && (
+                        <button
+                            onClick={handlePrev}
+                            className="btn btn-secondary"
+                        >
+                            بازگشت
+                        </button>
+                    )}
+                </div>
+                <div>
+                    {currentStep === 1 && (
+                        <button
+                            onClick={handleNext}
+                            className="btn btn-primary"
+                        >
+                            بعدی: پیام
+                        </button>
+                    )}
+                    {currentStep === 2 && (
+                         <button
+                            onClick={handleProceedToSchedule}
+                            disabled={isCreating}
+                            className="btn btn-primary w-48"
+                        >
+                            {isCreating ? <LoadingSpinner className="w-6 h-6" /> : 'بعدی: زمان‌بندی'}
+                        </button>
+                    )}
+                </div>
+            </footer>
         </div>
     );
 
@@ -428,6 +397,7 @@ const App: React.FC = () => {
                             theme={effectiveTheme}
                             onOpenAIAssistant={handleOpenAIAssistant} 
                             audienceCategories={audienceCategories}
+                            onViewCampaign={handleViewCampaign}
                         />
                     );
                 case 'audiences':
@@ -447,19 +417,6 @@ const App: React.FC = () => {
                             onStartNewCampaign={handleStartNewCampaign}
                             onViewCampaign={handleViewCampaign}
                         />
-                    );
-                case 'reports':
-                    return (
-                        viewedReport ? (
-                            <Step5Analytics 
-                                theme={effectiveTheme}
-                                viewedReport={viewedReport}
-                                onStartNewCampaign={resetCampaign}
-                                onBackToReports={handleBackToReports}
-                            />
-                        ) : (
-                            <ReportsPage reports={MOCK_REPORTS} onViewReport={handleViewReport} />
-                        )
                     );
                  case 'calendar':
                     return (

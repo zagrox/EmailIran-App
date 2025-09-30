@@ -1,30 +1,12 @@
-
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Report } from '../../types';
 
 interface Props {
     theme: 'light' | 'dark';
-    viewedReport: Report | null;
-    onStartNewCampaign: () => void;
-    onBackToReports: () => void;
+    viewedReport: Report;
+    onBack: () => void;
 }
-
-const defaultAnalyticsData = {
-    stats: {
-        openRate: 28.7,
-        clickRate: 4.1,
-        conversions: 134,
-    },
-    chartData: [
-      { name: '۱ ساعت', opens: 1200, clicks: 150 },
-      { name: '۳ ساعت', opens: 2500, clicks: 400 },
-      { name: '۶ ساعت', opens: 2800, clicks: 550 },
-      { name: '۱۲ ساعت', opens: 3100, clicks: 610 },
-      { name: '۲۴ ساعت', opens: 3580, clicks: 702 },
-      { name: '۴۸ ساعت', opens: 3820, clicks: 750 },
-    ]
-};
 
 const StatCard: React.FC<{ title: string; value: string; description: string }> = ({ title, value, description }) => (
     <div className="card">
@@ -34,20 +16,15 @@ const StatCard: React.FC<{ title: string; value: string; description: string }> 
     </div>
 );
 
-const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onStartNewCampaign, onBackToReports }) => {
+const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onBack }) => {
     const isDark = theme === 'dark';
-    const isViewingPastReport = !!viewedReport;
+    const { stats, chartData } = viewedReport;
 
-    const analyticsData = viewedReport ? viewedReport : defaultAnalyticsData;
-    const { stats, chartData } = analyticsData;
-
-    const mainButtonText = isViewingPastReport ? 'بازگشت به گزارش‌ها' : 'ایجاد کمپین جدید';
-    const mainButtonAction = isViewingPastReport ? onBackToReports : onStartNewCampaign;
+    const mainButtonText = 'بازگشت به کمپین‌ها';
+    const mainButtonAction = onBack;
     
-    const pageTitle = isViewingPastReport ? `گزارش: ${viewedReport.name}` : '🚀 ارسال با موفقیت تایید شد!';
-    const pageDescription = isViewingPastReport 
-        ? `ارسال شده در ${new Date(viewedReport.sentDate).toLocaleDateString('fa-IR', { dateStyle: 'full' })}`
-        : 'کمپین شما در راه است. جادو را به صورت زنده تماشا کنید، همانطور که داده‌های شما جان می‌گیرند.';
+    const pageTitle = `گزارش: ${viewedReport.name}`;
+    const pageDescription = `ارسال شده در ${new Date(viewedReport.sentDate).toLocaleDateString('fa-IR', { dateStyle: 'full' })}`;
 
 
     const tooltipStyle: React.CSSProperties = {

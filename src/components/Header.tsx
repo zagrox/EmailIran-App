@@ -85,7 +85,6 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', navLinkBase, navLinkActive, navLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', navLinkBase, navLinkActive, navLinkInactive)}>تقویم</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', navLinkBase, navLinkActive, navLinkInactive)}>کمپین‌ها</a>
-                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('reports')}} className={getLinkClasses('reports', navLinkBase, navLinkActive, navLinkInactive)}>گزارش‌ها</a>
                         </div>
                          <button
                             onClick={handleProfileClick}
@@ -138,7 +137,6 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>تقویم</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>کمپین‌ها</a>
-                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('reports')}} className={getLinkClasses('reports', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>گزارش‌ها</a>
                            <div className="border-t border-slate-200 dark:border-slate-700 my-2"></div>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleProfileClick()}} className={getLinkClasses('profile', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>پروفایل کاربری</a>
                        </div>

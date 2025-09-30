@@ -1,16 +1,19 @@
 
-import React, { useState, useMemo } from 'react';
-import { SparklesIcon, CalendarDaysIcon, ChartBarIcon, ShoppingCartIcon, ClipboardDocumentListIcon, PaintBrushIcon, WaveIcon, SignupArrowIcon } from './IconComponents';
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { SparklesIcon, CalendarDaysIcon, ChartBarIcon, ShoppingCartIcon, ClipboardDocumentListIcon, PaintBrushIcon, WaveIcon, SignupArrowIcon, ClockIcon, LoadingSpinner } from './IconComponents';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import type { AudienceCategory } from '../types';
+import type { AudienceCategory, Report, EmailMarketingCampaign } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import TodayViewCard from './TodayViewCard';
+import { fetchCampaigns } from '../services/campaignService';
 
 interface DashboardProps {
     theme: 'light' | 'dark';
     onOpenAIAssistant: (initialPrompt?: string) => void;
     audienceCategories: AudienceCategory[];
+    onViewCampaign: (id: number) => void;
 }
 
 const chartData = [
@@ -37,11 +40,87 @@ const FeatureCard: React.FC<{ name: string; icon: React.ReactNode }> = ({ name, 
     </div>
 );
 
-const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, audienceCategories }) => {
+interface ReportCardProps {
+    report: Report;
+    onViewCampaign: (id: number) => void;
+}
+
+const ReportCard: React.FC<ReportCardProps> = ({ report, onViewCampaign }) => {
+    return (
+        <button 
+            onClick={() => onViewCampaign(parseInt(report.id, 10))}
+            className="card-report w-full text-right"
+        >
+            <div className="flex-grow">
+                <h3 className="font-bold text-lg text-slate-900 dark:text-white">{report.name}</h3>
+                <p className="text-base text-slate-500 dark:text-slate-400 flex items-center gap-2 mt-1">
+                    <ClockIcon className="w-4 h-4" />
+                    ارسال شده در {new Date(report.sentDate).toLocaleDateString('fa-IR', { dateStyle: 'medium' })}
+                </p>
+            </div>
+            <div className="flex-shrink-0 grid grid-cols-3 gap-4 text-center mt-4 sm:mt-0 sm:text-right">
+                <div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">باز شدن</div>
+                    <div className="font-bold text-xl text-brand-purple">{report.stats.openRate.toLocaleString('fa-IR')}%</div>
+                </div>
+                <div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">کلیک</div>
+                    <div className="font-bold text-xl text-brand-mint">{report.stats.clickRate.toLocaleString('fa-IR')}%</div>
+                </div>
+                 <div>
+                    <div className="text-base text-slate-500 dark:text-slate-400">تبدیل</div>
+                    <div className="font-bold text-xl text-yellow-400">{report.stats.conversions.toLocaleString('fa-IR')}</div>
+                </div>
+            </div>
+        </button>
+    );
+};
+
+
+const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, audienceCategories, onViewCampaign }) => {
     const [prompt, setPrompt] = useState('');
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, accessToken } = useAuth();
     const { navigateToLogin, navigate } = useUI();
     const isDark = theme === 'dark';
+
+    const [latestReports, setLatestReports] = useState<Report[]>([]);
+    const [isLoadingReports, setIsLoadingReports] = useState(true);
+    const [reportsError, setReportsError] = useState<string | null>(null);
+
+    const mapCampaignToReport = (campaign: EmailMarketingCampaign): Report => ({
+        id: String(campaign.id),
+        name: campaign.campaign_subject,
+        sentDate: campaign.campaign_date,
+        stats: {
+            openRate: parseFloat((25.3 + (campaign.id % 10)).toFixed(1)),
+            clickRate: parseFloat((3.8 + (campaign.id % 5)).toFixed(1)),
+            conversions: 112 + (campaign.id % 50),
+        },
+        chartData: []
+    });
+
+    useEffect(() => {
+        const loadCampaigns = async () => {
+            if (!isAuthenticated || !accessToken) {
+                setIsLoadingReports(false);
+                return;
+            }
+            try {
+                const campaigns = await fetchCampaigns(accessToken);
+                const completed = campaigns
+                    .filter(c => c.campaign_status === 'completed')
+                    .sort((a, b) => new Date(b.campaign_date).getTime() - new Date(a.campaign_date).getTime())
+                    .slice(0, 4);
+                setLatestReports(completed.map(mapCampaignToReport));
+            } catch (err) {
+                console.error(err);
+                setReportsError('Failed to load recent campaigns.');
+            } finally {
+                setIsLoadingReports(false);
+            }
+        };
+        loadCampaigns();
+    }, [isAuthenticated, accessToken]);
 
     const totalSubscribers = useMemo(() => {
         return audienceCategories.reduce((total, category) => total + category.count, 0);
@@ -134,6 +213,30 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                         تولید محتوا با هوش مصنوعی
                     </button>
                 </div>
+
+                {isAuthenticated && (
+                    <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">آخرین گزارش کمپین‌ها</h2>
+                        {isLoadingReports ? (
+                            <div className="flex justify-center items-center py-8">
+                                <LoadingSpinner className="w-8 h-8 text-brand-purple" />
+                            </div>
+                        ) : reportsError ? (
+                            <p className="text-center text-red-500 dark:text-red-400 py-8">{reportsError}</p>
+                        ) : latestReports.length > 0 ? (
+                            <div className="space-y-4">
+                                {latestReports.map(report => (
+                                    <ReportCard key={report.id} report={report} onViewCampaign={onViewCampaign} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-slate-500 dark:text-slate-400 py-8">
+                                <p>هنوز کمپین تکمیل شده‌ای وجود ندارد.</p>
+                                <button onClick={() => navigate('campaigns')} className="btn-secondary mt-4 !px-4 !py-1.5 text-base">ساخت اولین کمپین</button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Right Features & Chart Panel */}

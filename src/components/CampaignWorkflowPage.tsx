@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
@@ -232,7 +233,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                 );
             }
             case 'completed':
-                return <Step5Analytics theme={theme} viewedReport={mapCampaignToReport(campaign)} onStartNewCampaign={onBack} onBackToReports={onBack} />;
+                return <Step5Analytics theme={theme} viewedReport={mapCampaignToReport(campaign)} onBack={onBack} />;
             default:
                 return <p>وضعیت کمپین نامشخص است.</p>;
         }
