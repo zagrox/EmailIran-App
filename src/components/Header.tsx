@@ -81,10 +81,10 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                     {/* Desktop Nav and Profile Button */}
                     <div className="hidden md:flex md:items-center">
                         <div className="flex items-baseline space-x-4 space-x-reverse">
-                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('dashboard')}} className={getLinkClasses('dashboard', navLinkBase, navLinkActive, navLinkInactive)}>داشبورد</a>
+                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('dashboard')}} className={getLinkClasses('dashboard', navLinkBase, navLinkActive, navLinkInactive)}>ایمیل ایران</a>
+                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', navLinkBase, navLinkActive, navLinkInactive)}>کمپین‌ها</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', navLinkBase, navLinkActive, navLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', navLinkBase, navLinkActive, navLinkInactive)}>تقویم</a>
-                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', navLinkBase, navLinkActive, navLinkInactive)}>کمپین‌ها</a>
                         </div>
                          <button
                             onClick={handleProfileClick}
