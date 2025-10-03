@@ -28,9 +28,9 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
         try {
             const result = await generateCampaignFromPrompt(currentPrompt, audienceCategories);
             setDraft(result);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setError('متأسفانه، پیش‌نویس تولید نشد. لطفاً دوباره تلاش کنید.');
+            setError(err.message || 'An unexpected error occurred. Please check the console.');
         } finally {
             setIsLoading(false);
         }
@@ -117,7 +117,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                         </div>
                      )}
 
-                    {error && <div className="p-4 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-md text-sm">{error}</div>}
+                    {error && <div className="p-4 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-md text-base">{error}</div>}
 
                     {draft && (
                          <div className="space-y-6 animate-fade-in">
