@@ -1,37 +1,10 @@
 // FIX: Imported React to resolve the 'Cannot find namespace React' error caused by using React.FC.
 import React from 'react';
 import type { Template, Segment, Report, CampaignStatus } from './types';
-import { ClockIcon, CheckCircleIcon, CreditCardIcon, PencilIcon, PaperAirplaneIcon, EllipsisHorizontalIcon } from './components/IconComponents';
-
-export const STEPS = [
-  {
-    id: 1,
-    title: 'انتخاب مخاطبان',
-    description: 'مخاطبان خود را پیدا کنید.',
-  },
-  {
-    id: 2,
-    title: 'ساخت پیام',
-    description: 'با ذوق طراحی کنید، با هدف صحبت کنید.',
-  },
-  {
-    id: 3,
-    title: 'تنظیم زمان‌بندی',
-    description: 'زمان‌بندی همه چیز است.',
-  },
-  {
-    id: 4,
-    title: 'تایید نهایی',
-    description: 'بررسی، پرداخت و آماده‌سازی برای ارسال.',
-  },
-  {
-    id: 5,
-    title: 'جادو را تماشا کنید',
-    description: 'پیگیری کنید. یاد بگیرید. رشد کنید.',
-  },
-];
+import { ClockIcon, CheckCircleIcon, CreditCardIcon, PencilIcon, PaperAirplaneIcon, EllipsisHorizontalIcon, UsersIcon } from './components/IconComponents';
 
 export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; colorClasses: string; icon: React.FC<any>; color: string; }> = {
+  targeting: { label: 'انتخاب مشترکین', colorClasses: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/50 dark:text-cyan-300', icon: UsersIcon, color: '#22d3ee' },
   editing: { label: 'ویرایش کمپین', colorClasses: 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300', icon: PencilIcon, color: '#64748b' },
   scheduled: { label: 'زمانبندی شده', colorClasses: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300', icon: ClockIcon, color: '#0ea5e9' },
   payment: { label: 'ثبت و پرداخت', colorClasses: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300', icon: CreditCardIcon, color: '#f59e0b' },
@@ -40,7 +13,7 @@ export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; color
   completed: { label: 'تکمیل ارسال‌ها', colorClasses: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', icon: CheckCircleIcon, color: '#22c55e' },
 };
 
-export const CAMPAIGN_STATUS_ORDER: CampaignStatus[] = ['editing', 'scheduled', 'payment', 'processing', 'sending', 'completed'];
+export const CAMPAIGN_STATUS_ORDER: CampaignStatus[] = ['targeting', 'editing', 'scheduled', 'payment', 'processing', 'sending', 'completed'];
 
 export const MOCK_SEGMENTS: Segment[] = [
     { id: 'seg1', name: 'مشترکین فعال', subscribers: 12540, health: 'Excellent' },

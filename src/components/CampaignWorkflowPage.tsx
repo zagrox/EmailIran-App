@@ -1,11 +1,10 @@
-
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
-import { fetchCampaignById, updateCampaign } from '../services/campaignService';
+import { fetchCampaignById, updateCampaign, createCampaign } from '../services/campaignService';
+import { uploadFile } from '../services/fileService';
 import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report } from '../types';
-import { LoadingSpinner, CheckCircleIcon } from './IconComponents';
+import { LoadingSpinner } from '../components/IconComponents';
 import CampaignStatusStepper from './CampaignStatusStepper';
 import Step1Audience from './steps/Step1_Audience';
 import Step2Message from './steps/Step2_Message';
@@ -18,6 +17,9 @@ interface Props {
     onBack: () => void;
     audienceCategories: AudienceCategory[];
     theme: 'light' | 'dark';
+    initialData: Partial<Omit<EmailMarketingCampaign, 'id'>> | null;
+    requestLogin: (callback: () => void) => void;
+    onCampaignCreated: (id: number) => void;
 }
 
 const mapCampaignToWizardState = (campaign: EmailMarketingCampaign, categories: AudienceCategory[]): CampaignState => {
@@ -29,6 +31,10 @@ const mapCampaignToWizardState = (campaign: EmailMarketingCampaign, categories: 
         const audience = rel.audiences_id;
         if (typeof audience === 'object' && audience !== null) {
             return String(audience.id);
+        }
+        // Handle cases where audiences_id is just a number (on create)
+        if (typeof audience === 'number') {
+            return String(audience);
         }
         return '';
     }).filter(id => id) || [];
@@ -44,12 +50,14 @@ const mapCampaignToWizardState = (campaign: EmailMarketingCampaign, categories: 
         audience: {
             segmentId: null,
             categoryIds: categoryIds,
-            filters: [],
             healthScore: avgHealthScore,
         },
         message: {
             subject: campaign.campaign_subject,
             body: campaign.campaign_content,
+            contentType: campaign.campaign_html ? 'html' : 'editor',
+            htmlFile: null,
+            htmlFileId: campaign.campaign_html,
             abTest: {
                 enabled: campaign.campaign_ab,
                 subjectB: campaign.campaign_subject_b || '',
@@ -84,25 +92,51 @@ const mapCampaignToReport = (campaign: EmailMarketingCampaign): Report => ({
 });
 
 
-const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCategories, theme }) => {
+const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCategories, theme, initialData, requestLogin, onCampaignCreated }) => {
     const [campaign, setCampaign] = useState<EmailMarketingCampaign | null>(null);
     const [wizardState, setWizardState] = useState<CampaignState | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [editingSubStep, setEditingSubStep] = useState(1);
+    const [localStatus, setLocalStatus] = useState<CampaignStatus>('targeting');
     
-    const { accessToken } = useAuth();
+    const { accessToken, isAuthenticated } = useAuth();
     const { addNotification } = useNotification();
+    
+    const isNewCampaign = campaignId === 0;
 
     const loadCampaign = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
+        
+        if (isNewCampaign) {
+            const defaultCampaignData: EmailMarketingCampaign = {
+                id: 0,
+                status: 'draft',
+                campaign_subject: 'کمپین جدید بدون عنوان',
+                campaign_date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                campaign_color: null,
+                campaign_link: null,
+                campaign_sender: null,
+                campaign_status: 'targeting',
+                campaign_ab: false,
+                campaign_subject_b: null,
+                campaign_content: 'سلام،\n\nاین محتوای پیش‌فرض برای کمپین جدید شماست. لطفاً آن را ویرایش کنید.',
+                campaign_html: null,
+                ...initialData
+            };
+            setCampaign(defaultCampaignData);
+            setWizardState(mapCampaignToWizardState(defaultCampaignData, audienceCategories));
+            setIsLoading(false);
+            return;
+        }
+
         if (!accessToken) {
             setError("Authentication token is missing.");
             setIsLoading(false);
             return;
         }
-        setIsLoading(true);
-        setError(null);
+
         try {
             const data = await fetchCampaignById(campaignId, accessToken);
             setCampaign(data);
@@ -113,7 +147,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
         } finally {
             setIsLoading(false);
         }
-    }, [campaignId, accessToken, audienceCategories]);
+    }, [campaignId, accessToken, audienceCategories, isNewCampaign, initialData]);
 
     useEffect(() => {
         loadCampaign();
@@ -127,7 +161,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     }, []);
     
     const handleStatusUpdate = async (newStatus: CampaignStatus, updatedData?: Partial<EmailMarketingCampaign>) => {
-        if (!accessToken || !campaign) return;
+        if (!accessToken || !campaign || isNewCampaign) return;
         setIsUpdating(true);
         try {
             const payload = { ...updatedData, campaign_status: newStatus };
@@ -141,20 +175,99 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
         }
     };
     
-    const handleSaveChanges = () => {
+    const handleSaveAudience = async () => {
+        if (isNewCampaign) {
+            setLocalStatus('editing');
+            return;
+        }
+
         if (!wizardState) return;
         const payload: Partial<EmailMarketingCampaign> = {
-            campaign_subject: wizardState.message.subject,
-            campaign_content: wizardState.message.body,
-            campaign_ab: wizardState.message.abTest.enabled,
-            campaign_subject_b: wizardState.message.abTest.subjectB,
             campaign_audiences: wizardState.audience.categoryIds.map(id => ({ audiences_id: parseInt(id, 10) }))
         };
-        handleStatusUpdate('scheduled', payload);
+        await handleStatusUpdate('editing', payload);
+    };
+
+    const createNewCampaign = async (targetStatus: CampaignStatus) => {
+        if (!wizardState || !accessToken) return;
+        setIsUpdating(true);
+        try {
+            let htmlFileId: string | null = wizardState.message.htmlFileId;
+            if (wizardState.message.contentType === 'html' && wizardState.message.htmlFile) {
+                addNotification('در حال آپلود فایل جدید HTML...', 'info');
+                htmlFileId = await uploadFile(wizardState.message.htmlFile, accessToken);
+                addNotification('فایل HTML با موفقیت آپلود شد.', 'success');
+            } else if (wizardState.message.contentType === 'editor') {
+                htmlFileId = null;
+            }
+
+            const campaignDate = `${wizardState.schedule.sendDate}T${wizardState.schedule.sendTime}:00`;
+            const payload: Partial<Omit<EmailMarketingCampaign, 'id'>> = {
+                campaign_subject: wizardState.message.subject,
+                campaign_content: wizardState.message.contentType === 'editor' ? wizardState.message.body : '',
+                campaign_html: htmlFileId,
+                campaign_ab: wizardState.message.abTest.enabled,
+                campaign_subject_b: wizardState.message.abTest.subjectB,
+                campaign_date: campaignDate,
+                campaign_audiences: wizardState.audience.categoryIds.map(id => ({ audiences_id: parseInt(id, 10) })),
+                campaign_status: targetStatus,
+                status: 'draft',
+            };
+            const newCampaign = await createCampaign(payload, accessToken);
+            addNotification('کمپین با موفقیت ایجاد و ذخیره شد!', 'success');
+            onCampaignCreated(newCampaign.id);
+        } catch (error: any) {
+             addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
+        } finally {
+            setIsUpdating(false);
+        }
+    }
+
+
+    const handleSaveChanges = async () => {
+        if (!isAuthenticated) {
+            addNotification('برای ذخیره و ادامه، لطفاً وارد شوید.', 'info');
+            requestLogin(() => handleSaveChanges());
+            return;
+        }
+
+        if (isNewCampaign) {
+            await createNewCampaign('scheduled');
+            return;
+        }
+        
+        if (!wizardState || !accessToken) return;
+        setIsUpdating(true);
+        try {
+            let htmlFileId: string | null = wizardState.message.htmlFileId;
+
+            if (wizardState.message.contentType === 'html' && wizardState.message.htmlFile) {
+                addNotification('در حال آپلود فایل جدید HTML...', 'info');
+                htmlFileId = await uploadFile(wizardState.message.htmlFile, accessToken);
+                addNotification('فایل HTML با موفقیت آپلود شد.', 'success');
+            } else if (wizardState.message.contentType === 'editor') {
+                htmlFileId = null;
+            }
+
+            const payload: Partial<EmailMarketingCampaign> = {
+                campaign_subject: wizardState.message.subject,
+                campaign_content: wizardState.message.contentType === 'editor' ? wizardState.message.body : '',
+                campaign_html: htmlFileId,
+                campaign_ab: wizardState.message.abTest.enabled,
+                campaign_subject_b: wizardState.message.abTest.subjectB,
+                campaign_audiences: wizardState.audience.categoryIds.map(id => ({ audiences_id: parseInt(id, 10) }))
+            };
+            await handleStatusUpdate('scheduled', payload);
+        } catch (error: any) {
+            addNotification(error.message || 'خطا در ذخیره تغییرات.', 'error');
+            setIsUpdating(false);
+        }
     };
 
     const handleUpdateSchedule = () => {
-        if (!wizardState) return;
+        // This flow should only be accessible for existing campaigns.
+        if (isNewCampaign || !wizardState) return;
+
         const payload: Partial<EmailMarketingCampaign> = {
             campaign_date: `${wizardState.schedule.sendDate}T${wizardState.schedule.sendTime}:00`,
         };
@@ -174,20 +287,27 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
         );
     }
     
+    const currentStatus = isNewCampaign ? localStatus : campaign.campaign_status;
+
     const renderContent = () => {
-        switch (campaign.campaign_status) {
+        switch (currentStatus) {
+            case 'targeting':
+                return (
+                    <div>
+                        <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={() => {}} audienceCategories={audienceCategories} />
+                        <footer className="mt-8 flex justify-between items-center">
+                            <button onClick={onBack} className="btn btn-secondary">بازگشت به لیست</button>
+                            <button onClick={handleSaveAudience} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
+                        </footer>
+                    </div>
+                );
             case 'editing':
                 return (
                     <div>
-                        {editingSubStep === 1 && <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={() => {}} audienceCategories={audienceCategories} />}
-                        {editingSubStep === 2 && <Step2Message campaignData={wizardState} updateCampaignData={updateWizardState} />}
+                        <Step2Message campaignData={wizardState} updateCampaignData={updateWizardState} />
                         <footer className="mt-8 flex justify-between items-center">
-                            <button onClick={onBack} className="btn btn-secondary">انصراف</button>
-                            <div>
-                                {editingSubStep > 1 && <button onClick={() => setEditingSubStep(1)} className="btn btn-secondary ml-4">بازگشت</button>}
-                                {editingSubStep < 2 && <button onClick={() => setEditingSubStep(2)} className="btn btn-primary">بعدی: پیام</button>}
-                                {editingSubStep === 2 && <button onClick={handleSaveChanges} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>}
-                            </div>
+                            <button onClick={() => isNewCampaign ? setLocalStatus('targeting') : handleStatusUpdate('targeting')} disabled={isUpdating} className="btn btn-secondary">بازگشت به مخاطبان</button>
+                            <button onClick={handleSaveChanges} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
                         </footer>
                     </div>
                 );
@@ -243,15 +363,15 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
         <div className="animate-fade-in">
              <div className="flex flex-col md:flex-row justify-between md:items-center mb-10 gap-4">
                 <div className="flex-grow">
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight sm:text-4xl">{campaign.campaign_subject}</h1>
+                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight sm:text-4xl">{isNewCampaign ? "ایجاد کمپین جدید" : campaign.campaign_subject}</h1>
                 </div>
-                {campaign.campaign_status !== 'completed' && (
+                {currentStatus !== 'completed' && (
                     <button onClick={onBack} className="btn btn-secondary flex-shrink-0">&rarr; بازگشت به کمپین‌ها</button>
                 )}
             </div>
             
             <div className="mb-12">
-                <CampaignStatusStepper currentStatus={campaign.campaign_status} />
+                <CampaignStatusStepper currentStatus={currentStatus} />
             </div>
 
             <main className="page-main-content">

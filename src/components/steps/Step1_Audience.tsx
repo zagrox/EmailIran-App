@@ -11,8 +11,6 @@ interface Props {
   audienceCategories: AudienceCategory[];
 }
 
-const MOCK_FILTERS = ['مستقر در ایران', 'ایمیل آخر را باز کرده‌اند', 'در ۳۰ روز گذشته روی لینکی کلیک کرده‌اند', 'بیش از ۳ بار خرید کرده‌اند'];
-
 const healthColorMap = {
     'Excellent': 'health-excellent',
     'Good': 'health-good',
@@ -70,13 +68,6 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
         });
     };
 
-    const handleFilterToggle = (filter: string) => {
-        const newFilters = audience.filters.includes(filter)
-            ? audience.filters.filter(f => f !== filter)
-            : [...audience.filters, filter];
-        updateCampaignData('audience', { ...audience, filters: newFilters });
-    };
-    
     const selectedCategories = useMemo(() => 
         audienceCategories.filter(c => audience.categoryIds.includes(c.id)), 
         [audience.categoryIds, audienceCategories]
@@ -123,24 +114,6 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                             />
                         ))}
                     </div>
-
-
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mt-8 mb-4">فیلترهای هوشمند</h3>
-                    <div className="flex flex-wrap gap-3">
-                        {MOCK_FILTERS.map(filter => (
-                            <button
-                                key={filter}
-                                onClick={() => handleFilterToggle(filter)}
-                                className={`btn-filter ${
-                                    audience.filters.includes(filter)
-                                    ? 'btn-filter-selected'
-                                    : 'btn-filter-unselected'
-                                }`}
-                            >
-                                {filter}
-                            </button>
-                        ))}
-                    </div>
                 </div>
 
                 <div className="card">
@@ -174,14 +147,6 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                                     {healthTranslationMap[averageHealthStatus]}
                                 </div>
                             </div>
-                            {audience.filters.length > 0 && (
-                                <div>
-                                    <div className="summary-label">فیلترهای فعال</div>
-                                    <ul className="list-disc list-inside mr-4 mt-2 text-slate-700 dark:text-slate-300 text-base">
-                                        {audience.filters.map(f => <li key={f}>{f}</li>)}
-                                    </ul>
-                                </div>
-                            )}
                         </div>
                     ) : (
                         <div className="mt-4 text-center text-slate-500 dark:text-slate-400 py-10">

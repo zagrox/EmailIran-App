@@ -1,16 +1,7 @@
-
-
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { STEPS } from './constants';
 // FIX: Import the centralized Page type to resolve conflicting type definitions.
-import type { CampaignState, AICampaignDraft, Report, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
-import Stepper from './components/Stepper';
+import type { CampaignState, AICampaignDraft, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Header from './components/Header';
-import Step1Audience from './components/steps/Step1_Audience';
-import Step2Message from './components/steps/Step2_Message';
-import Step3Schedule from './components/steps/Step3_Schedule';
-import Step4Review from './components/steps/Step4_Review';
-import Step5Analytics from './components/steps/Step5_Analytics';
 import AIAssistantModal from './components/AIAssistantModal';
 import AudiencesPage from './components/AudiencesPage';
 import DashboardPage from './components/DashboardPage';
@@ -22,35 +13,11 @@ import LoginPage from './components/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
-import { createCampaign } from './services/campaignService';
 import { useNotification } from './contexts/NotificationContext';
 import { LoadingSpinner } from './components/IconComponents';
 
 // FIX: The local 'Page' type definition was removed to use the centralized one from src/types.ts.
 type Theme = 'light' | 'dark' | 'system';
-
-const initialCampaignState: CampaignState = {
-    audience: {
-        segmentId: null,
-        categoryIds: [],
-        filters: [],
-        healthScore: 0,
-    },
-    message: {
-        subject: 'اخبار هیجان‌انگیز از شرکت ما!',
-        body: 'سلام {{firstName}}،\n\nما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم. ما سخت روی ویژگی‌های جدید کار کرده‌ایم و بی‌صبرانه منتظریم تا شما آن‌ها را ببینید.\n\nبا احترام،\nتیم',
-        abTest: {
-            enabled: false,
-            subjectB: '',
-            testSize: 20,
-        },
-    },
-    schedule: {
-        sendDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        sendTime: '09:00',
-        timezoneAware: true,
-    },
-};
 
 const mapHealth = (engage: string): 'Excellent' | 'Good' | 'Poor' => {
   switch (engage) {
@@ -90,9 +57,6 @@ const fetchAudienceCategories = async (): Promise<AudienceCategory[]> => {
 
 const App: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('dashboard');
-    const [isWizardActive, setIsWizardActive] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
-    const [campaignData, setCampaignData] = useState<CampaignState>(initialCampaignState);
     const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('theme') as Theme) || 'system');
     const [effectiveTheme, setEffectiveTheme] = useState<'light' | 'dark'>('light');
     const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
@@ -101,10 +65,20 @@ const App: React.FC = () => {
     const [audienceCategories, setAudienceCategories] = useState<AudienceCategory[]>([]);
     const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
-    const [isCreating, setIsCreating] = useState(false);
+    const [newCampaignInitialData, setNewCampaignInitialData] = useState<Partial<Omit<EmailMarketingCampaign, 'id'>> | null>(null);
+    const [postLoginCallback, setPostLoginCallback] = useState<(() => void) | null>(null);
 
-    const { isAuthenticated, user, accessToken } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const { addNotification } = useNotification();
+
+    const handleNavigation = useCallback((page: Page) => {
+        setCurrentPage(prevPage => {
+            if (page !== 'campaigns') {
+                setViewedCampaignId(null);
+            }
+            return page;
+        });
+    }, []);
 
     useEffect(() => {
         const fetchProjectDetails = async () => {
@@ -151,164 +125,69 @@ const App: React.FC = () => {
         loadAudiences();
     }, []);
 
-
-    const handleNavigation = useCallback((page: Page) => {
-        setCurrentPage(prevPage => {
-            if (page !== 'campaigns') {
-                setViewedCampaignId(null);
+    useEffect(() => {
+        // This effect handles post-authentication logic.
+        if (isAuthenticated) {
+            if (postLoginCallback) {
+                // If there's a pending action (like saving a campaign), execute it.
+                postLoginCallback();
+                setPostLoginCallback(null);
+            } else if (currentPage === 'login') {
+                // If the user just logged in and there's no pending action,
+                // navigate them to the dashboard.
+                handleNavigation('dashboard');
             }
-            return page;
-        });
-        setIsWizardActive(false);
-    }, []);
-    
+        }
+    }, [isAuthenticated, currentPage, handleNavigation, postLoginCallback]);
+
     const navigateToLogin = useCallback(() => {
         handleNavigation('login');
     }, [handleNavigation]);
 
-    const updateCampaignData = useCallback(<K extends keyof CampaignState>(field: K, value: CampaignState[K]) => {
-        setCampaignData(prev => ({
-            ...prev,
-            [field]: value
-        }));
-    }, []);
-
-    const handleNext = () => {
-        if (currentStep < 2) { // Only 2 steps in the initial wizard now
-            setCurrentStep(prev => prev + 1);
-        }
-    };
-    
-    const handlePrev = () => {
-        if (currentStep > 1) {
-            setCurrentStep(prev => prev - 1);
-        }
+    const requestLogin = (callback: () => void) => {
+        setPostLoginCallback(() => callback);
+        navigateToLogin();
     };
 
-    const handleProceedToSchedule = async () => {
-        if (!isAuthenticated) {
-            navigateToLogin();
-            return;
-        }
-
-        if (!accessToken) {
-            addNotification('Authentication token is missing. Please log in again.', 'error');
-            return;
-        }
-        
-        setIsCreating(true);
-
-        const campaignPayload: Partial<Omit<EmailMarketingCampaign, 'id'>> = {
-            campaign_subject: campaignData.message.subject,
-            campaign_content: campaignData.message.body,
-            campaign_ab: campaignData.message.abTest.enabled,
-            campaign_subject_b: campaignData.message.abTest.subjectB,
-            campaign_date: `${campaignData.schedule.sendDate}T${campaignData.schedule.sendTime}:00`,
-            campaign_status: 'scheduled',
-            campaign_sender: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : 'Campaign Wizard',
-            status: 'published',
-            campaign_audiences: campaignData.audience.categoryIds.map(id => ({
-                audiences_id: parseInt(id, 10)
-            }))
-        };
-
-        try {
-            const newCampaign = await createCampaign(campaignPayload, accessToken);
-            addNotification('کمپین با موفقیت ایجاد شد! اکنون زمانبندی را تنظیم کنید.', 'success');
-            handleViewCampaign(newCampaign.id);
-        } catch (error: any) {
-            addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
-        } finally {
-            setIsCreating(false);
-        }
-    };
-    
-    const resetCampaign = () => {
-        setCampaignData(initialCampaignState);
-        setCurrentStep(1);
-        setIsWizardActive(false);
-        handleNavigation('dashboard');
-        setViewedCampaignId(null);
-    }
-
-    const handleStartNewCampaign = () => {
-        setCampaignData(initialCampaignState);
-        setCurrentStep(1);
-        setViewedCampaignId(null);
-        setIsWizardActive(true);
-    };
-    
-    const handleStartCampaign = (categoryId: string) => {
-        const selectedCategory = audienceCategories.find(c => c.id === categoryId);
-        const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
-
-        setCampaignData({
-            ...initialCampaignState,
-            audience: {
-                ...initialCampaignState.audience,
-                categoryIds: [categoryId],
-                healthScore: healthScore,
-            },
-        });
-        setCurrentStep(1);
-        setViewedCampaignId(null);
-        setIsWizardActive(true);
-    };
-
-    const handleStartCampaignFromCalendar = (date: string) => {
-        setCampaignData({
-            ...initialCampaignState,
-            schedule: {
-                ...initialCampaignState.schedule,
-                sendDate: date,
-            },
-        });
-        setCurrentStep(1);
-        setViewedCampaignId(null);
-        setIsWizardActive(true);
-    };
-
-    const handleApplyAIDraft = (draft: AICampaignDraft) => {
-        const selectedCategory = audienceCategories.find(c => c.id === draft.audienceCategoryId);
-        const healthScore = selectedCategory?.health === 'Excellent' ? 95 : selectedCategory?.health === 'Good' ? 75 : 25;
-       
-        const audienceUpdate: Partial<CampaignState['audience']> = {
-            segmentId: null,
-            categoryIds: [draft.audienceCategoryId],
-            healthScore: healthScore,
-        };
-        
-        setCampaignData({
-            ...campaignData,
-            audience: {
-                ...campaignData.audience,
-                ...audienceUpdate,
-            },
-            message: {
-                ...campaignData.message,
-                subject: draft.subject,
-                body: draft.body,
-                abTest: {
-                    ...campaignData.message.abTest,
-                    enabled: !!draft.subjectB,
-                    subjectB: draft.subjectB || '',
-                },
-            },
-            schedule: {
-                ...campaignData.schedule,
-                sendTime: draft.sendTime,
-            }
-        });
-
-        setIsAIAssistantOpen(false);
-        setCurrentStep(1); 
-        setIsWizardActive(true);
-    };
-    
     const handleViewCampaign = (id: number) => {
         setViewedCampaignId(id);
         setCurrentPage('campaigns');
-        setIsWizardActive(false);
+    };
+    
+    const handleStartNewCampaign = () => {
+        setNewCampaignInitialData({});
+        setViewedCampaignId(0); // 0 indicates a new, unsaved campaign
+        setCurrentPage('campaigns');
+    };
+    
+    const handleStartCampaign = (categoryId: string) => {
+        setNewCampaignInitialData({
+             campaign_audiences: [{ audiences_id: parseInt(categoryId, 10) }]
+        });
+        setViewedCampaignId(0);
+        setCurrentPage('campaigns');
+    };
+
+    const handleStartCampaignFromCalendar = (date: string) => {
+        setNewCampaignInitialData({
+            campaign_date: `${date}T09:00:00`,
+        });
+        setViewedCampaignId(0);
+        setCurrentPage('campaigns');
+    };
+
+    const handleApplyAIDraft = (draft: AICampaignDraft) => {
+        setIsAIAssistantOpen(false);
+        setNewCampaignInitialData({
+            campaign_subject: draft.subject,
+            campaign_content: draft.body,
+            campaign_ab: !!draft.subjectB,
+            campaign_subject_b: draft.subjectB || null,
+            campaign_date: `${new Date().toISOString().split('T')[0]}T${draft.sendTime}:00`,
+            campaign_audiences: [{ audiences_id: parseInt(draft.audienceCategoryId, 10) }]
+        });
+        setViewedCampaignId(0);
+        setCurrentPage('campaigns');
     };
     
     const handleBackToCampaigns = () => {
@@ -324,69 +203,6 @@ const App: React.FC = () => {
         setIsAIAssistantOpen(false);
         setAiInitialPrompt(undefined);
     };
-
-    const renderWizardStep = () => {
-        switch (currentStep) {
-            case 1:
-                return <Step1Audience 
-                    campaignData={campaignData} 
-                    updateCampaignData={updateCampaignData}
-                    onOpenAIAssistant={() => handleOpenAIAssistant()}
-                    audienceCategories={audienceCategories}
-                />;
-            case 2:
-                return <Step2Message campaignData={campaignData} updateCampaignData={updateCampaignData} />;
-            default:
-                return <Step1Audience 
-                    campaignData={campaignData} 
-                    updateCampaignData={updateCampaignData}
-                    onOpenAIAssistant={() => handleOpenAIAssistant()}
-                    audienceCategories={audienceCategories}
-                />;
-        }
-    };
-
-    const renderWizard = () => (
-        <div className="page-container animate-fade-in">
-            <Stepper currentStep={currentStep} steps={STEPS.slice(0, 4)} />
-            
-            <main className="page-main-content">
-                {renderWizardStep()}
-            </main>
-            
-            <footer className="mt-8 flex justify-between items-center">
-                <div>
-                    {currentStep > 1 && (
-                        <button
-                            onClick={handlePrev}
-                            className="btn btn-secondary"
-                        >
-                            بازگشت
-                        </button>
-                    )}
-                </div>
-                <div>
-                    {currentStep === 1 && (
-                        <button
-                            onClick={handleNext}
-                            className="btn btn-primary"
-                        >
-                            بعدی: پیام
-                        </button>
-                    )}
-                    {currentStep === 2 && (
-                         <button
-                            onClick={handleProceedToSchedule}
-                            disabled={isCreating}
-                            className="btn btn-primary w-48"
-                        >
-                            {isCreating ? <LoadingSpinner className="w-6 h-6" /> : 'بعدی: زمان‌بندی'}
-                        </button>
-                    )}
-                </div>
-            </footer>
-        </div>
-    );
 
     const renderPage = () => {
         const pageContent = () => {
@@ -405,12 +221,15 @@ const App: React.FC = () => {
                         <AudiencesPage onStartCampaign={handleStartCampaign} audienceCategories={audienceCategories} />
                     );
                 case 'campaigns':
-                    return viewedCampaignId ? (
+                    return viewedCampaignId !== null ? (
                         <CampaignWorkflowPage 
                             campaignId={viewedCampaignId} 
                             onBack={handleBackToCampaigns}
                             audienceCategories={audienceCategories}
                             theme={effectiveTheme}
+                            initialData={viewedCampaignId === 0 ? newCampaignInitialData : null}
+                            requestLogin={requestLogin}
+                            onCampaignCreated={handleViewCampaign}
                         />
                     ) : (
                         <CampaignsPage 
@@ -466,7 +285,7 @@ const App: React.FC = () => {
                     />
                 )}
 
-                {isWizardActive ? renderWizard() : renderPage()}
+                {renderPage()}
             </div>
         </UIProvider>
     );

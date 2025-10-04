@@ -60,7 +60,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
             } else {
                 await login(email, password);
             }
-            navigate('dashboard');
+            // On success, the parent App component will handle navigation
+            // via its useEffect hook that watches for authentication state changes.
         } catch (err: any) {
             setError(err.message || 'An unexpected error occurred.');
         } finally {
