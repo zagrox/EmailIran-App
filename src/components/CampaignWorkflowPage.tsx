@@ -18,8 +18,9 @@ interface Props {
     audienceCategories: AudienceCategory[];
     theme: 'light' | 'dark';
     initialData: Partial<Omit<EmailMarketingCampaign, 'id'>> | null;
-    requestLogin: (callback: () => void) => void;
+    requestLogin: (draft: CampaignState) => void;
     onCampaignCreated: (id: number) => void;
+    onOpenAIAssistant: () => void;
 }
 
 const mapCampaignToWizardState = (campaign: EmailMarketingCampaign, categories: AudienceCategory[]): CampaignState => {
@@ -92,7 +93,7 @@ const mapCampaignToReport = (campaign: EmailMarketingCampaign): Report => ({
 });
 
 
-const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCategories, theme, initialData, requestLogin, onCampaignCreated }) => {
+const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCategories, theme, initialData, requestLogin, onCampaignCreated, onOpenAIAssistant }) => {
     const [campaign, setCampaign] = useState<EmailMarketingCampaign | null>(null);
     const [wizardState, setWizardState] = useState<CampaignState | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -227,7 +228,9 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     const handleSaveChanges = async () => {
         if (!isAuthenticated) {
             addNotification('برای ذخیره و ادامه، لطفاً وارد شوید.', 'info');
-            requestLogin(() => handleSaveChanges());
+            if (wizardState) {
+                requestLogin(wizardState);
+            }
             return;
         }
 
@@ -294,7 +297,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             case 'targeting':
                 return (
                     <div>
-                        <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={() => {}} audienceCategories={audienceCategories} />
+                        <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={onOpenAIAssistant} audienceCategories={audienceCategories} />
                         <footer className="mt-8 flex justify-between items-center">
                             <button onClick={onBack} className="btn btn-secondary">بازگشت به لیست</button>
                             <button onClick={handleSaveAudience} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>

@@ -90,7 +90,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
             <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
                 <h2 className="h2">افراد خود را انتخاب کنید</h2>
                 <button 
-                    onClick={onOpenAIAssistant}
+                    onClick={() => onOpenAIAssistant()}
                     className="btn-ai mt-4 sm:mt-0"
                 >
                     <SparklesIcon className="w-6 h-6" />

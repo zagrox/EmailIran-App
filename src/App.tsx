@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-// FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { CampaignState, AICampaignDraft, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Header from './components/Header';
 import AIAssistantModal from './components/AIAssistantModal';
@@ -14,9 +13,9 @@ import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
 import { useNotification } from './contexts/NotificationContext';
-import { LoadingSpinner } from './components/IconComponents';
+import { createCampaign } from './services/campaignService';
+import { uploadFile } from './services/fileService';
 
-// FIX: The local 'Page' type definition was removed to use the centralized one from src/types.ts.
 type Theme = 'light' | 'dark' | 'system';
 
 const mapHealth = (engage: string): 'Excellent' | 'Good' | 'Poor' => {
@@ -66,9 +65,9 @@ const App: React.FC = () => {
     const [isLoadingAudiences, setIsLoadingAudiences] = useState(true);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [newCampaignInitialData, setNewCampaignInitialData] = useState<Partial<Omit<EmailMarketingCampaign, 'id'>> | null>(null);
-    const [postLoginCallback, setPostLoginCallback] = useState<(() => void) | null>(null);
+    const [pendingCampaignDraft, setPendingCampaignDraft] = useState<CampaignState | null>(null);
 
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, accessToken } = useAuth();
     const { addNotification } = useNotification();
 
     const handleNavigation = useCallback((page: Page) => {
@@ -124,36 +123,69 @@ const App: React.FC = () => {
         };
         loadAudiences();
     }, []);
+    
+    const handleViewCampaign = useCallback((id: number) => {
+        setViewedCampaignId(id);
+        setCurrentPage('campaigns');
+    }, []);
+
+    const createCampaignFromDraft = useCallback(async (draft: CampaignState) => {
+        if (!accessToken) {
+            addNotification('Authentication failed. Please log in again.', 'error');
+            return;
+        }
+        try {
+            let htmlFileId: string | null = draft.message.htmlFileId;
+            if (draft.message.contentType === 'html' && draft.message.htmlFile) {
+                addNotification('در حال آپلود فایل جدید HTML...', 'info');
+                htmlFileId = await uploadFile(draft.message.htmlFile, accessToken);
+                addNotification('فایل HTML با موفقیت آپلود شد.', 'success');
+            } else if (draft.message.contentType === 'editor') {
+                htmlFileId = null;
+            }
+
+            const campaignDate = `${draft.schedule.sendDate}T${draft.schedule.sendTime}:00`;
+            const payload: Partial<Omit<EmailMarketingCampaign, 'id'>> = {
+                campaign_subject: draft.message.subject,
+                campaign_content: draft.message.contentType === 'editor' ? draft.message.body : '',
+                campaign_html: htmlFileId,
+                campaign_ab: draft.message.abTest.enabled,
+                campaign_subject_b: draft.message.abTest.subjectB,
+                campaign_date: campaignDate,
+                campaign_audiences: draft.audience.categoryIds.map(id => ({ audiences_id: parseInt(id, 10) })),
+                campaign_status: 'scheduled',
+                status: 'draft',
+            };
+            const newCampaign = await createCampaign(payload, accessToken);
+            addNotification('کمپین با موفقیت ایجاد و ذخیره شد!', 'success');
+            handleViewCampaign(newCampaign.id);
+        } catch (error: any) {
+             addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
+        }
+    }, [accessToken, addNotification, handleViewCampaign]);
 
     useEffect(() => {
         // This effect handles post-authentication logic.
         if (isAuthenticated) {
-            if (postLoginCallback) {
-                // If there's a pending action (like saving a campaign), execute it.
-                postLoginCallback();
-                setPostLoginCallback(null);
+            if (pendingCampaignDraft) {
+                createCampaignFromDraft(pendingCampaignDraft);
+                setPendingCampaignDraft(null);
             } else if (currentPage === 'login') {
-                // If the user just logged in and there's no pending action,
-                // navigate them to the dashboard.
+                // If the user just logged in without a pending action, go to dashboard.
                 handleNavigation('dashboard');
             }
         }
-    }, [isAuthenticated, currentPage, handleNavigation, postLoginCallback]);
+    }, [isAuthenticated, currentPage, handleNavigation, pendingCampaignDraft, createCampaignFromDraft]);
 
     const navigateToLogin = useCallback(() => {
         handleNavigation('login');
     }, [handleNavigation]);
 
-    const requestLogin = (callback: () => void) => {
-        setPostLoginCallback(() => callback);
+    const requestLogin = (draft: CampaignState) => {
+        setPendingCampaignDraft(draft);
         navigateToLogin();
     };
 
-    const handleViewCampaign = (id: number) => {
-        setViewedCampaignId(id);
-        setCurrentPage('campaigns');
-    };
-    
     const handleStartNewCampaign = () => {
         setNewCampaignInitialData({});
         setViewedCampaignId(0); // 0 indicates a new, unsaved campaign
@@ -230,6 +262,7 @@ const App: React.FC = () => {
                             initialData={viewedCampaignId === 0 ? newCampaignInitialData : null}
                             requestLogin={requestLogin}
                             onCampaignCreated={handleViewCampaign}
+                            onOpenAIAssistant={handleOpenAIAssistant}
                         />
                     ) : (
                         <CampaignsPage 
@@ -261,7 +294,6 @@ const App: React.FC = () => {
     const showHeader = currentPage !== 'login' || isAuthenticated;
 
     return (
-        // FIX: Corrected typo in UIProvider value prop.
         <UIProvider value={uiContextValue}>
             <div className="app-container">
                 {showHeader && (
