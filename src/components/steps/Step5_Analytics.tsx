@@ -62,8 +62,8 @@ const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onBack }) => {
                             labelStyle={labelStyle}
                         />
                         <Legend wrapperStyle={legendStyle}/>
-                        <Line type="monotone" dataKey="opens" stroke="#6D28D9" strokeWidth={2} name="باز شدن" />
-                        <Line type="monotone" dataKey="clicks" stroke="#6EE7B7" strokeWidth={2} name="کلیک"/>
+                        <Line type="monotone" dataKey="opens" stroke="#00d8a3" strokeWidth={2} name="باز شدن" />
+                        <Line type="monotone" dataKey="clicks" stroke="#69f7d1" strokeWidth={2} name="کلیک"/>
                     </LineChart>
                 </ResponsiveContainer>
             </div>

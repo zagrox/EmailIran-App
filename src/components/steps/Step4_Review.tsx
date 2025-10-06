@@ -106,7 +106,7 @@ const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
                                 <p className="text-sm text-slate-500 dark:text-slate-400">انقضا ۱۲/۲۰۲۵</p>
                             </div>
                         </div>
-                        <button className="text-base text-brand-mint hover:opacity-80 mt-3">تغییر روش پرداخت</button>
+                        <button className="text-base text-brand-600 hover:opacity-80 mt-3">تغییر روش پرداخت</button>
                     </div>
                 </div>
             </div>

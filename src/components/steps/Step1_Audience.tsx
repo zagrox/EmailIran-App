@@ -118,7 +118,7 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
 
                 <div className="card">
                     <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-2">
-                        <UsersIcon className="w-6 h-6 text-brand-mint"/>
+                        <UsersIcon className="w-6 h-6 text-brand-500"/>
                         خلاصه مخاطبان
                     </h3>
                     {selectedCategories.length > 0 ? (

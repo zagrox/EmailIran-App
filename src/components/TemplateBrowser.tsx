@@ -56,7 +56,7 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
                                 <div 
                                     key={template.id} 
                                     onMouseEnter={() => setPreviewTemplate(template)}
-                                    className="flex flex-col p-5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 transition-all duration-200 shadow-sm hover:shadow-lg hover:border-brand-purple dark:hover:border-brand-purple"
+                                    className="flex flex-col p-5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 transition-all duration-200 shadow-sm hover:shadow-lg hover:border-brand-500 dark:hover:border-brand-500"
                                 >
                                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${template.iconBgColor}`}>
                                         <IconComponent className="w-6 h-6" />
@@ -67,7 +67,7 @@ const TemplateBrowser: React.FC<Props> = ({ isOpen, onClose, onSelectTemplate })
                                     </div>
                                     <button
                                         onClick={() => handleSelect(template)}
-                                        className="w-full mt-4 px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-purple hover:text-white dark:hover:bg-brand-purple transition-colors duration-200 font-semibold"
+                                        className="w-full mt-4 px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-600 hover:text-white dark:hover:bg-brand-700 transition-colors duration-200 font-semibold"
                                         >
                                         انتخاب
                                     </button>

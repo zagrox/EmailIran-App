@@ -83,7 +83,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
             >
                 <div className="modal-header">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <SparklesIcon className="w-7 h-7 text-brand-purple" />
+                        <SparklesIcon className="w-7 h-7 text-brand-500" />
                         دستیار هوش مصنوعی کمپین
                     </h2>
                     <button onClick={handleClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
@@ -112,7 +112,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                     
                      {isLoading && (
                         <div className="flex flex-col items-center justify-center text-center p-8 space-y-4">
-                            <LoadingSpinner className="w-12 h-12 text-brand-purple" />
+                            <LoadingSpinner className="w-12 h-12 text-brand-500" />
                             <p className="text-slate-600 dark:text-slate-300">در حال ساخت کمپین شما... این ممکن است چند لحظه طول بکشد.</p>
                         </div>
                      )}
@@ -125,7 +125,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                 <h3 className="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">۲. پیش‌نویس خود را بازبینی کنید</h3>
                                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-4 bg-white dark:bg-slate-800/50">
                                     <div className="flex items-start gap-3">
-                                        <UsersIcon className="w-5 h-5 mt-1 text-brand-mint"/>
+                                        <UsersIcon className="w-5 h-5 mt-1 text-brand-500"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">مخاطب پیشنهادی</h4>
                                             <p className="text-base text-slate-600 dark:text-slate-300">{selectedAudienceName}</p>
@@ -133,17 +133,17 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                                     </div>
                                     <div className="border-t border-slate-200 dark:border-slate-700"></div>
                                     <div className="flex items-start gap-3">
-                                        <MailIcon className="w-5 h-5 mt-1 text-brand-mint"/>
+                                        <MailIcon className="w-5 h-5 mt-1 text-brand-500"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">پیام پیشنهادی</h4>
                                             <p className="text-base font-bold mt-2">موضوع اصلی: <span className="font-normal">"{draft.subject}"</span></p>
-                                            <p className="text-base font-bold mt-1 text-brand-mint">موضوع تست A/B: <span className="font-normal text-slate-600 dark:text-slate-300">"{draft.subjectB}"</span></p>
+                                            <p className="text-base font-bold mt-1 text-brand-500">موضوع تست A/B: <span className="font-normal text-slate-600 dark:text-slate-300">"{draft.subjectB}"</span></p>
                                             <p className="text-base mt-2 whitespace-pre-wrap border-l-4 border-slate-200 dark:border-slate-700 pl-3 py-1">{draft.body}</p>
                                         </div>
                                     </div>
                                     <div className="border-t border-slate-200 dark:border-slate-700"></div>
                                      <div className="flex items-start gap-3">
-                                        <ClockIcon className="w-5 h-5 mt-1 text-brand-mint"/>
+                                        <ClockIcon className="w-5 h-5 mt-1 text-brand-500"/>
                                         <div>
                                             <h4 className="font-semibold text-slate-900 dark:text-white">زمان ارسال پیشنهادی</h4>
                                             <p className="text-base text-slate-600 dark:text-slate-300">{draft.sendTime}</p>
@@ -173,7 +173,7 @@ const AIAssistantModal: React.FC<Props> = ({ isOpen, onClose, onApply, initialPr
                     ) : (
                         <button
                             onClick={handleApply}
-                            className="btn px-6 py-2 bg-brand-mint text-slate-900 hover:opacity-90"
+                            className="btn px-6 py-2 bg-brand-500 text-slate-900 hover:opacity-90"
                         >
                             اعمال پیش‌نویس
                         </button>

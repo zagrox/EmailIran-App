@@ -72,7 +72,7 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
             >
                 <div className="modal-header">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <UserIcon className="w-7 h-7 text-brand-purple" />
+                        <UserIcon className="w-7 h-7 text-brand-600" />
                         {isSignup ? 'ایجاد حساب کاربری' : 'ورود به حساب کاربری'}
                     </h2>
                     <button onClick={handleClose} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
@@ -142,7 +142,7 @@ const LoginModal: React.FC<Props> = ({ isOpen, onClose }) => {
                             </div>
                         </div>
                         <div className="mt-6 text-center">
-                            <button type="button" onClick={toggleMode} className="text-base text-brand-purple hover:underline focus:outline-none">
+                            <button type="button" onClick={toggleMode} className="text-base text-brand-600 hover:underline focus:outline-none">
                                 {isSignup ? 'قبلاً حساب کاربری دارید؟ وارد شوید' : 'حساب کاربری ندارید؟ ثبت‌نام کنید'}
                             </button>
                         </div>

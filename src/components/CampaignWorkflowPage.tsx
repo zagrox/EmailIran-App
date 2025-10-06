@@ -278,7 +278,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center py-40"><LoadingSpinner className="w-16 h-16 text-brand-purple" /></div>;
+        return <div className="flex justify-center items-center py-40"><LoadingSpinner className="w-16 h-16 text-brand-500" /></div>;
     }
     if (error || !campaign || !wizardState) {
         return (
@@ -340,7 +340,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                     <div className="text-center card py-20">
                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">کمپین در صف ارسال است</h2>
                          <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">کمپین شما برای ارسال در زمان زیر آماده است:</p>
-                         <p className="mt-4 text-3xl font-bold text-brand-purple">{sendDate.toLocaleString('fa-IR', { dateStyle: 'full', timeStyle: 'short' })}</p>
+                         <p className="mt-4 text-3xl font-bold text-brand-600">{sendDate.toLocaleString('fa-IR', { dateStyle: 'full', timeStyle: 'short' })}</p>
                     </div>
                 );
             }
@@ -350,7 +350,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white animate-pulse">کمپین در حال ارسال است...</h2>
                          <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">ما در حال ارسال ایمیل‌ها به مخاطبان شما هستیم.</p>
                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-4 mt-8 overflow-hidden">
-                            <div className="bg-brand-purple h-4 rounded-full w-2/3 animate-pulse"></div>
+                            <div className="bg-brand-500 h-4 rounded-full w-2/3 animate-pulse"></div>
                         </div>
                     </div>
                 );

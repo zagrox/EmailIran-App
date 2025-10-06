@@ -35,7 +35,7 @@ const features = [
 
 const FeatureCard: React.FC<{ name: string; icon: React.ReactNode }> = ({ name, icon }) => (
     <div className="feature-card">
-        <div className="text-brand-mint">{icon}</div>
+        <div className="text-brand-500">{icon}</div>
         <span className="font-semibold text-slate-700 dark:text-slate-300">{name}</span>
     </div>
 );
@@ -61,11 +61,11 @@ const ReportCard: React.FC<ReportCardProps> = ({ report, onViewCampaign }) => {
             <div className="flex-shrink-0 grid grid-cols-3 gap-4 text-center mt-4 sm:mt-0 sm:text-right">
                 <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">باز شدن</div>
-                    <div className="font-bold text-xl text-brand-purple">{report.stats.openRate.toLocaleString('fa-IR')}%</div>
+                    <div className="font-bold text-xl text-brand-600">{report.stats.openRate.toLocaleString('fa-IR')}%</div>
                 </div>
                 <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">کلیک</div>
-                    <div className="font-bold text-xl text-brand-mint">{report.stats.clickRate.toLocaleString('fa-IR')}%</div>
+                    <div className="font-bold text-xl text-brand-400">{report.stats.clickRate.toLocaleString('fa-IR')}%</div>
                 </div>
                  <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">تبدیل</div>
@@ -171,7 +171,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
         return (
             <button onClick={navigateToLogin} className="flex items-center gap-4 text-right">
                 <h3 className="text-2xl font-bold text-slate-800 dark:text-white">ثبت نام رایگان</h3>
-                <div className="text-brand-mint">
+                <div className="text-brand-500">
                     <SignupArrowIcon />
                 </div>
             </button>
@@ -219,7 +219,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                         <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">آخرین گزارش کمپین‌ها</h2>
                         {isLoadingReports ? (
                             <div className="flex justify-center items-center py-8">
-                                <LoadingSpinner className="w-8 h-8 text-brand-purple" />
+                                <LoadingSpinner className="w-8 h-8 text-brand-600" />
                             </div>
                         ) : reportsError ? (
                             <p className="text-center text-red-500 dark:text-red-400 py-8">{reportsError}</p>
@@ -259,7 +259,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                             <XAxis dataKey="name" stroke={axisStrokeColor} tickLine={false} axisLine={false} dy={10} reversed={true} />
                             <YAxis stroke={axisStrokeColor} tickLine={false} axisLine={false} orientation="left" />
                             <Tooltip contentStyle={tooltipStyle} />
-                            <Line type="monotone" dataKey="subscribers" stroke="#6EE7B7" strokeWidth={3} name="مشترکین" dot={false} />
+                            <Line type="monotone" dataKey="subscribers" stroke="#00f0b5" strokeWidth={3} name="مشترکین" dot={false} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
@@ -269,7 +269,7 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
             <div className="xl:col-span-5">
                 <div className="subscriber-stat-card">
                     <div className="text-right">
-                        <h3 className="text-4xl font-black text-slate-900 dark:text-white">{totalSubscribers.toLocaleString('fa-IR')}<span className="text-brand-mint text-3xl"> +</span></h3>
+                        <h3 className="text-4xl font-black text-slate-900 dark:text-white">{totalSubscribers.toLocaleString('fa-IR')}<span className="text-brand-500 text-3xl"> +</span></h3>
                         <p className="mt-1 text-lg text-slate-500 dark:text-slate-400 font-semibold">تعداد مشترکین در لیست‌ها</p>
                     </div>
                     {renderUserAction()}

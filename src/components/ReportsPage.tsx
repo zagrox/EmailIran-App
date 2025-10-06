@@ -24,11 +24,11 @@ const ReportCard: React.FC<ReportCardProps> = ({ report, onViewReport }) => {
             <div className="flex-shrink-0 grid grid-cols-3 gap-4 text-center mt-4 sm:mt-0 sm:text-right">
                 <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">باز شدن</div>
-                    <div className="font-bold text-xl text-brand-purple">{report.stats.openRate}%</div>
+                    <div className="font-bold text-xl text-brand-600">{report.stats.openRate}%</div>
                 </div>
                 <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">کلیک</div>
-                    <div className="font-bold text-xl text-brand-mint">{report.stats.clickRate}%</div>
+                    <div className="font-bold text-xl text-brand-400">{report.stats.clickRate}%</div>
                 </div>
                  <div>
                     <div className="text-base text-slate-500 dark:text-slate-400">تبدیل</div>

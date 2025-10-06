@@ -20,7 +20,7 @@ const AudienceCard: React.FC<AudienceCardProps> = ({ category, onStartCampaign }
                 </div>
                 <button 
                     onClick={() => onStartCampaign(category.id)}
-                    className="mt-4 w-full sm:w-auto px-5 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-purple hover:text-white dark:hover:bg-brand-purple transition-colors duration-200 font-semibold text-base"
+                    className="mt-4 w-full sm:w-auto px-5 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-md hover:bg-brand-500 hover:text-white dark:hover:bg-brand-500 transition-colors duration-200 font-semibold text-base"
                 >
                     ساخت کمپین
                 </button>

@@ -9,7 +9,7 @@ export const CAMPAIGN_STATUS_INFO: Record<CampaignStatus, { label: string; color
   scheduled: { label: 'زمانبندی شده', colorClasses: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300', icon: ClockIcon, color: '#0ea5e9' },
   payment: { label: 'ثبت و پرداخت', colorClasses: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300', icon: CreditCardIcon, color: '#f59e0b' },
   processing: { label: 'در صف ارسال', colorClasses: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300', icon: EllipsisHorizontalIcon, color: '#f97316' },
-  sending: { label: 'در حال ارسال', colorClasses: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300', icon: PaperAirplaneIcon, color: '#8b5cf6' },
+  sending: { label: 'در حال ارسال', colorClasses: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300', icon: PaperAirplaneIcon, color: '#3b82f6' },
   completed: { label: 'تکمیل ارسال‌ها', colorClasses: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200', icon: CheckCircleIcon, color: '#22c55e' },
 };
 

@@ -137,7 +137,7 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
                             <button
                                 onClick={handleGetTimeSuggestion}
                                 disabled={isTimeSuggestionLoading}
-                                className="w-full flex items-center justify-center gap-2 text-base px-4 py-2 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 transition-colors disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 text-base px-4 py-2 bg-brand-600/20 text-brand-600 rounded-md hover:bg-brand-600/30 transition-colors disabled:opacity-50"
                             >
                                 {isTimeSuggestionLoading ? <LoadingSpinner className="w-5 h-5" /> : <SparklesIcon className="w-5 h-5" />}
                                 پیشنهاد بهترین زمان ارسال

@@ -170,8 +170,8 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                                 <div>
                                     <label className="label">نوع حساب</label>
                                     <div className="mt-1 grid grid-cols-2 gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
-                                        <button onClick={() => setAccountType('personal')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'personal' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>شخصی</button>
-                                        <button onClick={() => setAccountType('business')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'business' ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>تجاری</button>
+                                        <button onClick={() => setAccountType('personal')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'personal' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow' : 'text-slate-600 dark:text-slate-300'}`}>شخصی</button>
+                                        <button onClick={() => setAccountType('business')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${accountType === 'business' ? 'bg-white dark:bg-slate-900 text-brand-600 shadow' : 'text-slate-600 dark:text-slate-300'}`}>تجاری</button>
                                     </div>
                                 </div>
                                 <div>
@@ -257,7 +257,7 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                                     aria-label={`Switch to ${option.key} theme`}
                                     className={`flex-1 p-4 rounded-lg border-2 text-center transition-all duration-200 ${
                                         theme === option.key
-                                            ? 'bg-violet-50 dark:bg-slate-700/80 border-brand-purple'
+                                            ? 'bg-brand-50 dark:bg-slate-700/80 border-brand-500'
                                             : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'
                                     }`}
                                 >

@@ -150,7 +150,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                                         p-2 rounded-lg transition-colors text-center
                                         disabled:opacity-50 disabled:cursor-not-allowed disabled:text-slate-400 dark:disabled:text-slate-600
                                         ${day.isSelected ? 'ring-2 ring-amber-500' : ''}
-                                        ${day.isToday && !day.isSelected ? 'bg-brand-mint/30' : ''}
+                                        ${day.isToday && !day.isSelected ? 'bg-brand-500/30' : ''}
                                         ${!day.isSelected ? 'hover:bg-slate-200 dark:hover:bg-slate-700' : ''}
                                         ${day.isHoliday ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}
                                     `}
@@ -166,7 +166,7 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                     <div className="mt-auto pt-4">
                         <button
                             onClick={onCtaClick}
-                            className="w-full py-2 bg-brand-purple text-white font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                            className="w-full py-2 bg-brand-500 text-white font-bold rounded-lg hover:bg-brand-700 transition-colors"
                         >
                             {ctaText}
                         </button>

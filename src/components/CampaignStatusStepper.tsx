@@ -28,7 +28,7 @@ const CampaignStatusStepper: React.FC<Props> = ({ currentStatus }) => {
                 {!isFirst && (
                   <div
                     className={`absolute w-1/2 h-0.5 top-4 left-1/2 ${
-                      isCompleted || isCurrent ? 'bg-brand-purple' : 'bg-slate-200 dark:bg-slate-700'
+                      isCompleted || isCurrent ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-700'
                     }`}
                     aria-hidden="true"
                   />
@@ -37,7 +37,7 @@ const CampaignStatusStepper: React.FC<Props> = ({ currentStatus }) => {
                 {!isLast && (
                   <div
                     className={`absolute w-1/2 h-0.5 top-4 right-1/2 ${
-                      isCompleted ? 'bg-brand-purple' : 'bg-slate-200 dark:bg-slate-700'
+                      isCompleted ? 'bg-brand-600' : 'bg-slate-200 dark:bg-slate-700'
                     }`}
                     aria-hidden="true"
                   />
@@ -47,7 +47,7 @@ const CampaignStatusStepper: React.FC<Props> = ({ currentStatus }) => {
                   {/* The dot */}
                   <div
                     className={`relative flex h-8 w-8 items-center justify-center rounded-full z-10
-                      ${isCompleted ? 'bg-brand-purple' : ''}
+                      ${isCompleted ? 'bg-brand-600' : ''}
                       ${isCurrent ? 'border-2 bg-slate-50 dark:bg-slate-800' : ''}
                       ${isUpcoming ? 'border-2 border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800' : ''}
                     `}

@@ -9,6 +9,7 @@ import UserProfilePage from './components/UserProfilePage';
 import CampaignsPage from './components/CampaignsPage';
 import CampaignWorkflowPage from './components/CampaignWorkflowPage';
 import LoginPage from './components/LoginPage';
+import HelpPage from './components/HelpPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
@@ -278,6 +279,8 @@ const App: React.FC = () => {
                     return (
                         <UserProfilePage theme={theme} setTheme={setTheme} onNavigate={handleNavigation} />
                     );
+                case 'help':
+                    return <HelpPage />;
                 case 'login':
                     return <LoginPage logoUrl={logoUrl} />;
             }

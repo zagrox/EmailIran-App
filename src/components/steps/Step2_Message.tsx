@@ -123,7 +123,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                 <button
                     onClick={() => setIsTemplateBrowserOpen(true)}
                     disabled={isHtmlMode}
-                    className="flex items-center gap-2 px-4 py-2 bg-brand-mint text-slate-900 rounded-md hover:opacity-90 transition-opacity duration-200 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-slate-900 rounded-md hover:opacity-90 transition-opacity duration-200 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <DocumentDuplicateIcon className="w-5 h-5" />
                     انتخاب از قالب‌ها
@@ -133,8 +133,8 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
             
             <div className="mb-6">
                 <div className="inline-grid grid-cols-2 gap-2 rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
-                    <button onClick={() => handleContentTypeChange('editor')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${isEditorMode ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>ویرایشگر متن</button>
-                    <button onClick={() => handleContentTypeChange('html')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${isHtmlMode ? 'bg-white dark:bg-slate-900 text-brand-purple shadow' : 'text-slate-600 dark:text-slate-300'}`}>آپلود HTML</button>
+                    <button onClick={() => handleContentTypeChange('editor')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${isEditorMode ? 'bg-white dark:bg-slate-900 text-brand-600 shadow' : 'text-slate-600 dark:text-slate-300'}`}>ویرایشگر متن</button>
+                    <button onClick={() => handleContentTypeChange('html')} className={`px-4 py-1.5 text-base rounded-md font-semibold transition-colors ${isHtmlMode ? 'bg-white dark:bg-slate-900 text-brand-600 shadow' : 'text-slate-600 dark:text-slate-300'}`}>آپلود HTML</button>
                 </div>
             </div>
 
@@ -226,7 +226,7 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                                 ></textarea>
                                 {isBodyLoading && (
                                     <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/80 flex items-center justify-center rounded-md">
-                                        <LoadingSpinner className="w-8 h-8 text-brand-purple" />
+                                        <LoadingSpinner className="w-8 h-8 text-brand-500" />
                                     </div>
                                 )}
                             </div>
@@ -307,15 +307,15 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                             <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">پیش‌نمایش آزمون A/B</h3>
                             <div className="space-y-3 p-4 bg-white dark:bg-slate-900 rounded-md border border-slate-300 dark:border-slate-600">
                                 <div>
-                                    <span className="text-sm font-bold uppercase text-brand-purple">نسخه الف</span>
-                                    <div className="mt-1 p-2 border-l-4 border-brand-purple bg-slate-50 dark:bg-slate-800 rounded-r-md">
+                                    <span className="text-sm font-bold uppercase text-brand-600">نسخه الف</span>
+                                    <div className="mt-1 p-2 border-l-4 border-brand-600 bg-slate-50 dark:bg-slate-800 rounded-r-md">
                                         <p className="text-base font-semibold text-slate-800 dark:text-slate-200 truncate">{message.subject}</p>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 truncate">سلام علی، ما به‌روزرسانی‌های شگفت‌انگیزی برای شما داریم...</p>
                                     </div>
                                 </div>
                                 <div>
-                                    <span className="text-sm font-bold uppercase text-brand-mint">نسخه ب</span>
-                                    <div className="mt-1 p-2 border-l-4 border-brand-mint bg-slate-50 dark:bg-slate-800 rounded-r-md">
+                                    <span className="text-sm font-bold uppercase text-brand-400">نسخه ب</span>
+                                    <div className="mt-1 p-2 border-l-4 border-brand-400 bg-slate-50 dark:bg-slate-800 rounded-r-md">
                                         <p className="text-base font-semibold text-slate-800 dark:text-slate-200 truncate">
                                             {message.abTest.subjectB || <span className="text-slate-400 dark:text-slate-500">[موضوع جایگزین شما در اینجا]</span>}
                                         </p>

@@ -24,7 +24,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
                 {/* Connector line */}
                 {stepIdx > 0 && (
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className={`h-0.5 w-full ${isPast || isCurrent ? 'bg-brand-purple' : 'bg-slate-200 dark:bg-slate-700'}`} />
+                    <div className={`h-0.5 w-full ${isPast || isCurrent ? 'bg-brand-500' : 'bg-slate-200 dark:bg-slate-700'}`} />
                   </div>
                 )}
                 
@@ -32,18 +32,18 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, steps }) => {
                   {/* Circle */}
                   <div
                     className={`relative flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-300 bg-slate-50 dark:bg-slate-800
-                      ${isCurrent ? 'border-2 border-brand-purple' : 'border-2 border-slate-300 dark:border-slate-600'}
+                      ${isCurrent ? 'border-2 border-brand-500' : 'border-2 border-slate-300 dark:border-slate-600'}
                     `}
                     aria-current={isCurrent ? 'step' : undefined}
                   >
                     {isCurrent && (
-                      <span className="h-2.5 w-2.5 rounded-full bg-brand-purple" aria-hidden="true" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-brand-500" aria-hidden="true" />
                     )}
                   </div>
 
                   {/* Title */}
                   <span className={`mt-3 block w-max text-center text-base font-medium 
-                    ${isCurrent ? 'text-brand-purple dark:text-violet-300' : 'text-slate-500 dark:text-slate-400'}`}>
+                    ${isCurrent ? 'text-brand-500 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400'}`}>
                     {step.title}
                   </span>
                 </div>

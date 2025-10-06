@@ -61,11 +61,11 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                 <div className="flex items-center justify-between h-16">
                     {/* Logo, Title and New Campaign Button */}
                     <div className="flex items-center">
-                        <button onClick={() => handleNav('dashboard')} className="flex items-center focus:outline-none focus:ring-2 focus:ring-brand-purple rounded-lg">
+                        <button onClick={() => handleNav('dashboard')} className="flex items-center focus:outline-none focus:ring-2 focus:ring-brand-500 rounded-lg">
                             {logoUrl ? (
                                 <img src={logoUrl} alt="ایمیل ایران" className="h-14 object-contain" />
                             ) : (
-                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-500 to-brand-600 text-transparent bg-clip-text">
                                    ایمیل ایران
                                 </h1>
                             )}
@@ -85,6 +85,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', navLinkBase, navLinkActive, navLinkInactive)}>کمپین‌ها</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', navLinkBase, navLinkActive, navLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', navLinkBase, navLinkActive, navLinkInactive)}>تقویم</a>
+                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('help')}} className={getLinkClasses('help', navLinkBase, navLinkActive, navLinkInactive)}>راهنما</a>
                         </div>
                          <button
                             onClick={handleProfileClick}
@@ -128,7 +129,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                        <button
                            onClick={handleStartWizard}
-                           className={`${mobileNavLinkBase} w-full text-center bg-brand-purple text-white hover:bg-violet-700 mb-2 font-semibold`}
+                           className={`${mobileNavLinkBase} w-full text-center bg-brand-600 text-white hover:bg-brand-700 mb-2 font-semibold`}
                        >
                            کمپین جدید
                        </button>
@@ -137,6 +138,7 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>تقویم</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>کمپین‌ها</a>
+                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('help')}} className={getLinkClasses('help', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>راهنما</a>
                            <div className="border-t border-slate-200 dark:border-slate-700 my-2"></div>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleProfileClick()}} className={getLinkClasses('profile', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>پروفایل کاربری</a>
                        </div>

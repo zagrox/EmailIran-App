@@ -113,7 +113,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
                         </button>
                     </form>
                     <p className="mt-6 text-center text-base">
-                        <button onClick={() => switchMode('login')} className="font-semibold text-brand-purple hover:underline">بازگشت به ورود</button>
+                        <button onClick={() => switchMode('login')} className="font-semibold text-brand-600 hover:underline">بازگشت به ورود</button>
                     </p>
                 </div>
             );
@@ -149,7 +149,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
                     
                     {!isSignup && (
                         <div className="text-sm text-right">
-                           <button type="button" onClick={() => switchMode('reset')} className="font-medium text-brand-purple hover:underline">رمز عبور خود را فراموش کرده‌اید؟</button>
+                           <button type="button" onClick={() => switchMode('reset')} className="font-medium text-brand-600 hover:underline">رمز عبور خود را فراموش کرده‌اید؟</button>
                         </div>
                     )}
 
@@ -178,7 +178,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
         <div className="min-h-screen flex items-center justify-center p-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 max-w-6xl w-full bg-white dark:bg-slate-800/50 shadow-2xl rounded-2xl ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
                 {/* Left Branding Panel */}
-                <div className="hidden lg:flex flex-col items-center justify-center p-12 bg-gradient-to-br from-brand-purple to-brand-pink text-white text-center relative">
+                <div className="hidden lg:flex flex-col items-center justify-center p-12 bg-gradient-to-br from-brand-500 to-brand-700 text-white text-center relative">
                     <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
                     <div className="z-10">
                         <h1 className="text-4xl font-bold">جادوی کمپین خود را آزاد کنید</h1>
@@ -194,11 +194,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
                 {/* Right Form Panel */}
                 <div className="p-8 sm:p-12 flex flex-col">
                     <div className="mb-8">
-                        <button onClick={() => navigate('dashboard')} className="inline-block focus:outline-none focus:ring-2 focus:ring-brand-purple rounded-lg" aria-label="Back to Homepage">
+                        <button onClick={() => navigate('dashboard')} className="inline-block focus:outline-none focus:ring-2 focus:ring-brand-500 rounded-lg" aria-label="Back to Homepage">
                             {logoUrl ? (
                                 <img src={logoUrl} alt="ایمیل ایران" className="h-14 object-contain" />
                             ) : (
-                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-pink to-brand-mint text-transparent bg-clip-text">
+                                <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-500 to-brand-600 text-transparent bg-clip-text">
                                    ایمیل ایران
                                 </h1>
                             )}
@@ -219,7 +219,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ logoUrl }) => {
                              <div className="text-center card !p-4 !bg-slate-100 dark:!bg-slate-800/80">
                                 <p className="text-base text-slate-600 dark:text-slate-300">
                                     {mode === 'signup' ? 'قبلا حساب کاربری دارید؟' : 'حساب کاربری ندارید؟'}
-                                    <button onClick={() => switchMode(mode === 'signup' ? 'login' : 'signup')} className="font-semibold text-brand-purple hover:underline mr-2">
+                                    <button onClick={() => switchMode(mode === 'signup' ? 'login' : 'signup')} className="font-semibold text-brand-600 hover:underline mr-2">
                                         {mode === 'signup' ? 'وارد شوید' : 'ثبت نام کنید'}
                                     </button>
                                 </p>

@@ -13,7 +13,7 @@ const ActionBadge: React.FC<{ status: CampaignStatus }> = ({ status }) => {
         scheduled: { label: 'زمانبندی شده', icon: ClockIcon, classes: 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300' },
         payment: { label: 'ثبت و پرداخت', icon: CreditCardIcon, classes: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' },
         processing: { label: 'در صف ارسال', icon: EllipsisHorizontalIcon, classes: 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' },
-        sending: { label: 'در حال ارسال', icon: PaperAirplaneIcon, classes: 'bg-violet-100 text-violet-800 dark:bg-violet-900/50 dark:text-violet-300' },
+        sending: { label: 'در حال ارسال', icon: PaperAirplaneIcon, classes: 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300' },
         completed: { label: 'مشاهده گزارش', icon: ChartBarIcon, classes: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
     };
 
@@ -49,11 +49,11 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
     return (
         <button 
             onClick={() => onViewCampaign(campaign.id)}
-            className="card-report !p-0 overflow-hidden relative text-right w-full transition-all duration-300 hover:shadow-xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple cursor-pointer"
+            className="card-report !p-0 overflow-hidden relative text-right w-full transition-all duration-300 hover:shadow-xl hover:ring-brand-500/50 dark:hover:ring-brand-500 cursor-pointer"
         >
             <div 
                 className={`w-2 h-full absolute right-0 top-0`} 
-                style={{ backgroundColor: campaign.campaign_color || (statusInfo ? statusInfo.color : '#6D28D9') }}
+                style={{ backgroundColor: campaign.campaign_color || (statusInfo ? statusInfo.color : '#0d9488') }}
             ></div>
             <div className="p-5 pr-6 w-full">
                 <div className="flex flex-col sm:flex-row items-center w-full gap-4">
@@ -61,7 +61,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign, onViewCampaign })
                          <div className="flex items-center gap-3 flex-wrap">
                             <h3 className="font-bold text-lg text-slate-900 dark:text-white">{campaign.campaign_subject}</h3>
                             {campaign.campaign_ab && (
-                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-mint/20 text-slate-800 dark:text-white border border-brand-mint">
+                                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-brand-500/20 text-slate-800 dark:text-white border border-brand-500">
                                     A/B
                                 </span>
                             )}
@@ -176,7 +176,7 @@ const CampaignsPage: React.FC<CampaignsPageProps> = ({ onStartNewCampaign, onVie
 
             {isLoading && (
                 <div className="flex justify-center items-center py-20">
-                    <LoadingSpinner className="w-12 h-12 text-brand-purple" />
+                    <LoadingSpinner className="w-12 h-12 text-brand-600" />
                 </div>
             )}
             {error && (

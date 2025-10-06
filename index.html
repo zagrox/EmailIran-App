@@ -14,6 +14,28 @@
         @tailwind utilities;
 
         @layer base {
+          /* 
+          ==========================================================================
+           BRAND COLOR THEME DEFINITION
+          ==========================================================================
+           To change the application's primary brand color, simply update the
+           HSL (Hue, Saturation, Lightness) values below. All components will
+           automatically adapt to the new color scheme.
+          */
+          :root {
+            --brand-50: 221 100% 97%;
+            --brand-100: 219 93% 93%;
+            --brand-200: 217 91% 87%;
+            --brand-300: 214 96% 78%;
+            --brand-400: 214 94% 67%;
+            --brand-500: 161 65% 55%;
+            --brand-600: 221 83% 58%;
+            --brand-700: 224 76% 48%;
+            --brand-800: 225 73% 47%;
+            --brand-900: 226 68% 38%;
+            --brand-950: 224 57% 21%;
+          }
+
           body {
             @apply min-h-screen bg-slate-50 dark:bg-black text-slate-800 dark:text-slate-200 transition-colors duration-300 font-sans antialiased text-base;
           }
@@ -27,28 +49,28 @@
 
           /* Buttons */
           .btn { @apply rounded-md transition-colors duration-200 font-semibold inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed; }
-          .btn-primary { @apply px-6 py-2 bg-brand-purple text-white hover:bg-violet-700; }
-          .btn-secondary { @apply px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600; }
-          .btn-launch { @apply px-8 py-3 bg-gradient-to-r from-brand-pink to-brand-mint text-white rounded-md hover:opacity-90 transition-opacity duration-200 font-bold text-lg; }
-          .btn-ai { @apply flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-500 to-cyan-400 text-white rounded-lg font-semibold text-xl shadow-lg shadow-violet-500/30 dark:shadow-cyan-400/20 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-violet-500/40 dark:hover:shadow-cyan-400/30 active:translate-y-0 active:scale-100 active:shadow-lg disabled:!shadow-none disabled:hover:!translate-y-0 disabled:!scale-100; }
-          .btn-ai-suggestion { @apply text-base px-3 py-1.5 bg-brand-purple/20 text-brand-purple rounded-md hover:bg-brand-purple/30 disabled:cursor-wait flex items-center gap-2; }
+          .btn-primary { @apply px-6 py-2 bg-brand-500 text-white hover:bg-brand-700; }
+          .btn-secondary { @apply px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-500 dark:hover:bg-slate-500; }
+          .btn-launch { @apply px-8 py-3 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-md hover:opacity-90 transition-opacity duration-200 font-bold text-lg; }
+          .btn-ai { @apply flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-500 to-brand-400 text-white rounded-lg font-semibold text-xl shadow-lg shadow-brand-500/30 dark:shadow-brand-400/20 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/40 dark:hover:shadow-brand-400/30 active:translate-y-0 active:scale-100 active:shadow-lg disabled:!shadow-none disabled:hover:!translate-y-0 disabled:!scale-100; }
+          .btn-ai-suggestion { @apply text-base px-3 py-1.5 bg-brand-100 text-brand-700 rounded-md hover:bg-brand-200 dark:bg-brand-900/40 dark:text-brand-300 dark:hover:bg-brand-900/60 disabled:cursor-wait flex items-center gap-2; }
           .btn-filter { @apply px-4 py-2 text-base rounded-full border transition-colors duration-200; }
-          .btn-filter-selected { @apply bg-brand-mint/20 border-brand-mint text-slate-800 dark:text-white; }
+          .btn-filter-selected { @apply bg-brand-500/20 border-brand-500 text-slate-800 dark:text-white; }
           .btn-filter-unselected { @apply bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300; }
 
           /* Cards */
           .card { @apply bg-slate-100 dark:bg-slate-900/70 p-6 rounded-xl border border-slate-200 dark:border-slate-800; }
           .card-category { @apply p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer; }
-          .card-category-selected { @apply bg-violet-50 dark:bg-slate-700/80 border-brand-purple; }
+          .card-category-selected { @apply bg-brand-50 dark:bg-slate-700/80 border-brand-500; }
           .card-category-unselected { @apply bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600; }
           .card-audience { @apply bg-white dark:bg-slate-800/50 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 overflow-hidden flex flex-col sm:flex-row items-center p-5 transition-transform duration-300 hover:-translate-y-1; }
-          .card-report { @apply bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 flex flex-col sm:flex-row items-center justify-between transition-all duration-300 hover:shadow-xl hover:ring-brand-purple/50 dark:hover:ring-brand-purple cursor-pointer; }
+          .card-report { @apply bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 flex flex-col sm:flex-row items-center justify-between transition-all duration-300 hover:shadow-xl hover:ring-brand-500/50 dark:hover:ring-brand-500 cursor-pointer; }
           .modern-stat-card { @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-lg rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10 p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl cursor-pointer; }
           
           /* Inputs */
-          .input { @apply w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md p-3 text-slate-900 dark:text-white focus:ring-brand-purple focus:border-brand-purple transition-colors; }
+          .input { @apply w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md p-3 text-slate-900 dark:text-white focus:ring-brand-500 focus:border-brand-500 transition-colors; }
           .input-range { @apply w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700; }
-          .ai-input-container { @apply p-[2px] rounded-xl bg-gradient-to-br from-slate-300 to-slate-200 dark:from-brand-purple dark:to-brand-pink relative mt-4 shadow-inner; }
+          .ai-input-container { @apply p-[2px] rounded-xl bg-gradient-to-br from-slate-300 to-slate-200 dark:from-brand-500 dark:to-brand-600 relative mt-4 shadow-inner; }
           .ai-hero-textarea {
             @apply w-full rounded-[10px] p-4 text-lg transition-colors resize-none border-none focus:ring-0;
             @apply bg-white text-slate-900 placeholder-slate-500; /* Light mode */
@@ -71,12 +93,12 @@
 
           /* Toggle Switch */
           .toggle-switch { @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors; }
-          .toggle-switch-on { @apply bg-brand-purple; }
+          .toggle-switch-on { @apply bg-brand-600; }
           .toggle-switch-off { @apply bg-slate-400 dark:bg-slate-600; }
           .toggle-switch-handle { @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform; }
           .toggle-switch-handle-on { @apply -translate-x-6; }
           .toggle-switch-handle-off { @apply -translate-x-1; }
-          .toggle-switch-ab-on { @apply bg-brand-mint; }
+          .toggle-switch-ab-on { @apply bg-brand-500; }
           
           /* Health Indicators */
           .health-excellent { @apply text-green-500 dark:text-green-400 bg-green-100 dark:bg-green-900/50; }
@@ -111,9 +133,19 @@
                         sans: ['Vazirmatn', 'sans-serif'],
                     },
                     colors: {
-                        'brand-purple': '#6D28D9',
-                        'brand-pink': '#EC4899',
-                        'brand-mint': '#6EE7B7',
+                        'brand': {
+                          50: 'hsl(var(--brand-50) / <alpha-value>)',
+                          100: 'hsl(var(--brand-100) / <alpha-value>)',
+                          200: 'hsl(var(--brand-200) / <alpha-value>)',
+                          300: 'hsl(var(--brand-300) / <alpha-value>)',
+                          400: 'hsl(var(--brand-400) / <alpha-value>)',
+                          500: 'hsl(var(--brand-500) / <alpha-value>)',
+                          600: 'hsl(var(--brand-600) / <alpha-value>)',
+                          700: 'hsl(var(--brand-700) / <alpha-value>)',
+                          800: 'hsl(var(--brand-800) / <alpha-value>)',
+                          900: 'hsl(var(--brand-900) / <alpha-value>)',
+                          950: 'hsl(var(--brand-950) / <alpha-value>)',
+                        },
                         'slate': {
                             50: '#f8fafc',
                             100: '#f1f5f9',
