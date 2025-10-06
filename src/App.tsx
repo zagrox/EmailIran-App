@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import type { CampaignState, AICampaignDraft, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Header from './components/Header';
@@ -10,6 +11,7 @@ import CampaignsPage from './components/CampaignsPage';
 import CampaignWorkflowPage from './components/CampaignWorkflowPage';
 import LoginPage from './components/LoginPage';
 import HelpPage from './components/HelpPage';
+import PricingPage from './components/PricingPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
@@ -281,6 +283,8 @@ const App: React.FC = () => {
                     );
                 case 'help':
                     return <HelpPage />;
+                case 'pricing':
+                    return <PricingPage />;
                 case 'login':
                     return <LoginPage logoUrl={logoUrl} />;
             }

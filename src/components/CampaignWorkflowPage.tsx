@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 import { fetchCampaignById, updateCampaign, createCampaign } from '../services/campaignService';
 import { uploadFile } from '../services/fileService';
-import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report } from '../types';
+import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report, PricingTier } from '../types';
 import { LoadingSpinner } from '../components/IconComponents';
 import CampaignStatusStepper from './CampaignStatusStepper';
 import Step1Audience from './steps/Step1_Audience';
@@ -100,11 +100,35 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [localStatus, setLocalStatus] = useState<CampaignStatus>('targeting');
+    const [pricingTiers, setPricingTiers] = useState<PricingTier[]>([]);
     
     const { accessToken, isAuthenticated } = useAuth();
     const { addNotification } = useNotification();
     
     const isNewCampaign = campaignId === 0;
+
+    useEffect(() => {
+        const fetchPricingTiers = async () => {
+            try {
+                const response = await fetch('https://crm.ir48.com/items/pricing');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch pricing data');
+                }
+                const { data } = await response.json();
+                if (data && Array.isArray(data.pricing_slot)) {
+                    // Sort tiers by volume ascending to make finding the rate easier
+                    const sortedTiers = data.pricing_slot.sort((a: PricingTier, b: PricingTier) => a.pricing_volume - b.pricing_volume);
+                    setPricingTiers(sortedTiers);
+                } else {
+                    throw new Error('Pricing data is not in the expected format.');
+                }
+            } catch (err) {
+                console.error(err);
+                addNotification('Could not load pricing information.', 'error');
+            }
+        };
+        fetchPricingTiers();
+    }, [addNotification]);
 
     const loadCampaign = useCallback(async () => {
         setIsLoading(true);
@@ -297,7 +321,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             case 'targeting':
                 return (
                     <div>
-                        <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={onOpenAIAssistant} audienceCategories={audienceCategories} />
+                        <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={onOpenAIAssistant} audienceCategories={audienceCategories} pricingTiers={pricingTiers} />
                         <footer className="mt-8 flex justify-between items-center">
                             <button onClick={onBack} className="btn btn-secondary">بازگشت به لیست</button>
                             <button onClick={handleSaveAudience} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
@@ -327,7 +351,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             case 'payment':
                  return (
                     <div>
-                        <Step4Review campaignData={wizardState} audienceCategories={audienceCategories} />
+                        <Step4Review campaignData={wizardState} audienceCategories={audienceCategories} pricingTiers={pricingTiers} />
                          <footer className="mt-8 flex justify-between items-center">
                             <button onClick={() => handleStatusUpdate('scheduled')} disabled={isUpdating} className="btn btn-secondary">بازگشت به زمانبندی</button>
                             <button onClick={() => handleStatusUpdate('processing')} disabled={isUpdating} className="btn btn-launch w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'پرداخت و نهایی کردن'}</button>

@@ -1,7 +1,7 @@
 
 
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
-export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'calendar' | 'profile' | 'login' | 'help';
+export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'calendar' | 'profile' | 'login' | 'help' | 'pricing';
 
 export type CampaignStatus = 'targeting' | 'editing' | 'scheduled' | 'payment' | 'processing' | 'sending' | 'completed';
 
@@ -128,4 +128,10 @@ export interface EmailMarketingCampaign {
     campaign_content: string;
     campaign_html: string | null;
     campaign_audiences?: RelatedAudience[];
+}
+
+export interface PricingTier {
+    pricing_level: string;
+    pricing_volume: number;
+    pricing_rate: number;
 }

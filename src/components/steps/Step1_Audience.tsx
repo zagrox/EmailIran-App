@@ -1,14 +1,15 @@
 
 
 import React, { useMemo } from 'react';
-import type { CampaignState, AudienceCategory } from '../../types';
-import { UsersIcon, SparklesIcon } from '../IconComponents';
+import type { CampaignState, AudienceCategory, PricingTier } from '../../types';
+import { UsersIcon, SparklesIcon, CalculatorIcon } from '../IconComponents';
 
 interface Props {
   campaignData: CampaignState;
   updateCampaignData: <K extends keyof CampaignState>(field: K, value: CampaignState[K]) => void;
   onOpenAIAssistant: () => void;
   audienceCategories: AudienceCategory[];
+  pricingTiers: PricingTier[];
 }
 
 const healthColorMap = {
@@ -45,7 +46,7 @@ const CategoryCard: React.FC<{ category: AudienceCategory; isSelected: boolean; 
 );
 
 
-const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOpenAIAssistant, audienceCategories }) => {
+const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOpenAIAssistant, audienceCategories, pricingTiers }) => {
     const { audience } = campaignData;
 
     const handleCategoryToggle = (categoryId: string) => {
@@ -83,6 +84,17 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
         if (audience.healthScore >= 60) return 'Good';
         return 'Poor';
     }, [audience.healthScore]);
+
+    const currentPricingTier = useMemo(() => {
+        if (!pricingTiers || pricingTiers.length === 0 || totalRecipients === 0) {
+            return null;
+        }
+        // Tiers are sorted ascending by volume. Find the best tier.
+        const applicableTier = [...pricingTiers].reverse().find(tier => totalRecipients >= tier.pricing_volume);
+        
+        // If recipient count is lower than the lowest tier, use the lowest tier's rate.
+        return applicableTier || pricingTiers[0];
+    }, [totalRecipients, pricingTiers]);
 
 
     return (
@@ -146,6 +158,22 @@ const Step1Audience: React.FC<Props> = ({ campaignData, updateCampaignData, onOp
                                 <div className={`text-left text-base mt-1 font-semibold ${healthColorMap[averageHealthStatus].split(' ')[0]}`}>
                                     {healthTranslationMap[averageHealthStatus]}
                                 </div>
+                            </div>
+                             <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                <div className="summary-label flex items-center gap-2 mb-2">
+                                    <CalculatorIcon className="w-5 h-5 text-slate-500" />
+                                    سطح قیمت‌گذاری تخمینی
+                                </div>
+                                {currentPricingTier ? (
+                                    <div className="p-3 bg-slate-100 dark:bg-slate-900/70 rounded-lg text-center">
+                                        <p className="font-bold text-lg text-slate-800 dark:text-slate-200 capitalize">{currentPricingTier.pricing_level}</p>
+                                        <p className="text-base text-slate-500 dark:text-slate-400">{currentPricingTier.pricing_rate.toLocaleString('fa-IR')} تومان / ایمیل</p>
+                                    </div>
+                                ) : (
+                                    <div className="text-center text-slate-500 dark:text-slate-400 py-2">
+                                        برای مشاهده قیمت، یک مخاطب انتخاب کنید.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ) : (

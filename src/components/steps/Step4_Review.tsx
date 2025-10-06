@@ -1,12 +1,13 @@
 
 
-import React from 'react';
-import type { CampaignState, AudienceCategory } from '../../types';
+import React, { useMemo } from 'react';
+import type { CampaignState, AudienceCategory, PricingTier } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface Props {
   campaignData: CampaignState;
   audienceCategories: AudienceCategory[];
+  pricingTiers: PricingTier[];
 }
 
 const SummaryItem: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
@@ -16,7 +17,7 @@ const SummaryItem: React.FC<{ label: string; children: React.ReactNode }> = ({ l
     </div>
 );
 
-const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
+const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories, pricingTiers }) => {
     const { audience, message, schedule } = campaignData;
     const { isAuthenticated } = useAuth();
 
@@ -24,8 +25,22 @@ const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
     const recipientCount = selectedCategories.reduce((sum, c) => sum + c.count, 0);
     const segmentNames = selectedCategories.map(c => c.name_fa).join('، ') || 'مخاطب انتخاب نشده';
     
-    const pricePerEmail = 0.001;
-    const totalCost = recipientCount * pricePerEmail;
+    const { pricePerEmail, totalCost, tierName } = useMemo(() => {
+        if (!pricingTiers || pricingTiers.length === 0 || recipientCount === 0) {
+            return { pricePerEmail: 0, totalCost: 0, tierName: '-' };
+        }
+        
+        // Find the highest tier that the current volume qualifies for. Tiers are sorted ascending by volume.
+        const applicableTier = [...pricingTiers].reverse().find(tier => recipientCount >= tier.pricing_volume);
+        
+        // If volume is below the lowest tier, use the lowest tier's rate.
+        const effectiveTier = applicableTier || pricingTiers[0];
+
+        const rate = effectiveTier.pricing_rate;
+        const cost = recipientCount * rate;
+        return { pricePerEmail: rate, totalCost: cost, tierName: effectiveTier.pricing_level };
+    }, [recipientCount, pricingTiers]);
+
 
     return (
         <div className="animate-slide-in-up">
@@ -86,12 +101,16 @@ const Step4Review: React.FC<Props> = ({ campaignData, audienceCategories }) => {
                            </div>
                            <div className="flex justify-between">
                                <span>قیمت هر ایمیل</span>
-                               <span>${pricePerEmail.toFixed(4)}</span>
+                               <span className="font-semibold">{pricePerEmail.toLocaleString('fa-IR')} تومان</span>
                            </div>
+                           <div className="flex justify-between text-sm text-slate-500 dark:text-slate-400">
+                                <span>سطح قیمت‌گذاری</span>
+                                <span className="capitalize">{tierName}</span>
+                            </div>
                            <div className="border-t border-slate-200 dark:border-slate-700 my-2"></div>
                            <div className="flex justify-between text-slate-900 dark:text-white font-bold text-lg">
                                <span>هزینه کل</span>
-                               <span>${totalCost.toFixed(2)}</span>
+                               <span>{totalCost.toLocaleString('fa-IR')} تومان</span>
                            </div>
                         </div>
                     </div>

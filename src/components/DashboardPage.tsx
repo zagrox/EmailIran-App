@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { SparklesIcon, CalendarDaysIcon, ChartBarIcon, ShoppingCartIcon, ClipboardDocumentListIcon, PaintBrushIcon, WaveIcon, SignupArrowIcon, ClockIcon, LoadingSpinner } from './IconComponents';
+import { SparklesIcon, CalendarDaysIcon, ChartBarIcon, ShoppingCartIcon, ClipboardDocumentListIcon, PaintBrushIcon, WaveIcon, SignupArrowIcon, ClockIcon, LoadingSpinner, CalculatorIcon } from './IconComponents';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { AudienceCategory, Report, EmailMarketingCampaign } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,22 +23,6 @@ const chartData = [
   { name: 'خرداد', subscribers: 38000 },
   { name: 'تیر', subscribers: 39000 },
 ];
-
-const features = [
-    { name: 'ساخت کمپین هوشمند', icon: <SparklesIcon className="w-8 h-8"/> },
-    { name: 'ثبت و مدیریت سفارش', icon: <ShoppingCartIcon className="w-8 h-8"/> },
-    { name: 'انتشار آنلاین کمپین', icon: <ClipboardDocumentListIcon className="w-8 h-8"/> },
-    { name: 'طراحی با قالب‌ساز', icon: <PaintBrushIcon className="w-8 h-8"/> },
-    { name: 'کمپین‌ها و گزارشات', icon: <ChartBarIcon className="w-8 h-8"/> },
-    { name: 'رویدادهای رسمی', icon: <CalendarDaysIcon className="w-8 h-8"/> },
-];
-
-const FeatureCard: React.FC<{ name: string; icon: React.ReactNode }> = ({ name, icon }) => (
-    <div className="feature-card">
-        <div className="text-brand-500">{icon}</div>
-        <span className="font-semibold text-slate-700 dark:text-slate-300">{name}</span>
-    </div>
-);
 
 interface ReportCardProps {
     report: Report;
@@ -98,6 +82,22 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
         },
         chartData: []
     });
+
+    const features = [
+        { name: 'ساخت کمپین هوشمند', icon: <SparklesIcon className="w-8 h-8"/>, action: () => onOpenAIAssistant() },
+        { name: 'ثبت و مدیریت سفارش', icon: <ShoppingCartIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
+        { name: 'انتشار آنلاین کمپین', icon: <ClipboardDocumentListIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
+        { name: 'طراحی با قالب‌ساز', icon: <PaintBrushIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
+        { name: 'کمپین‌ها و گزارشات', icon: <ChartBarIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
+        { name: 'ماشین حساب قیمت', icon: <CalculatorIcon className="w-8 h-8"/>, action: () => navigate('pricing') },
+    ];
+    
+    const FeatureCard: React.FC<{ name: string; icon: React.ReactNode; action: () => void; }> = ({ name, icon, action }) => (
+        <button onClick={action} className="feature-card w-full">
+            <div className="text-brand-500">{icon}</div>
+            <span className="font-semibold text-slate-700 dark:text-slate-300">{name}</span>
+        </button>
+    );
 
     useEffect(() => {
         const loadCampaigns = async () => {
