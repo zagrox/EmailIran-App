@@ -71,7 +71,7 @@ const Step5Analytics: React.FC<Props> = ({ theme, viewedReport, onBack }) => {
             <div className="mt-10">
                  <button 
                     onClick={mainButtonAction}
-                    className="btn btn-launch"
+                    className="btn btn-gradient"
                  >
                     {mainButtonText}
                  </button>

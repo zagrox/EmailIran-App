@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>جادوگر کمپین ایمیل</title>
+    <title>جادوگر بازاریابی ایمیل ایران</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -26,18 +26,18 @@
             --brand-50: 221 100% 97%;
             --brand-100: 219 93% 93%;
             --brand-200: 217 91% 87%;
-            --brand-300: 214 96% 78%;
+            --brand-300: 120 78% 72%;
             --brand-400: 214 94% 67%;
             --brand-500: 161 65% 55%;
             --brand-600: 221 83% 58%;
-            --brand-700: 224 76% 48%;
-            --brand-800: 225 73% 47%;
+            --brand-700: 240 100% 80%;
+            --brand-800: 35 100% 70%;
             --brand-900: 226 68% 38%;
             --brand-950: 224 57% 21%;
           }
 
           body {
-            @apply min-h-screen bg-slate-50 dark:bg-black text-slate-800 dark:text-slate-200 transition-colors duration-300 font-sans antialiased text-base;
+            @apply min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors duration-300 font-sans antialiased text-base;
           }
         }
 
@@ -52,7 +52,8 @@
           .btn-primary { @apply px-6 py-2 bg-brand-500 text-white hover:bg-brand-700; }
           .btn-secondary { @apply px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-500 dark:hover:bg-slate-500; }
           .btn-launch { @apply px-8 py-3 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-md hover:opacity-90 transition-opacity duration-200 font-bold text-lg; }
-          .btn-ai { @apply flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-500 to-brand-400 text-white rounded-lg font-semibold text-xl shadow-lg shadow-brand-500/30 dark:shadow-brand-400/20 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/40 dark:hover:shadow-brand-400/30 active:translate-y-0 active:scale-100 active:shadow-lg disabled:!shadow-none disabled:hover:!translate-y-0 disabled:!scale-100; }
+          .btn-gradient { @apply px-8 py-3 bg-gradient-to-r from-brand-700 to-brand-800 text-black rounded-lg hover:opacity-90 transition-opacity duration-200 font-bold text-lg; }
+          .btn-ai { @apply flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-lg font-semibold text-xl shadow-lg shadow-brand-500/30 dark:shadow-brand-400/20 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/40 dark:hover:shadow-brand-400/30 active:translate-y-0 active:scale-100 active:shadow-lg disabled:!shadow-none disabled:hover:!translate-y-0 disabled:!scale-100; }
           .btn-ai-suggestion { @apply text-base px-3 py-1.5 bg-brand-100 text-brand-700 rounded-md hover:bg-brand-200 dark:bg-brand-900/40 dark:text-brand-300 dark:hover:bg-brand-900/60 disabled:cursor-wait flex items-center gap-2; }
           .btn-filter { @apply px-4 py-2 text-base rounded-full border transition-colors duration-200; }
           .btn-filter-selected { @apply bg-brand-500/20 border-brand-500 text-slate-800 dark:text-white; }

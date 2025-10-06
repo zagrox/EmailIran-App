@@ -20,7 +20,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ onStartCampaign }) => {
                 title="تقویم بازاریابی"
                 description="از تقویم برای مشاهده مناسبت‌های مهم و رویدادهای کلیدی استفاده کنید تا کمپین‌ها را بهتر برنامه‌ریزی کنید."
             />
-            <div className="mt-8">
+            <div className="mt-4">
                 <PersianCalendar
                     selectedDate={selectedDate}
                     onDateSelect={handleDateSelect}

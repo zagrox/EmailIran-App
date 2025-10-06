@@ -163,10 +163,10 @@ const PersianCalendar: React.FC<Props> = ({ selectedDate, onDateSelect, ctaText,
                     </div>
                 </div>
                  {ctaText && onCtaClick && (
-                    <div className="mt-auto pt-4">
+                    <div className="mt-auto pt-8">
                         <button
                             onClick={onCtaClick}
-                            className="w-full py-2 bg-brand-500 text-white font-bold rounded-lg hover:bg-brand-700 transition-colors"
+                            className="btn-gradient w-full"
                         >
                             {ctaText}
                         </button>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PageHeader from './PageHeader';
-import { ChevronDownIcon } from './IconComponents';
+import { ChevronDownIcon, SparklesIcon, ClipboardDocumentListIcon, CalculatorIcon, UserIcon, RocketIcon } from './IconComponents';
 
 interface FAQItem {
     q: string;
@@ -9,13 +9,33 @@ interface FAQItem {
 
 interface HelpCategory {
     name: string;
+    id: string;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
     items: FAQItem[];
 }
 
 const helpData: HelpCategory[] = [
     {
         name: 'شروع سریع',
+        id: 'quick-start',
+        icon: RocketIcon,
         items: [
+            {
+                q: 'این اپلیکیشن درباره چیست؟',
+                a: (
+                    <p>
+                        این اپلیکیشن یک پلتفرم قدرتمند و هوشمند برای ایجاد و مدیریت کمپین‌های بازاریابی ایمیلی است. با استفاده از دستیار هوش مصنوعی ما، شما می‌توانید به سادگی محتوای جذاب بنویسید، مخاطبان مناسب را هدف قرار دهید، و بهترین زمان ارسال را پیدا کنید. هدف ما این است که بازاریابی ایمیلی را برای کسب‌وکارها و بازاریابان آسان‌تر، سریع‌تر و موثرتر کنیم تا بتوانند به بهترین شکل با مشتریان خود ارتباط برقرار کنند.
+                    </p>
+                ),
+            },
+            {
+                q: 'چگونه می‌توانم به صورت رایگان ثبت‌نام کنم؟',
+                a: (
+                    <p>
+                        ثبت‌نام در پلتفرم ما کاملا رایگان و آسان است. برای ایجاد حساب کاربری، کافیست روی آیکون پروفایل در گوشه بالا-چپ کلیک کرده و گزینه ثبت‌نام را انتخاب کنید. اگر از سیستم خارج شده باشید، در داشبورد نیز دکمه «ثبت نام رایگان» را مشاهده خواهید کرد. سپس فرم ثبت‌نام را با وارد کردن نام، نام خانوادگی، آدرس ایمیل و رمز عبور دلخواه خود تکمیل کنید. پس از ثبت‌نام، بلافاصله به امکانات پلتفرم دسترسی خواهید داشت و می‌توانید اولین کمپین خود را بسازید.
+                    </p>
+                ),
+            },
             {
                 q: 'چگونه اولین کمپین خود را بسازم؟',
                 a: (
@@ -28,6 +48,8 @@ const helpData: HelpCategory[] = [
     },
     {
         name: 'دستیار هوش مصنوعی',
+        id: 'ai-assistant',
+        icon: SparklesIcon,
         items: [
             {
                 q: 'دستیار هوش مصنوعی چه کارهایی انجام می‌دهد؟',
@@ -55,6 +77,8 @@ const helpData: HelpCategory[] = [
     },
     {
         name: 'مدیریت کمپین',
+        id: 'campaign-management',
+        icon: ClipboardDocumentListIcon,
         items: [
             {
                 q: 'تست A/B چیست و چگونه کار می‌کند؟',
@@ -95,6 +119,8 @@ const helpData: HelpCategory[] = [
     },
     {
         name: 'قیمت‌گذاری',
+        id: 'pricing',
+        icon: CalculatorIcon,
         items: [
             {
                 q: 'قیمت‌گذاری شما چگونه کار می‌کند؟',
@@ -125,6 +151,8 @@ const helpData: HelpCategory[] = [
     },
     {
         name: 'حساب کاربری',
+        id: 'account',
+        icon: UserIcon,
         items: [
             {
                 q: 'چگونه اطلاعات پروفایل خود را ویرایش کنم؟',
@@ -154,17 +182,17 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ item, isOpen, onClick }) => {
     return (
-        <div className="border-b border-slate-200 dark:border-slate-700">
+        <div className="bg-white dark:bg-slate-800/50 rounded-lg shadow-sm ring-1 ring-black/5 dark:ring-white/10 overflow-hidden">
             <button
                 onClick={onClick}
-                className="flex justify-between items-center w-full py-5 text-right"
+                className="flex justify-between items-center w-full p-5 text-right"
                 aria-expanded={isOpen}
             >
                 <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{item.q}</h3>
                 <ChevronDownIcon className={`w-6 h-6 text-slate-500 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
-                <div className="pb-5 text-base text-slate-600 dark:text-slate-400 space-y-4">
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[1000px]' : 'max-h-0'}`}>
+                <div className="px-5 pb-5 pt-0 text-base text-slate-600 dark:text-slate-400 space-y-4">
                     {item.a}
                 </div>
             </div>
@@ -172,12 +200,38 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ item, isOpen, onClick }) 
     );
 };
 
+
 const HelpPage: React.FC = () => {
     const [openAccordion, setOpenAccordion] = useState<string>(helpData[0].items[0].q);
+    const [activeSection, setActiveSection] = useState<string>(helpData[0].id);
+    const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            { threshold: 0.5, rootMargin: "-40% 0px -60% 0px" }
+        );
+
+        Object.values(sectionRefs.current).forEach((el) => {
+            if (el) observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, []);
 
     const handleToggle = (question: string) => {
         setOpenAccordion(prev => (prev === question ? '' : question));
     };
+    
+    const handleNavClick = (id: string) => {
+        sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     return (
         <div>
@@ -185,22 +239,57 @@ const HelpPage: React.FC = () => {
                 title="مرکز راهنمایی"
                 description="پاسخ سوالات خود را پیدا کنید و یاد بگیرید چگونه از تمام امکانات پلتفرم ما استفاده کنید."
             />
-            <div className="page-main-content">
-                {helpData.map((category) => (
-                    <div key={category.name} className="mb-12">
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white pb-4 border-b-2 border-brand-500 mb-4">{category.name}</h2>
-                        <div className="space-y-2">
-                             {category.items.map((item) => (
-                                <AccordionItem 
-                                    key={item.q}
-                                    item={item}
-                                    isOpen={openAccordion === item.q}
-                                    onClick={() => handleToggle(item.q)}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                ))}
+            <div className="flex flex-col lg:flex-row-reverse gap-12">
+                <aside className="lg:w-1/4 xl:w-1/5">
+                    <nav className="sticky top-24">
+                        <h3 className="text-base font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">دسته‌بندی‌ها</h3>
+                        <ul className="space-y-2">
+                           {helpData.map(category => {
+                                const Icon = category.icon;
+                                const isActive = activeSection === category.id;
+                                return (
+                                    <li key={category.id}>
+                                        <button
+                                            onClick={() => handleNavClick(category.id)}
+                                            className={`w-full flex items-center gap-3 p-3 rounded-lg text-base font-semibold transition-colors duration-200 text-right ${
+                                                isActive 
+                                                ? 'bg-brand-500/20 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300' 
+                                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                            }`}
+                                        >
+                                            <Icon className={`w-5 h-5 ${isActive ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400'}`} />
+                                            <span>{category.name}</span>
+                                        </button>
+                                    </li>
+                                );
+                           })}
+                        </ul>
+                    </nav>
+                </aside>
+
+                <main className="flex-1 min-w-0">
+                     {helpData.map((category) => (
+                        <section 
+                            // FIX: The ref callback function must not return a value. Wrapping the assignment in a block statement ensures it returns `void`.
+                            ref={el => { sectionRefs.current[category.id] = el; }}
+                            id={category.id} 
+                            key={category.id} 
+                            className="mb-12 scroll-mt-24"
+                        >
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">{category.name}</h2>
+                            <div className="space-y-4">
+                                {category.items.map((item) => (
+                                    <AccordionItem 
+                                        key={item.q}
+                                        item={item}
+                                        isOpen={openAccordion === item.q}
+                                        onClick={() => handleToggle(item.q)}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    ))}
+                </main>
             </div>
         </div>
     );

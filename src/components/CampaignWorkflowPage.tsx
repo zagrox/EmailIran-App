@@ -324,7 +324,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                         <Step1Audience campaignData={wizardState} updateCampaignData={updateWizardState} onOpenAIAssistant={onOpenAIAssistant} audienceCategories={audienceCategories} pricingTiers={pricingTiers} />
                         <footer className="mt-8 flex justify-between items-center">
                             <button onClick={onBack} className="btn btn-secondary">بازگشت به لیست</button>
-                            <button onClick={handleSaveAudience} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
+                            <button onClick={handleSaveAudience} disabled={isUpdating} className="btn btn-gradient w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
                         </footer>
                     </div>
                 );
@@ -334,7 +334,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                         <Step2Message campaignData={wizardState} updateCampaignData={updateWizardState} />
                         <footer className="mt-8 flex justify-between items-center">
                             <button onClick={() => isNewCampaign ? setLocalStatus('targeting') : handleStatusUpdate('targeting')} disabled={isUpdating} className="btn btn-secondary">بازگشت به مخاطبان</button>
-                            <button onClick={handleSaveChanges} disabled={isUpdating} className="btn btn-primary w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
+                            <button onClick={handleSaveChanges} disabled={isUpdating} className="btn btn-gradient w-48">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'ذخیره و ادامه'}</button>
                         </footer>
                     </div>
                 );
@@ -344,7 +344,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                         <Step3Schedule campaignData={wizardState} updateCampaignData={updateWizardState} />
                         <footer className="mt-8 flex justify-between items-center">
                             <button onClick={() => handleStatusUpdate('editing')} disabled={isUpdating} className="btn btn-secondary">بازگشت به ویرایش</button>
-                            <button onClick={handleUpdateSchedule} disabled={isUpdating} className="btn btn-primary w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'تایید زمانبندی و ادامه'}</button>
+                            <button onClick={handleUpdateSchedule} disabled={isUpdating} className="btn btn-gradient w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'تایید زمانبندی و ادامه'}</button>
                         </footer>
                     </div>
                 );
@@ -354,7 +354,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                         <Step4Review campaignData={wizardState} audienceCategories={audienceCategories} pricingTiers={pricingTiers} />
                          <footer className="mt-8 flex justify-between items-center">
                             <button onClick={() => handleStatusUpdate('scheduled')} disabled={isUpdating} className="btn btn-secondary">بازگشت به زمانبندی</button>
-                            <button onClick={() => handleStatusUpdate('processing')} disabled={isUpdating} className="btn btn-launch w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'پرداخت و نهایی کردن'}</button>
+                            <button onClick={() => handleStatusUpdate('processing')} disabled={isUpdating} className="btn btn-gradient w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'پرداخت و نهایی کردن'}</button>
                         </footer>
                     </div>
                 );
