@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { SparklesIcon, CalendarDaysIcon, ChartBarIcon, ShoppingCartIcon, ClipboardDocumentListIcon, PaintBrushIcon, WaveIcon, SignupArrowIcon, ClockIcon, LoadingSpinner, CalculatorIcon } from './IconComponents';
+import { UsersIcon, QuestionMarkCircleIcon, SparklesIcon, CalendarDaysIcon, ChartBarIcon, WaveIcon, SignupArrowIcon, ClockIcon, LoadingSpinner, CalculatorIcon } from './IconComponents';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { AudienceCategory, Report, EmailMarketingCampaign } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -85,11 +85,11 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
 
     const features = [
         { name: 'ساخت کمپین هوشمند', icon: <SparklesIcon className="w-8 h-8"/>, action: () => onOpenAIAssistant() },
-        { name: 'ثبت و مدیریت سفارش', icon: <ShoppingCartIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
-        { name: 'انتشار آنلاین کمپین', icon: <ClipboardDocumentListIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
-        { name: 'طراحی با قالب‌ساز', icon: <PaintBrushIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
+        { name: 'رویدادهای رسمی', icon: <CalendarDaysIcon className="w-8 h-8"/>, action: () => navigate('calendar') },
+        { name: 'راهنمای اپلیکیشن', icon: <QuestionMarkCircleIcon className="w-8 h-8"/>, action: () => navigate('help') },
+        { name: 'لیست‌های مشترکین', icon: <UsersIcon className="w-8 h-8"/>, action: () => navigate('audiences') },
+        { name: 'تعرفه ایمیل مارکتینگ', icon: <CalculatorIcon className="w-8 h-8"/>, action: () => navigate('pricing') },
         { name: 'کمپین‌ها و گزارشات', icon: <ChartBarIcon className="w-8 h-8"/>, action: () => navigate('campaigns') },
-        { name: 'ماشین حساب قیمت', icon: <CalculatorIcon className="w-8 h-8"/>, action: () => navigate('pricing') },
     ];
     
     const FeatureCard: React.FC<{ name: string; icon: React.ReactNode; action: () => void; }> = ({ name, icon, action }) => (
