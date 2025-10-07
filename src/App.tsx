@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import type { CampaignState, AICampaignDraft, AudienceCategory, ApiAudienceItem, Page, EmailMarketingCampaign } from './types';
 import Header from './components/Header';
@@ -12,6 +11,8 @@ import CampaignWorkflowPage from './components/CampaignWorkflowPage';
 import LoginPage from './components/LoginPage';
 import HelpPage from './components/HelpPage';
 import PricingPage from './components/PricingPage';
+import OrdersPage from './components/OrdersPage';
+import PaymentStatusPage from './components/PaymentStatusPage';
 import { useAuth } from './contexts/AuthContext';
 import { UIProvider } from './contexts/UIContext';
 import NotificationContainer from './components/NotificationContainer';
@@ -81,6 +82,16 @@ const App: React.FC = () => {
             return page;
         });
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('trackId') && params.has('orderId')) {
+            setCurrentPage('payment-status');
+            // Clean up URL to avoid re-triggering on refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }, []);
+
 
     useEffect(() => {
         const fetchProjectDetails = async () => {
@@ -277,9 +288,15 @@ const App: React.FC = () => {
                     return (
                         <CalendarPage onStartCampaign={handleStartCampaignFromCalendar} />
                     );
+                case 'orders':
+                    return <OrdersPage onViewCampaign={handleViewCampaign} />;
                 case 'profile':
                     return (
-                        <UserProfilePage theme={theme} setTheme={setTheme} onNavigate={handleNavigation} />
+                        <UserProfilePage 
+                            theme={theme} 
+                            setTheme={setTheme} 
+                            onNavigate={handleNavigation}
+                        />
                     );
                 case 'help':
                     return <HelpPage />;
@@ -287,6 +304,8 @@ const App: React.FC = () => {
                     return <PricingPage />;
                 case 'login':
                     return <LoginPage logoUrl={logoUrl} />;
+                case 'payment-status':
+                    return <PaymentStatusPage onViewCampaign={handleViewCampaign} onNavigate={handleNavigation} />;
             }
         };
 

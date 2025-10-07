@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from './PageHeader';
-import { SunIcon, MoonIcon, DesktopIcon, UserIcon, LoadingSpinner, XIcon } from './IconComponents';
+import { SunIcon, MoonIcon, DesktopIcon, UserIcon, LoadingSpinner, XIcon, ClipboardDocumentListIcon } from './IconComponents';
 import { useAuth } from '../contexts/AuthContext';
 import { useUI } from '../contexts/UIContext';
 import { useNotification } from '../contexts/NotificationContext';
-// FIX: Import the centralized Page type to resolve conflicting type definitions.
 import type { Page } from '../types';
 
 type Theme = 'light' | 'dark' | 'system';
 
-// FIX: The local, incorrect 'Page' type definition was removed to use the centralized one from src/types.ts.
-// This was the primary source of the build error.
 interface UserProfilePageProps {
     theme: Theme;
     setTheme: (theme: Theme) => void;
@@ -58,7 +55,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
             setMobile(profile.mobile || '');
             setWebsite(profile.website || '');
             setAccountType(profile.type || 'personal');
-            // Sync theme from profile data without triggering a save
             const profileTheme = mapDisplayToTheme(profile.display);
             if (theme !== profileTheme) {
                 setTheme(profileTheme);
@@ -85,7 +81,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
             };
             await updateProfileAndUser(userData, profileData);
         } catch (error) {
-            // Error is handled by the AuthContext notification
             console.error(error);
         } finally {
             setIsSaving(false);
@@ -105,10 +100,9 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
         setIsPasswordSaving(true);
         try {
             await changePassword(password.current, password.new);
-            setPassword({ current: '', new: '', confirm: '' }); // Clear fields on success
+            setPassword({ current: '', new: '', confirm: '' });
             setIsPasswordModalOpen(false);
         } catch (error) {
-            // Error is handled by AuthContext, no need to do anything here
             console.error(error);
         } finally {
             setIsPasswordSaving(false);
@@ -122,7 +116,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
             await updateProfileAndUser({}, { display: displayValue });
         } catch (error) {
             console.error("Couldn't save theme preference:", error);
-            // Optionally show a small toast notification here
         }
     }
 
@@ -156,16 +149,18 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
         <div>
             <PageHeader 
                 title="پروفایل کاربری"
-                description="اطلاعات شخصی، تنظیمات و اعلان‌های خود را مدیریت کنید."
-            />
+                description="اطلاعات شخصی، سوابق خرید و تنظیمات خود را مدیریت کنید."
+            >
+                <button onClick={() => onNavigate('orders')} className="btn btn-primary inline-flex items-center gap-2">
+                    <ClipboardDocumentListIcon className="w-5 h-5" />
+                    <span>تاریخچه سفارشات</span>
+                </button>
+            </PageHeader>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* User Info Column */}
                 <div className="lg:col-span-2 space-y-8">
-                    {/* Profile Details Card */}
                     <div className="card">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اطلاعات کاربری</h3>
                         <div className="space-y-6">
-                            {/* Row 1: Account Type & Email */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="label">نوع حساب</label>
@@ -180,7 +175,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                                 </div>
                             </div>
                             
-                            {/* Row 2: Company (Conditional) */}
                             {accountType === 'business' && (
                                 <div className="animate-fade-in">
                                     <label htmlFor="company" className="label">شرکت</label>
@@ -188,7 +182,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                                 </div>
                             )}
 
-                            {/* Row 3: First & Last Name */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label htmlFor="firstName" className="label">نام</label>
@@ -200,7 +193,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                                 </div>
                             </div>
 
-                            {/* Row 4: Mobile & Website */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label htmlFor="mobile" className="label">موبایل</label>
@@ -221,7 +213,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                         </div>
                     </div>
                 </div>
-                {/* Settings Column */}
                 <div className="lg:col-span-1 space-y-8">
                     <div className="card">
                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">اعلان‌ها</h3>
@@ -246,7 +237,6 @@ const UserProfilePage: React.FC<UserProfilePageProps> = ({ theme, setTheme, onNa
                             />
                          </div>
                     </div>
-                    {/* Display Settings Card */}
                     <div className="card">
                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">تنظیمات نمایش</h3>
                          <div className="flex justify-around items-center gap-4">

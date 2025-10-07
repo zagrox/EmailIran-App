@@ -185,14 +185,14 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
                 <div className="bg-white dark:bg-slate-900/70 p-6 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white">امکانات پیشرفته ایمیل مارکتینگ</h2>
                     <p className="text-base text-slate-500 dark:text-slate-400 mt-1">مدیریت آسان ارسال کمپین های ایمیل انبوه</p>
-                    <div className="grid grid-cols-3 gap-4 mt-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
                         {features.map(feature => <FeatureCard key={feature.name} {...feature} />)}
                     </div>
                 </div>
                 
                 <TodayViewCard onNavigateToCalendar={() => navigate('calendar')} />
 
-                <div className="bg-white dark:bg-slate-900/70 p-6 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 h-80">
+                <div className="hidden lg:block bg-white dark:bg-slate-900/70 p-6 rounded-2xl shadow-2xl ring-1 ring-black/5 dark:ring-white/10 h-80">
                     <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-4">رشد مشترکین ایمیل ایران</h3>
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 30 }}>
@@ -268,9 +268,9 @@ const DashboardPage: React.FC<DashboardProps> = ({ theme, onOpenAIAssistant, aud
 
             {/* Bottom Subscriber Stat */}
             <div className="xl:col-span-5">
-                <div className="subscriber-stat-card">
+                <div className="subscriber-stat-card !flex-col gap-6 sm:!flex-row sm:gap-0">
                     {renderUserAction()}
-                    <div className="text-right">
+                    <div className="text-center sm:text-right">
                         <h3 className="text-4xl font-black text-slate-900 dark:text-white">{totalSubscribers.toLocaleString('fa-IR')}<span className="text-brand-500 text-3xl"> +</span></h3>
                         <p className="mt-1 text-lg text-slate-500 dark:text-slate-400 font-semibold">تعداد مشترکین ایمیلی</p>
                     </div>

@@ -135,9 +135,9 @@ const Header: React.FC<HeaderProps> = ({ setCurrentPage, currentPage, onStartNew
                        </button>
                        <div className="border-t border-slate-200 dark:border-slate-700 my-2 pt-2 space-y-1">
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('dashboard')}} className={getLinkClasses('dashboard', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>داشبورد</a>
+                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>کمپین‌ها</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('audiences')}} className={getLinkClasses('audiences', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>مخاطبان</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('calendar')}} className={getLinkClasses('calendar', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>تقویم</a>
-                           <a href="#" onClick={(e) => {e.preventDefault(); handleNav('campaigns')}} className={getLinkClasses('campaigns', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>کمپین‌ها</a>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleNav('help')}} className={getLinkClasses('help', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>راهنما</a>
                            <div className="border-t border-slate-200 dark:border-slate-700 my-2"></div>
                            <a href="#" onClick={(e) => {e.preventDefault(); handleProfileClick()}} className={getLinkClasses('profile', mobileNavLinkBase, mobileNavLinkActive, mobileNavLinkInactive)}>پروفایل کاربری</a>

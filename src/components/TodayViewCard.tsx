@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { ChevronLeftIcon } from './IconComponents';
 
@@ -36,23 +37,17 @@ const TodayViewCard: React.FC<TodayViewCardProps> = ({ onNavigateToCalendar }) =
             aria-label={`Navigate to calendar for today, ${formattedPersianDate}`}
         >
             <div className="bg-white dark:bg-slate-900/80 backdrop-blur-sm rounded-[14px] p-4 flex items-center justify-between">
-                {/* Navigation Arrow */}
-                <span className="text-slate-300 dark:text-slate-600">
+                <div className="flex-grow">
+                    <p className="font-semibold text-lg text-slate-800 dark:text-white text-right">
+                        امروز: {formattedPersianDate}
+                    </p>
+                    <p className="font-normal text-md text-slate-500 dark:text-slate-400 text-right mt-1">
+                        {formattedGregorianDate}
+                    </p>
+                </div>
+                <span className="text-slate-300 dark:text-slate-600 flex-shrink-0 mr-4">
                     <ChevronLeftIcon className="w-6 h-6" />
                 </span>
-
-                {/* Date Display (centered) */}
-                <p className="font-normal text-lg text-slate-800 dark:text-white text-center">
-                    امروز: {formattedPersianDate}
-                </p>
-
-                {/* Invisible spacer to balance the layout and center the date */}
-                <span className="w-6" aria-hidden="true" />
-
-                {/* Date Display (centered) */}
-                <p className="font-normal text-md text-slate-800 dark:text-white text-center">
-                    {formattedGregorianDate}
-                </p>
             </div>
         </button>
     );

@@ -1,9 +1,9 @@
-
-
 // FIX: Added a centralized 'Page' type to be used across the application, resolving type conflicts.
-export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'calendar' | 'profile' | 'login' | 'help' | 'pricing';
+export type Page = 'dashboard' | 'audiences' | 'campaigns' | 'calendar' | 'profile' | 'login' | 'help' | 'pricing' | 'payment-status' | 'orders';
 
 export type CampaignStatus = 'targeting' | 'editing' | 'scheduled' | 'payment' | 'processing' | 'sending' | 'completed';
+
+export type OrderStatus = 'Pending' | 'Completed' | 'Processing' | 'Failed' | 'Canceled';
 
 export interface CampaignState {
   audience: {
@@ -128,10 +128,32 @@ export interface EmailMarketingCampaign {
     campaign_content: string;
     campaign_html: string | null;
     campaign_audiences?: RelatedAudience[];
+    campaign_order?: string | { id: string; } | null;
 }
 
 export interface PricingTier {
     pricing_level: string;
     pricing_volume: number;
     pricing_rate: number;
+}
+
+export interface Transaction {
+    id: number;
+    status: 'draft' | 'published';
+    trackid?: string | null;
+    transaction_result?: string | null;
+    transaction_message?: string | null;
+    transaction_order: string; // Order ID (UUID)
+    payment_status?: string | null;
+    date_created: string;
+}
+
+export interface Order {
+    id: string; // UUID
+    order_status: OrderStatus;
+    order_total: number;
+    user_created?: string; // User ID
+    status: 'draft' | 'published';
+    date_created: string;
+    transactions?: number[]; // Array of transaction IDs
 }

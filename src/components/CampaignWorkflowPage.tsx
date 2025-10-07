@@ -1,10 +1,21 @@
+
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
-import { fetchCampaignById, updateCampaign, createCampaign } from '../services/campaignService';
+import { 
+    fetchCampaignById, 
+    updateCampaign, 
+    createCampaign, 
+    createOrder, 
+    createTransaction,
+    fetchProjectSettings,
+    fetchOrderById
+} from '../services/campaignService';
 import { uploadFile } from '../services/fileService';
-import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report, PricingTier } from '../types';
-import { LoadingSpinner } from '../components/IconComponents';
+import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report, PricingTier, Order } from '../types';
+import { LoadingSpinner, XIcon } from '../components/IconComponents';
 import CampaignStatusStepper from './CampaignStatusStepper';
 import Step1Audience from './steps/Step1_Audience';
 import Step2Message from './steps/Step2_Message';
@@ -33,7 +44,6 @@ const mapCampaignToWizardState = (campaign: EmailMarketingCampaign, categories: 
         if (typeof audience === 'object' && audience !== null) {
             return String(audience.id);
         }
-        // Handle cases where audiences_id is just a number (on create)
         if (typeof audience === 'number') {
             return String(audience);
         }
@@ -101,6 +111,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     const [error, setError] = useState<string | null>(null);
     const [localStatus, setLocalStatus] = useState<CampaignStatus>('targeting');
     const [pricingTiers, setPricingTiers] = useState<PricingTier[]>([]);
+    const [isOfflinePaymentModalOpen, setIsOfflinePaymentModalOpen] = useState(false);
     
     const { accessToken, isAuthenticated } = useAuth();
     const { addNotification } = useNotification();
@@ -116,7 +127,6 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                 }
                 const { data } = await response.json();
                 if (data && Array.isArray(data.pricing_slot)) {
-                    // Sort tiers by volume ascending to make finding the rate easier
                     const sortedTiers = data.pricing_slot.sort((a: PricingTier, b: PricingTier) => a.pricing_volume - b.pricing_volume);
                     setPricingTiers(sortedTiers);
                 } else {
@@ -216,6 +226,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     const createNewCampaign = async (targetStatus: CampaignStatus) => {
         if (!wizardState || !accessToken) return;
         setIsUpdating(true);
+        let createdCampaignId: number | null = null;
         try {
             let htmlFileId: string | null = wizardState.message.htmlFileId;
             if (wizardState.message.contentType === 'html' && wizardState.message.htmlFile) {
@@ -236,25 +247,26 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                 campaign_date: campaignDate,
                 campaign_audiences: wizardState.audience.categoryIds.map(id => ({ audiences_id: parseInt(id, 10) })),
                 campaign_status: targetStatus,
-                status: 'draft',
+                status: 'published',
             };
             const newCampaign = await createCampaign(payload, accessToken);
+            createdCampaignId = newCampaign.id;
             addNotification('کمپین با موفقیت ایجاد و ذخیره شد!', 'success');
             onCampaignCreated(newCampaign.id);
         } catch (error: any) {
              addNotification(error.message || 'خطا در ایجاد کمپین.', 'error');
+             throw error; // re-throw to be caught by caller
         } finally {
             setIsUpdating(false);
         }
+        return createdCampaignId;
     }
 
 
     const handleSaveChanges = async () => {
         if (!isAuthenticated) {
             addNotification('برای ذخیره و ادامه، لطفاً وارد شوید.', 'info');
-            if (wizardState) {
-                requestLogin(wizardState);
-            }
+            if (wizardState) requestLogin(wizardState);
             return;
         }
 
@@ -292,14 +304,107 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     };
 
     const handleUpdateSchedule = () => {
-        // This flow should only be accessible for existing campaigns.
         if (isNewCampaign || !wizardState) return;
-
         const payload: Partial<EmailMarketingCampaign> = {
             campaign_date: `${wizardState.schedule.sendDate}T${wizardState.schedule.sendTime}:00`,
         };
         handleStatusUpdate('payment', payload);
     };
+
+    const handleFinalizePayment = async (paymentMethod: 'online' | 'offline') => {
+        if (!isAuthenticated) {
+            if (wizardState) requestLogin(wizardState);
+            return;
+        }
+        if (!wizardState || !accessToken || !campaign) return;
+    
+        setIsUpdating(true);
+        try {
+            let currentCampaignId = campaign.id;
+            let orderForPayment: Order | null = null;
+    
+            // Step 1: Ensure campaign is saved. A campaign must be saved to reach the payment step.
+            if (isNewCampaign) {
+                const newId = await createNewCampaign('payment');
+                if (!newId) throw new Error("Campaign could not be saved before payment.");
+                currentCampaignId = newId;
+            }
+    
+            // Step 2: Check for an existing 'Pending' order linked to the campaign
+            // Re-fetch the campaign to get the latest order link, especially if it was just created.
+            const freshCampaignData = await fetchCampaignById(currentCampaignId, accessToken);
+            // FIX: Correctly extract the order ID whether campaign_order is a string or an object.
+            const orderRef = freshCampaignData.campaign_order;
+            const existingOrderId = orderRef && (typeof orderRef === 'object' ? orderRef.id : orderRef);
+    
+            if (existingOrderId) {
+                const existingOrder = await fetchOrderById(existingOrderId, accessToken);
+                if (existingOrder && existingOrder.order_status === 'Pending') {
+                    orderForPayment = existingOrder;
+                    addNotification('استفاده از سفارش در انتظار موجود.', 'info');
+                }
+            }
+    
+            // Step 3: If no reusable order is found, create a new one.
+            if (!orderForPayment) {
+                addNotification('در حال ایجاد سفارش جدید...', 'info');
+                const recipientCount = audienceCategories
+                    .filter(c => wizardState.audience.categoryIds.includes(c.id))
+                    .reduce((sum, c) => sum + c.count, 0);
+                
+                const applicableTier = [...pricingTiers].reverse().find(tier => recipientCount >= tier.pricing_volume) || pricingTiers[0];
+                const totalCost = recipientCount * (applicableTier?.pricing_rate || 0);
+    
+                if (totalCost <= 0) {
+                    throw new Error("Cannot process an order with zero cost.");
+                }
+                
+                const orderPayload: Partial<Order> = { order_total: totalCost, order_status: 'Pending', status: 'published' };
+                const newOrder = await createOrder(orderPayload, accessToken);
+                
+                // Link the new order to the campaign
+                await updateCampaign(currentCampaignId, { campaign_order: newOrder.id }, accessToken);
+                orderForPayment = newOrder;
+            }
+    
+            if (!orderForPayment) {
+                throw new Error("Could not retrieve or create an order for payment.");
+            }
+    
+            // Step 4: Proceed with payment
+            if (paymentMethod === 'offline') {
+                setIsOfflinePaymentModalOpen(true);
+            } else { // Online payment
+                addNotification('در حال انتقال به درگاه پرداخت...', 'info');
+                const { project_zibal: merchantId } = await fetchProjectSettings();
+                const callbackUrl = `${window.location.origin}${window.location.pathname.replace(/\/$/, "")}?orderId=${orderForPayment.id}`;
+                
+                const zibalResponse = await fetch('https://gateway.zibal.ir/v1/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        merchant: merchantId,
+                        amount: orderForPayment.order_total * 10, // Zibal expects Rials
+                        callbackUrl,
+                        description: `پرداخت برای کمپین: ${wizardState.message.subject}`,
+                    }),
+                });
+                const zibalData = await zibalResponse.json();
+    
+                if (zibalData.result === 100) {
+                    await createTransaction({ transaction_order: orderForPayment.id, trackid: zibalData.trackId, status: 'published' }, accessToken);
+                    window.location.href = `https://gateway.zibal.ir/start/${zibalData.trackId}`;
+                } else {
+                    throw new Error(`Zibal error (${zibalData.result}): ${zibalData.message}`);
+                }
+            }
+        } catch (err: any) {
+            addNotification(err.message || 'خطا در پردازش پرداخت.', 'error');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
 
     if (isLoading) {
         return <div className="flex justify-center items-center py-40"><LoadingSpinner className="w-16 h-16 text-brand-500" /></div>;
@@ -351,10 +456,15 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             case 'payment':
                  return (
                     <div>
-                        <Step4Review campaignData={wizardState} audienceCategories={audienceCategories} pricingTiers={pricingTiers} />
-                         <footer className="mt-8 flex justify-between items-center">
+                        <Step4Review 
+                            campaignData={wizardState} 
+                            audienceCategories={audienceCategories} 
+                            pricingTiers={pricingTiers} 
+                            onFinalizePayment={handleFinalizePayment}
+                            isProcessingPayment={isUpdating}
+                        />
+                         <footer className="mt-8 flex justify-start items-center">
                             <button onClick={() => handleStatusUpdate('scheduled')} disabled={isUpdating} className="btn btn-secondary">بازگشت به زمانبندی</button>
-                            <button onClick={() => handleStatusUpdate('processing')} disabled={isUpdating} className="btn btn-gradient w-52">{isUpdating ? <LoadingSpinner className="w-5 h-5"/> : 'پرداخت و نهایی کردن'}</button>
                         </footer>
                     </div>
                 );
@@ -363,7 +473,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                 return (
                     <div className="text-center card py-20">
                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">کمپین در صف ارسال است</h2>
-                         <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">کمپین شما برای ارسال در زمان زیر آماده است:</p>
+                         <p className="mt-2 text-lg text-slate-500 dark:text-slate-400">پرداخت شما موفق بود! کمپین شما برای ارسال در زمان زیر آماده است:</p>
                          <p className="mt-4 text-3xl font-bold text-brand-600">{sendDate.toLocaleString('fa-IR', { dateStyle: 'full', timeStyle: 'short' })}</p>
                     </div>
                 );
@@ -404,6 +514,32 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             <main className="page-main-content">
                 {renderContent()}
             </main>
+
+            {isOfflinePaymentModalOpen && (
+                 <div className="modal-overlay">
+                    <div className="modal-container max-w-lg">
+                        <div className="modal-header">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">دستورالعمل پرداخت آفلاین</h3>
+                            <button onClick={() => setIsOfflinePaymentModalOpen(false)} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                                <XIcon className="w-6 h-6 text-slate-500 dark:text-slate-400" />
+                            </button>
+                        </div>
+                        <div className="modal-content text-slate-600 dark:text-slate-300">
+                             <p className="font-semibold">سفارش شما با موفقیت ثبت شد!</p>
+                             <p>برای نهایی کردن سفارش، لطفاً مبلغ کل را به حساب زیر واریز کرده و فیش واریزی را برای پشتیبانی ما ارسال کنید.</p>
+                             <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg space-y-2">
+                                <p><strong>نام بانک:</strong> بانک ملی ایران</p>
+                                <p><strong>شماره حساب:</strong> ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶</p>
+                                <p><strong>نام صاحب حساب:</strong> شرکت ایمیل ایران</p>
+                             </div>
+                             <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">پس از تایید پرداخت توسط تیم ما، کمپین شما به وضعیت «در صف ارسال» منتقل خواهد شد.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={() => { setIsOfflinePaymentModalOpen(false); onBack(); }} className="btn btn-primary">متوجه شدم</button>
+                        </div>
+                    </div>
+                 </div>
+            )}
         </div>
     );
 };
