@@ -1,6 +1,9 @@
 
 
 
+
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
@@ -15,13 +18,14 @@ import {
 } from '../services/campaignService';
 import { uploadFile } from '../services/fileService';
 import type { EmailMarketingCampaign, CampaignState, CampaignStatus, AudienceCategory, Report, PricingTier, Order } from '../types';
-import { LoadingSpinner, XIcon } from '../components/IconComponents';
+import { LoadingSpinner, XIcon, ClipboardDocumentListIcon } from '../components/IconComponents';
 import CampaignStatusStepper from './CampaignStatusStepper';
 import Step1Audience from './steps/Step1_Audience';
 import Step2Message from './steps/Step2_Message';
 import Step3Schedule from './steps/Step3_Schedule';
 import Step4Review from './steps/Step4_Review';
 import Step5Analytics from './steps/Step5_Analytics';
+import CampaignSummary from './CampaignSummary';
 
 interface Props {
     campaignId: number;
@@ -112,6 +116,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     const [localStatus, setLocalStatus] = useState<CampaignStatus>('targeting');
     const [pricingTiers, setPricingTiers] = useState<PricingTier[]>([]);
     const [isOfflinePaymentModalOpen, setIsOfflinePaymentModalOpen] = useState(false);
+    const [isSummaryOpen, setIsSummaryOpen] = useState(false);
     
     const { accessToken, isAuthenticated } = useAuth();
     const { addNotification } = useNotification();
@@ -347,7 +352,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
     
             // Step 3: If no reusable order is found, create a new one.
             if (!orderForPayment) {
-                addNotification('در حال ایجاد سفارش جدید...', 'info');
+                addNotification('در حال ثبت سفارش جدید...', 'info');
                 const recipientCount = audienceCategories
                     .filter(c => wizardState.audience.categoryIds.includes(c.id))
                     .reduce((sum, c) => sum + c.count, 0);
@@ -492,7 +497,7 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
             case 'completed':
                 return <Step5Analytics theme={theme} viewedReport={mapCampaignToReport(campaign)} onBack={onBack} />;
             default:
-                return <p>وضعیت کمپین نامشخص است.</p>;
+                return <p>وضعیت کمپین نامشخص</p>;
         }
     };
 
@@ -503,17 +508,33 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                     <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight sm:text-4xl">{isNewCampaign ? "ایجاد کمپین جدید" : campaign.campaign_subject}</h1>
                 </div>
                 {currentStatus !== 'completed' && (
-                    <button onClick={onBack} className="btn btn-secondary flex-shrink-0">&rarr; بازگشت به کمپین‌ها</button>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                         <button onClick={() => setIsSummaryOpen(true)} className="btn btn-filter inline-flex items-center gap-2">
+                            <ClipboardDocumentListIcon className="w-5 h-5" />
+                            <span>خلاصه کمپین</span>
+                        </button>
+                        <button onClick={onBack} className="btn btn-filter">&rarr; لیست کمپین‌ها</button>
+                    </div>
                 )}
             </div>
             
-            <div className="mb-12">
-                <CampaignStatusStepper currentStatus={currentStatus} />
+            <div>
+                <div className="mb-8">
+                    <CampaignStatusStepper currentStatus={currentStatus} />
+                </div>
+                <main className="page-main-content !mt-0">
+                    {renderContent()}
+                </main>
             </div>
 
-            <main className="page-main-content">
-                {renderContent()}
-            </main>
+            <CampaignSummary
+                isOpen={isSummaryOpen}
+                onClose={() => setIsSummaryOpen(false)}
+                status={currentStatus}
+                campaignData={wizardState}
+                audienceCategories={audienceCategories}
+                pricingTiers={pricingTiers}
+            />
 
             {isOfflinePaymentModalOpen && (
                  <div className="modal-overlay">
@@ -525,12 +546,13 @@ const CampaignWorkflowPage: React.FC<Props> = ({ campaignId, onBack, audienceCat
                             </button>
                         </div>
                         <div className="modal-content text-slate-600 dark:text-slate-300">
-                             <p className="font-semibold">سفارش شما با موفقیت ثبت شد!</p>
+                             <p className="font-semibold">سفارش با موفقیت ثبت شد!</p>
                              <p>برای نهایی کردن سفارش، لطفاً مبلغ کل را به حساب زیر واریز کرده و فیش واریزی را برای پشتیبانی ما ارسال کنید.</p>
                              <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg space-y-2">
-                                <p><strong>نام بانک:</strong> بانک ملی ایران</p>
-                                <p><strong>شماره حساب:</strong> ۱۲۳۴-۵۶۷۸-۹۰۱۲-۳۴۵۶</p>
-                                <p><strong>نام صاحب حساب:</strong> شرکت ایمیل ایران</p>
+                                <p><strong>نام بانک:</strong> بانک پاسارگاد</p>
+                                <p><strong>شماره شبا:</strong> IR290570033880012263512101</p>
+                                <p><strong>شماره کارت:</strong> ۵۰۲۲-۲۹۱۰-۸۹۳۲-۴۴۷۷</p>
+                                <p><strong>نام صاحب حساب:</strong> حمید چمانچی</p>
                              </div>
                              <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">پس از تایید پرداخت توسط تیم ما، کمپین شما به وضعیت «در صف ارسال» منتقل خواهد شد.</p>
                         </div>

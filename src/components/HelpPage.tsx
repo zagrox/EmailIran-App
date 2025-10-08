@@ -219,7 +219,12 @@ const HelpPage: React.FC = () => {
         );
 
         Object.values(sectionRefs.current).forEach((el) => {
-            if (el) observer.observe(el);
+            // FIX: Use `instanceof HTMLElement` as a type guard. This resolves the issue where `Object.values`
+            // might be inferred as returning `unknown[]`, and a simple truthiness check (`if (el)`)
+            // is not enough to narrow the type to `Element`.
+            if (el instanceof HTMLElement) {
+                observer.observe(el);
+            }
         });
 
         return () => observer.disconnect();

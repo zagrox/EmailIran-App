@@ -84,8 +84,8 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
 
     return (
         <div className="animate-slide-in-up">
-            <h2 className="h2">زمان‌بندی را تنظیم کنید</h2>
-            <p className="p-description">مانند یک حرفه‌ای با تحویل آگاه از منطقه زمانی و پیش‌بینی‌های هوشمند، زمان‌بندی کنید.</p>
+            <h2 className="h2">زمان ارسال را تنظیم کنید.</h2>
+            <p className="p-description">بهترین تاریخ و زمان ارسال کمپین را بر اساس تقویم و با کمک هوش مصنوعی انتخاب کنید.</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-8">
                 {/* Calendar */}
@@ -124,7 +124,7 @@ const Step3Schedule: React.FC<Props> = ({ campaignData, updateCampaignData }) =>
                         </div>
 
                         <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800/70 p-4 rounded-lg">
-                            <span className="font-medium text-slate-900 dark:text-white">تحویل آگاه از منطقه زمانی</span>
+                            <span className="font-medium text-slate-900 dark:text-white">تحویل متناسب با منطقه زمانی</span>
                             <button
                                 onClick={handleTimezoneToggle}
                                 className={`toggle-switch ${isTimezoneAware ? 'toggle-switch-on' : 'toggle-switch-off'}`}

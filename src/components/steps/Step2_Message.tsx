@@ -1,10 +1,11 @@
 
 
 
+
 import React, { useState } from 'react';
 import type { CampaignState } from '../../types';
 import { getSubjectSuggestions, improveEmailBody } from '../../services/geminiService';
-import { SparklesIcon, LoadingSpinner, DocumentDuplicateIcon, ArrowUpTrayIcon, XCircleIcon } from '../IconComponents';
+import { SparklesIcon, LoadingSpinner, DocumentDuplicateIcon, ArrowUpTrayIcon, XCircleIcon, PaintBrushIcon } from '../IconComponents';
 import TemplateBrowser from '../TemplateBrowser';
 
 interface Props {
@@ -233,6 +234,27 @@ const Step2Message: React.FC<Props> = ({ campaignData, updateCampaignData }) => 
                         </div>
                     ) : (
                          <div className="animate-fade-in">
+                            <div className="card !p-4 !bg-sky-50 dark:!bg-sky-900/30 border border-sky-200 dark:border-sky-800 mb-6 animate-fade-in">
+                                <div className="flex items-start gap-4">
+                                    <div>
+                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400">
+                                            <PaintBrushIcon className="w-6 h-6" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-lg text-slate-900 dark:text-white">چگونه یک قالب HTML حرفه‌ای بسازیم؟</h4>
+                                        <p className="mt-1 text-base text-slate-600 dark:text-slate-300">
+                                            برای طراحی قالب‌های ایمیل زیبا و واکنش‌گرا که از زبان فارسی پشتیبانی می‌کنند، می‌توانید از ابزار رایگان <a href="https://megamail.ir/" target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 font-semibold hover:underline">مگامیل</a> استفاده کنید.
+                                        </p>
+                                        <ol className="list-decimal list-inside mr-4 mt-3 space-y-2 text-base text-slate-600 dark:text-slate-300">
+                                            <li>در <a href="https://app.megamail.ir/?register" target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 font-semibold hover:underline">مگامیل ثبت‌نام کنید</a> (رایگان است).</li>
+                                            <li>با ویرایشگر کشیدن و رها کردن، قالب خود را بسازید یا از <a href="https://megamail.ir/#/templates" target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 font-semibold hover:underline">قالب‌های آماده</a> استفاده کنید.</li>
+                                            <li>پس از اتمام طراحی، خروجی HTML قالب خود را دانلود کنید.</li>
+                                            <li>فایل HTML دانلود شده را در بخش زیر آپلود نمایید.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
                             <label className="label mb-2">فایل کمپین HTML</label>
                             {message.htmlFile ? (
                                 <div className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md">
